@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0B86311A-B8CF-4BF5-B4E6-795C411A5F47}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Shipwreck.TypeScriptModels</RootNamespace>
+    <AssemblyName>Shipwreck.TypeScriptModels</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccessModifier.cs" />
+    <Compile Include="ArrayType.cs" />
+    <Compile Include="BuiltinType.cs" />
+    <Compile Include="ClassDeclaration.cs" />
+    <Compile Include="ConstructorDeclaration.cs" />
+    <Compile Include="Declaration.cs" />
+    <Compile Include="Documentation.cs" />
+    <Compile Include="EnumDeclaration.cs" />
+    <Compile Include="FieldDeclaration.cs" />
+    <Compile Include="FlagedType.cs" />
+    <Compile Include="FunctionDeclaration.cs" />
+    <Compile Include="FunctionType.cs" />
+    <Compile Include="IndentedTextWriterHelper.cs" />
+    <Compile Include="ITypeScriptFunction.cs" />
+    <Compile Include="ITypeScriptObjectOwner.cs" />
+    <Compile Include="ITypeScriptType.cs" />
+    <Compile Include="MemberDeclaration.cs" />
+    <Compile Include="MethodDeclaration.cs" />
+    <Compile Include="ModuleDeclaration.cs" />
+    <Compile Include="ObjectType.cs" />
+    <Compile Include="ObjectTypeProperty.cs" />
+    <Compile Include="ParameterDeclaration.cs" />
+    <Compile Include="ParameterDocumentation.cs" />
+    <Compile Include="PromiseType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyDeclaration.cs" />
+    <Compile Include="Statement.cs" />
+    <Compile Include="TypeDeclaration.cs" />
+    <Compile Include="TypeFlags.cs" />
+    <Compile Include="TypeScriptCollection.cs" />
+    <Compile Include="TypeScriptCollectionExtensions.cs" />
+    <Compile Include="TypeScriptContext.cs" />
+    <Compile Include="UnionType.cs" />
+    <Compile Include="UnknownType.cs" />
+    <Compile Include="VariableDeclaration.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
