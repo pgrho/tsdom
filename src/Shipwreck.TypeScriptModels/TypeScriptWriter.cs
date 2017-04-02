@@ -19,6 +19,8 @@ namespace Shipwreck.TypeScriptModels
             _Writer = (writer as IndentedTextWriter) ?? new IndentedTextWriter(writer);
         }
 
+        #region IExpressionVisitor<int>
+
         // 4.2
         public int VisitThis()
         {
@@ -167,7 +169,6 @@ namespace Shipwreck.TypeScriptModels
             return 0;
         }
 
-
         // 4.10
         public int VisitFunction(FunctionExpression expression)
         {
@@ -178,7 +179,6 @@ namespace Shipwreck.TypeScriptModels
                 _Writer.Write(expression.FunctionName);
             }
             _Writer.WriteCallSignature(expression);
-
 
             WriteMethodBody();
             return 0;
@@ -224,7 +224,7 @@ namespace Shipwreck.TypeScriptModels
         public int VisitNew(NewExpression expression)
         {
             _Writer.Write("new ");
-            expression.Type.Accept(this);
+            WriteChildExpression(expression, expression.Type);
             if (expression.HasTypeArgument)
             {
                 _Writer.WriteTypeParameters(expression.TypeArguments);
@@ -243,7 +243,7 @@ namespace Shipwreck.TypeScriptModels
         // 4.15
         public int VisitCall(CallExpression expression)
         {
-            expression.Type.Accept(this);
+            WriteChildExpression(expression, expression.Type);
             if (expression.HasTypeArgument)
             {
                 _Writer.WriteTypeParameters(expression.TypeArguments);
@@ -265,7 +265,7 @@ namespace Shipwreck.TypeScriptModels
             _Writer.Write('<');
             expression.Type.Accept(this);
             _Writer.Write('>');
-            expression.Operand.Accept(this);
+            WriteChildExpression(expression, expression.Operand);
 
             return 0;
         }
@@ -278,6 +278,7 @@ namespace Shipwreck.TypeScriptModels
                 case UnaryOperator.PrefixIncrement:
                     _Writer.Write("++");
                     break;
+
                 case UnaryOperator.PrefixDecrement:
                     _Writer.Write("--");
                     break;
@@ -289,12 +290,15 @@ namespace Shipwreck.TypeScriptModels
                 case UnaryOperator.Plus:
                     _Writer.Write('+');
                     break;
+
                 case UnaryOperator.Minus:
                     _Writer.Write('-');
                     break;
+
                 case UnaryOperator.BitwiseNot:
                     _Writer.Write('~');
                     break;
+
                 case UnaryOperator.LogicalNot:
                     _Writer.Write('!');
                     break;
@@ -302,9 +306,11 @@ namespace Shipwreck.TypeScriptModels
                 case UnaryOperator.Delete:
                     _Writer.Write("delete ");
                     break;
+
                 case UnaryOperator.Void:
                     _Writer.Write("void ");
                     break;
+
                 case UnaryOperator.TypeOf:
                     _Writer.Write("typeof ");
                     break;
@@ -313,7 +319,7 @@ namespace Shipwreck.TypeScriptModels
                     throw new NotImplementedException($"{nameof(UnaryOperator)}.{expression.Operator}");
             }
 
-            expression.Operand.Accept(this);
+            WriteChildExpression(expression, expression.Operand);
 
             switch (expression.Operator)
             {
@@ -332,11 +338,11 @@ namespace Shipwreck.TypeScriptModels
         // 4.19
         public int VisitBinary(BinaryExpression expression)
         {
-            expression.Left.Accept(this);
+            WriteChildExpression(expression, expression.Left);
             _Writer.Write(' ');
             _Writer.Write(expression.Operator.GetToken());
             _Writer.Write(' ');
-            expression.Right.Accept(this);
+            WriteChildExpression(expression, expression.Right);
 
             return 0;
         }
@@ -344,13 +350,14 @@ namespace Shipwreck.TypeScriptModels
         // 4.20
         public int VisitConditional(ConditionalExpression expression)
         {
-            expression.Condition.Accept(this);
+            WriteChildExpression(expression, expression.Condition);
             _Writer.Write(" ? ");
-            expression.TruePart.Accept(this);
+            WriteChildExpression(expression, expression.TruePart);
             _Writer.Write(" : ");
-            expression.FalsePart.Accept(this);
+            WriteChildExpression(expression, expression.FalsePart);
             return 0;
         }
+
         // 4.21
         public int VisitAssignment(AssignmentExpression expression)
         {
@@ -389,12 +396,22 @@ namespace Shipwreck.TypeScriptModels
         // 4.22
         public int VisitComma(CommaExpression expression)
         {
-            expression.Left.Accept(this);
+            WriteChildExpression(expression, expression.Left);
             _Writer.Write(", ");
-            expression.Right.Accept(this);
+            WriteChildExpression(expression, expression.Right);
 
             return 0;
         }
+
+        private void WriteChildExpression(Expression parent, Expression child)
+        {
+            // TODO: Determine precedence
+            _Writer.Write('(');
+            child.Accept(this);
+            _Writer.Write(')');
+        }
+
+        #endregion IExpressionVisitor<int>
 
         public int VisitMethod(MethodDeclaration member)
         {
