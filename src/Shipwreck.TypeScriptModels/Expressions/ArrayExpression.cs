@@ -10,12 +10,12 @@ namespace Shipwreck.TypeScriptModels.Expressions
     public sealed class ArrayExpression : Expression
     {
 
-        private Collection<IObjectLiteralMember> _Elements;
+        private Collection<Expression> _Elements;
 
         public bool HasElement
             => _Elements?.Count > 0;
 
-        public Collection<IObjectLiteralMember> Elements
+        public Collection<Expression> Elements
         {
             get
             {

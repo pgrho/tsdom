@@ -36,18 +36,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
             writer.Write(Name);
             if (HasTypeParameter)
             {
-                writer.Write('<');
-
-                for (var i = 0; i < TypeParameters.Count; i++)
-                {
-                    if (i > 0)
-                    {
-                        writer.Write(", ");
-                    }
-                    writer.Write(TypeParameters[i].Name);
-                }
-
-                writer.Write('>');
+                writer.WriteTypeParameters(_TypeParameters);
             }
         }
 

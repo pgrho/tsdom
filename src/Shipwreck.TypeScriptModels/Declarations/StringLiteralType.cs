@@ -13,7 +13,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         public string Value { get; set; }
 
-        public void WriteTypeReference(TextWriter writer) 
+        public void WriteTypeReference(TextWriter writer)
             => writer.WriteLiteral(Name);
     }
 }

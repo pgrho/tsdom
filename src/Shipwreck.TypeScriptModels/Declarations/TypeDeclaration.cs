@@ -10,11 +10,8 @@ namespace Shipwreck.TypeScriptModels.Declarations
     public abstract class TypeDeclaration : ITypeReference
     {
         public string Name { get; set; }
-         
+
         public virtual void WriteTypeReference(TextWriter writer)
             => writer.Write(Name);
     }
-
-
-
 }

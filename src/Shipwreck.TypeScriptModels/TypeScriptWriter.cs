@@ -220,6 +220,182 @@ namespace Shipwreck.TypeScriptModels
             return 0;
         }
 
+        // 4.14
+        public int VisitNew(NewExpression expression)
+        {
+            _Writer.Write("new ");
+            expression.Type.Accept(this);
+            if (expression.HasTypeArgument)
+            {
+                _Writer.WriteTypeParameters(expression.TypeArguments);
+            }
+            if (expression.HasParameter)
+            {
+                _Writer.WriteParameters(expression.Parameters, this);
+            }
+            else
+            {
+                _Writer.Write("()");
+            }
+            return 0;
+        }
+
+        // 4.15
+        public int VisitCall(CallExpression expression)
+        {
+            expression.Type.Accept(this);
+            if (expression.HasTypeArgument)
+            {
+                _Writer.WriteTypeParameters(expression.TypeArguments);
+            }
+            if (expression.HasParameter)
+            {
+                _Writer.WriteParameters(expression.Parameters, this);
+            }
+            else
+            {
+                _Writer.Write("()");
+            }
+            return 0;
+        }
+
+        // 4.16
+        public int VisitTypeAssertion(TypeAssertionExpression expression)
+        {
+            _Writer.Write('<');
+            expression.Type.Accept(this);
+            _Writer.Write('>');
+            expression.Operand.Accept(this);
+
+            return 0;
+        }
+
+        // 4.18
+        public int VisitUnary(UnaryExpression expression)
+        {
+            switch (expression.Operator)
+            {
+                case UnaryOperator.PrefixIncrement:
+                    _Writer.Write("++");
+                    break;
+                case UnaryOperator.PrefixDecrement:
+                    _Writer.Write("--");
+                    break;
+
+                case UnaryOperator.PostfixIncrement:
+                case UnaryOperator.PostfixDecrement:
+                    break;
+
+                case UnaryOperator.Plus:
+                    _Writer.Write('+');
+                    break;
+                case UnaryOperator.Minus:
+                    _Writer.Write('-');
+                    break;
+                case UnaryOperator.BitwiseNot:
+                    _Writer.Write('~');
+                    break;
+                case UnaryOperator.LogicalNot:
+                    _Writer.Write('!');
+                    break;
+
+                case UnaryOperator.Delete:
+                    _Writer.Write("delete ");
+                    break;
+                case UnaryOperator.Void:
+                    _Writer.Write("void ");
+                    break;
+                case UnaryOperator.TypeOf:
+                    _Writer.Write("typeof ");
+                    break;
+
+                default:
+                    throw new NotImplementedException($"{nameof(UnaryOperator)}.{expression.Operator}");
+            }
+
+            expression.Operand.Accept(this);
+
+            switch (expression.Operator)
+            {
+                case UnaryOperator.PostfixIncrement:
+                    _Writer.Write("++");
+                    break;
+
+                case UnaryOperator.PostfixDecrement:
+                    _Writer.Write("--");
+                    break;
+            }
+
+            return 0;
+        }
+
+        // 4.19
+        public int VisitBinary(BinaryExpression expression)
+        {
+            expression.Left.Accept(this);
+            _Writer.Write(' ');
+            _Writer.Write(expression.Operator.GetToken());
+            _Writer.Write(' ');
+            expression.Right.Accept(this);
+
+            return 0;
+        }
+
+        // 4.20
+        public int VisitConditional(ConditionalExpression expression)
+        {
+            expression.Condition.Accept(this);
+            _Writer.Write(" ? ");
+            expression.TruePart.Accept(this);
+            _Writer.Write(" : ");
+            expression.FalsePart.Accept(this);
+            return 0;
+        }
+        // 4.21
+        public int VisitAssignment(AssignmentExpression expression)
+        {
+            expression.Target.Accept(this);
+
+            _Writer.Write(' ');
+            switch (expression.CompoundOperator)
+            {
+                case BinaryOperator.Default:
+                    break;
+
+                case BinaryOperator.Add:
+                case BinaryOperator.Subtract:
+                case BinaryOperator.Multiply:
+                case BinaryOperator.Divide:
+                case BinaryOperator.IntegerDivide:
+                case BinaryOperator.LeftShift:
+                case BinaryOperator.SignedRightShift:
+                case BinaryOperator.UnsignedRightShift:
+                case BinaryOperator.BitwiseAnd:
+                case BinaryOperator.BitwiseOr:
+                case BinaryOperator.BitwiseXor:
+                    _Writer.Write(expression.CompoundOperator.GetToken());
+                    break;
+
+                default:
+                    throw new NotImplementedException($"{nameof(BinaryOperator)}.{expression.CompoundOperator}");
+            }
+            _Writer.Write("= ");
+
+            expression.Value.Accept(this);
+
+            return 0;
+        }
+
+        // 4.22
+        public int VisitComma(CommaExpression expression)
+        {
+            expression.Left.Accept(this);
+            _Writer.Write(", ");
+            expression.Right.Accept(this);
+
+            return 0;
+        }
+
         public int VisitMethod(MethodDeclaration member)
         {
             VisitMethodDeclarationCore(member);

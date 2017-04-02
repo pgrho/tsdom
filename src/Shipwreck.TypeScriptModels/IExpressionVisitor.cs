@@ -47,7 +47,30 @@ namespace Shipwreck.TypeScriptModels
         // 4.13
         T VisitProperty(PropertyExpression property);
 
-        // TODO: 4.14 The new Operator
-        // TODO: 4.15 Function Calls
+        // 4.14
+        T VisitNew(NewExpression expression);
+
+        // 4.15
+        T VisitCall(CallExpression expression);
+
+        // 4.16
+        T VisitTypeAssertion(TypeAssertionExpression expression);
+
+        // TODO: 4.17 JSX Expressions
+
+        // 4.18
+        T VisitUnary(UnaryExpression expression);
+
+        // 4.19
+        T VisitBinary(BinaryExpression expression);
+
+        // 4.20
+        T VisitConditional(ConditionalExpression expression);
+
+        // 4.21
+        T VisitAssignment(AssignmentExpression expression);
+
+        // 4.22
+        T VisitComma(CommaExpression expression);
     }
 }

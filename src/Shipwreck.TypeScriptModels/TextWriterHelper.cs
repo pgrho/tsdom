@@ -130,6 +130,25 @@ namespace Shipwreck.TypeScriptModels
                 writer.Write('>');
             }
         }
+        public static void WriteTypeParameters(this TextWriter writer, Collection<ITypeReference> typeParameters)
+        {
+            if (typeParameters?.Count > 0)
+            {
+                writer.Write('<');
+
+                for (var i = 0; i < typeParameters.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        writer.Write(", ");
+                    }
+                    var tp = typeParameters[i];
+                    tp.WriteTypeReference(writer);
+                }
+
+                writer.Write('>');
+            }
+        }
         public static void WriteParameters(this TextWriter writer, Collection<Parameter> parameters)
         {
             writer.Write('(');
@@ -160,6 +179,25 @@ namespace Shipwreck.TypeScriptModels
                         writer.Write(": ");
                         tp.ParameterType.WriteTypeReference(writer);
                     }
+                }
+
+            }
+            writer.Write(')');
+        }
+        public static void WriteParameters<T>(this TextWriter writer, Collection<Expression> parameters, IExpressionVisitor<T> visitor)
+        {
+            writer.Write('(');
+
+            if (parameters?.Count > 0)
+            {
+                for (var i = 0; i < parameters.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        writer.Write(", ");
+                    }
+
+                    parameters[i].Accept(visitor);
                 }
 
             }
