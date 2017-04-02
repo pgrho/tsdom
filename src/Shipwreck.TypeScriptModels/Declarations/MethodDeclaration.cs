@@ -1,15 +1,19 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class CallSignatureBase : Signature, ICallSignature
+    public sealed class MethodDeclaration : IObjectLiteralMember, ICallSignature
     {
+        public AccessibilityModifier Accessibility { get; set; }
+        public string MethodName { get; set; }
+
         private Collection<TypeParameter> _TypeParameters;
 
         public bool HasTypeParameter
@@ -45,8 +49,9 @@ namespace Shipwreck.TypeScriptModels.Declarations
         }
 
         public ITypeReference ReturnType { get; set; }
-
-        internal override void WriteSignature(TextWriter writer) 
-            => writer.WriteCallSignature(this);
+        public void Accept<T>(IObjectLiteralVisitor<T> visitor)
+            => visitor.VisitMethod(this);
     }
+
+
 }

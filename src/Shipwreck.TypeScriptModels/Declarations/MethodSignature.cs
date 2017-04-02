@@ -9,12 +9,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class MethodSignature : CallSignatureBase
     {
-        public string PropertyName { get; set; }
+        public string MethodName { get; set; }
         public bool IsOptional { get; set; }
 
         internal override void WriteSignature(TextWriter writer)
         {
-            writer.Write(PropertyName);
+            writer.Write(MethodName);
             if (IsOptional)
             {
                 writer.Write('?');

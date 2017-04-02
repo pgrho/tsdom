@@ -34,6 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Declarations\AccessorDeclaration.cs" />
     <Compile Include="Declarations\ArrayType.cs" />
     <Compile Include="Declarations\AccessibilityModifier.cs" />
     <Compile Include="Declarations\CallSignature.cs" />
@@ -42,18 +43,43 @@
     <Compile Include="Declarations\FunctionType.cs" />
     <Compile Include="Declarations\CallSignatureBase.cs" />
     <Compile Include="Declarations\ConstructSignature.cs" />
+    <Compile Include="Declarations\GetAccessorDeclaration.cs" />
+    <Compile Include="Declarations\ICallSignature.cs" />
     <Compile Include="Declarations\IndexSignature.cs" />
     <Compile Include="Declarations\InterfaceDeclaration.cs" />
     <Compile Include="Declarations\ClassDeclaration.cs" />
     <Compile Include="CollectionHelper.cs" />
     <Compile Include="Declarations\EnumDeclaration.cs" />
+    <Compile Include="Declarations\MethodDeclaration.cs" />
     <Compile Include="Declarations\MethodSignature.cs" />
     <Compile Include="Declarations\Parameter.cs" />
     <Compile Include="Declarations\PropertySignature.cs" />
+    <Compile Include="Declarations\SetAccessorDeclaration.cs" />
     <Compile Include="Declarations\Signature.cs" />
     <Compile Include="Declarations\ThisType.cs" />
     <Compile Include="Declarations\TypeAliasDeclaration.cs" />
     <Compile Include="Declarations\TypeQuery.cs" />
+    <Compile Include="Expression.cs" />
+    <Compile Include="Expressions\ArrayExpression.cs" />
+    <Compile Include="Expressions\ArrowFunctionExpression.cs" />
+    <Compile Include="Expressions\BooleanExpression.cs" />
+    <Compile Include="Expressions\FunctionExpression.cs" />
+    <Compile Include="Expressions\FunctionExpressionBase.cs" />
+    <Compile Include="Expressions\IdentifierExpression.cs" />
+    <Compile Include="Expressions\IObjectLiteralVisitor.cs" />
+    <Compile Include="Expressions\ParenthesesExpression.cs" />
+    <Compile Include="Expressions\PropertyExpression.cs" />
+    <Compile Include="Expressions\SuperExpression.cs" />
+    <Compile Include="TypeScriptWriter.cs" />
+    <Compile Include="Expressions\IObjectLiteralMember.cs" />
+    <Compile Include="Expressions\NullExpression.cs" />
+    <Compile Include="Expressions\NumberExpression.cs" />
+    <Compile Include="Expressions\ObjectExpression.cs" />
+    <Compile Include="Expressions\ObjectMemberInitializer.cs" />
+    <Compile Include="Expressions\RegExpExpression.cs" />
+    <Compile Include="Expressions\StringExpression.cs" />
+    <Compile Include="Expressions\ThisExpression.cs" />
+    <Compile Include="IExpressionVisitor.cs" />
     <Compile Include="ITypeReference.cs" />
     <Compile Include="Declarations\NamedTypeReference.cs" />
     <Compile Include="Declarations\ObjectType.cs" />
@@ -67,9 +93,7 @@
     <Compile Include="Declarations\TupleType.cs" />
     <Compile Include="Declarations\TypeDeclaration.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Expressions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

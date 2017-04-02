@@ -86,6 +86,25 @@ namespace Shipwreck.TypeScriptModels
             }
         }
 
+
+        public static void WriteCallSignature(this TextWriter writer, ICallSignature signature)
+        {
+            writer.WriteTypeParameters(signature.TypeParameters);
+            if (signature.HasParameter)
+            {
+                writer.WriteParameters(signature.Parameters);
+            }
+            else
+            {
+                writer.Write("()");
+            }
+            if (signature.ReturnType != null)
+            {
+                writer.Write(": ");
+                signature.ReturnType.WriteTypeReference(writer);
+            }
+        }
+
         public static void WriteTypeParameters(this TextWriter writer, Collection<TypeParameter> typeParameters)
         {
             if (typeParameters?.Count > 0)

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shipwreck.TypeScriptModels.Declarations;
 
-namespace Shipwreck.TypeScriptModels.Declarations
+namespace Shipwreck.TypeScriptModels.Expressions
 {
-    public abstract class CallSignatureBase : Signature, ICallSignature
+    public abstract class FunctionExpressionBase : Expression, ICallSignature
     {
         private Collection<TypeParameter> _TypeParameters;
 
@@ -45,8 +45,6 @@ namespace Shipwreck.TypeScriptModels.Declarations
         }
 
         public ITypeReference ReturnType { get; set; }
-
-        internal override void WriteSignature(TextWriter writer) 
-            => writer.WriteCallSignature(this);
     }
+
 }
