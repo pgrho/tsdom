@@ -49,9 +49,25 @@ namespace Shipwreck.TypeScriptModels.Declarations
         }
 
         public ITypeReference ReturnType { get; set; }
+
+        private Collection<Statement> _Statements;
+
+        public bool HasStatement
+            => _Statements?.Count > 0;
+
+        public Collection<Statement> Statements
+        {
+            get
+            {
+                return CollectionHelper.GetOrCreate(ref _Statements);
+            }
+            set
+            {
+                CollectionHelper.Set(ref _Statements, value);
+            }
+        }
+
         public void Accept<T>(IObjectLiteralVisitor<T> visitor)
             => visitor.VisitMethod(this);
     }
-
-
 }

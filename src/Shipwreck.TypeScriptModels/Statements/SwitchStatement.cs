@@ -1,15 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace Shipwreck.TypeScriptModels.Statements
 {
     // 5.12
     public sealed class SwitchStatement : Statement
     {
+        private Collection<SwitchCase> _Cases;
+
+        public Expression Condition { get; set; }
+
+        public bool HasCase
+            => _Cases?.Count > 0;
+
+        public Collection<SwitchCase> Cases
+        {
+            get
+            {
+                return CollectionHelper.GetOrCreate(ref _Cases);
+            }
+            set
+            {
+                CollectionHelper.Set(ref _Cases, value);
+            }
+        }
+
         public override T Accept<T>(IStatementVistor<T> visitor)
-            => visitor.VisitSwith(this);
+            => visitor.VisitSwitch(this);
     }
 }

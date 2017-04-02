@@ -9,6 +9,8 @@ namespace Shipwreck.TypeScriptModels.Statements
     // 5.13
     public sealed class ThrowStatement : Statement
     {
+        public Expression Value { get; set; }
+
         public override T Accept<T>(IStatementVistor<T> visitor)
             => visitor.VisitThrow(this);
     }

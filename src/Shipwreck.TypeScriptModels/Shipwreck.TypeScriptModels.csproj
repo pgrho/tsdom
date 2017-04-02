@@ -71,6 +71,7 @@
     <Compile Include="Expressions\BooleanExpression.cs" />
     <Compile Include="Expressions\CallExpression.cs" />
     <Compile Include="Expressions\ConditionalExpression.cs" />
+    <Compile Include="Expressions\ForBindingExpression.cs" />
     <Compile Include="Expressions\FunctionExpression.cs" />
     <Compile Include="Expressions\FunctionExpressionBase.cs" />
     <Compile Include="Expressions\IdentifierExpression.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Statements\LetDeclaration.cs" />
     <Compile Include="Statements\LexicalDeclaration.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
+    <Compile Include="Statements\SwitchCase.cs" />
     <Compile Include="Statements\SwitchStatement.cs" />
     <Compile Include="Statements\ThrowStatement.cs" />
     <Compile Include="Statements\TryStatement.cs" />

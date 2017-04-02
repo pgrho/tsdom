@@ -15,45 +15,46 @@ namespace Shipwreck.TypeScriptModels
         // 5.3
         T VisitLetDeclaration(LetDeclaration statement);
 
+        // 5.3
         T VisitConstDeclaration(ConstDeclaration statement);
 
         // 5.4
-        T VisitIf(IfStatement expression);
+        T VisitIf(IfStatement statement);
 
         // 5.4
-        T VisitDo(DoStatement expression);
+        T VisitDo(DoStatement statement);
 
         // 5.4
-        T VisitWhile(WhileStatement expression);
+        T VisitWhile(WhileStatement statement);
 
         // 5.5
-        T VisitFor(ForStatement expression);
+        T VisitFor(ForStatement statement);
 
         // 5.6
-        T VisitForIn(ForInStatement expression);
+        T VisitForIn(ForInStatement statement);
 
         // 5.7
-        T VisitForOf(ForOfStatement expression);
+        T VisitForOf(ForOfStatement statement);
 
         // 5.8
-        T VisitContinue(ContinueStatement expression);
+        T VisitContinue(ContinueStatement statement);
 
         // 5.9
-        T VisitBreak(BreakStatement expression);
+        T VisitBreak(BreakStatement statement);
 
         // 5.10
-        T VisitReturn(ReturnStatement expression);
+        T VisitReturn(ReturnStatement statement);
 
         // 5.11
-        T VisitWith(WithStatement expression);
+        T VisitWith(WithStatement statement);
 
         // 5.12
-        T VisitSwith(SwitchStatement expression);
+        T VisitSwitch(SwitchStatement statement);
 
         // 5.13
-        T VisitThrow(ThrowStatement expression);
+        T VisitThrow(ThrowStatement statement);
 
         // 5.14
-        T VisitTry(TryStatement expression);
+        T VisitTry(TryStatement statement);
     }
 }

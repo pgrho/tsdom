@@ -1,16 +1,18 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shipwreck.TypeScriptModels.Declarations;
 using Shipwreck.TypeScriptModels.Expressions;
+using Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public class TypeScriptWriter : IExpressionVisitor<int>, IObjectLiteralVisitor<int>
+    public class TypeScriptWriter : IExpressionVisitor<int>, IObjectLiteralVisitor<int>, IStatementVistor<int>
     {
         private readonly IndentedTextWriter _Writer;
 
@@ -22,46 +24,46 @@ namespace Shipwreck.TypeScriptModels
         #region IExpressionVisitor<int>
 
         // 4.2
-        public int VisitThis()
+        int IExpressionVisitor<int>.VisitThis()
         {
             _Writer.Write("this");
             return 0;
         }
 
         // 4.3
-        public int VisitIdentifier(IdentifierExpression expression)
+        int IExpressionVisitor<int>.VisitIdentifier(IdentifierExpression expression)
         {
             _Writer.Write(expression.Name);
             return 0;
         }
 
         // 4.4
-        public int VisitNull()
+        int IExpressionVisitor<int>.VisitNull()
         {
             _Writer.Write("null");
             return 0;
         }
 
-        public int VisitBoolean(BooleanExpression expression)
+        int IExpressionVisitor<int>.VisitBoolean(BooleanExpression expression)
         {
             _Writer.Write(expression.Value ? "true" : "false");
             return 0;
         }
 
-        public int VisitNumber(NumberExpression expression)
+        int IExpressionVisitor<int>.VisitNumber(NumberExpression expression)
         {
             //todo:
             _Writer.Write(expression.Value);
             return 0;
         }
 
-        public int VisitString(StringExpression expression)
+        int IExpressionVisitor<int>.VisitString(StringExpression expression)
         {
             _Writer.WriteLiteral(expression.Value);
             return 0;
         }
 
-        public int VisitRegExp(RegExpExpression expression)
+        int IExpressionVisitor<int>.VisitRegExp(RegExpExpression expression)
         {
             _Writer.Write('/');
             _Writer.Write(expression.Pattern);
@@ -71,9 +73,8 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.5
-        public int VisitObject(ObjectExpression expression)
+        int IExpressionVisitor<int>.VisitObject(ObjectExpression expression)
         {
-            // TODO: Arrow Function直後の場合はカッコが必要
             _Writer.WriteLine('{');
 
             if (expression.HasMember)
@@ -97,7 +98,7 @@ namespace Shipwreck.TypeScriptModels
 
         #region IObjectLiteralVisitor<int>
 
-        public int VisitMemberInitializer(ObjectMemberInitializer member)
+        int IObjectLiteralVisitor<int>.VisitMemberInitializer(ObjectMemberInitializer member)
         {
             _Writer.Write(member.PropertyName);
             if (member.Value != null)
@@ -129,7 +130,7 @@ namespace Shipwreck.TypeScriptModels
         #endregion IObjectLiteralVisitor<int>
 
         // 4.6
-        public int VisitArray(ArrayExpression expression)
+        int IExpressionVisitor<int>.VisitArray(ArrayExpression expression)
         {
             _Writer.WriteLine('[');
 
@@ -153,7 +154,7 @@ namespace Shipwreck.TypeScriptModels
         // TODO:4.7
 
         // 4.8
-        public int VisitParentheses(ParenthesesExpression expression)
+        int IExpressionVisitor<int>.VisitParentheses(ParenthesesExpression expression)
         {
             _Writer.Write('(');
             expression.Expression.Accept(this);
@@ -163,14 +164,14 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.9
-        public int VisitSuper()
+        int IExpressionVisitor<int>.VisitSuper()
         {
             _Writer.Write("super");
             return 0;
         }
 
         // 4.10
-        public int VisitFunction(FunctionExpression expression)
+        int IExpressionVisitor<int>.VisitFunction(FunctionExpression expression)
         {
             _Writer.Write("function");
             if (!string.IsNullOrEmpty(expression.FunctionName))
@@ -180,12 +181,19 @@ namespace Shipwreck.TypeScriptModels
             }
             _Writer.WriteCallSignature(expression);
 
-            WriteMethodBody();
+            if (expression.HasStatement)
+            {
+                WriteMethodBody(expression.Statements);
+            }
+            else
+            {
+                _Writer.Write(" {}");
+            }
             return 0;
         }
 
         // 4.11
-        public int VisitArrowFunction(ArrowFunctionExpression expression)
+        int IExpressionVisitor<int>.VisitArrowFunction(ArrowFunctionExpression expression)
         {
             if (expression.HasParameter)
             {
@@ -197,13 +205,41 @@ namespace Shipwreck.TypeScriptModels
             }
             _Writer.Write(" => ");
 
-            // TODO: Statementによって変える
-            WriteMethodBody();
+            if (expression.HasStatement && expression.Statements.Count == 1 && expression.Statements[0] is ReturnStatement)
+            {
+                var rs = ((ReturnStatement)expression.Statements[0]).Value;
+
+                if (rs != null)
+                {
+                    if (rs is ObjectExpression)
+                    {
+                        _Writer.Write('(');
+                        rs.WriteExpression(_Writer);
+                        _Writer.Write(')');
+                    }
+                    else
+                    {
+                        rs.WriteExpression(_Writer);
+                    }
+
+                    return 0;
+                }
+            }
+
+            if (expression.HasStatement)
+            {
+                WriteMethodBody(expression.Statements);
+            }
+            else
+            {
+                _Writer.Write(" {}");
+            }
+
             return 0;
         }
 
         // 4.13
-        public int VisitProperty(PropertyExpression property)
+        int IExpressionVisitor<int>.VisitProperty(PropertyExpression property)
         {
             property.Accept(this);
             if (property.IsValidIdentifier)
@@ -221,7 +257,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.14
-        public int VisitNew(NewExpression expression)
+        int IExpressionVisitor<int>.VisitNew(NewExpression expression)
         {
             _Writer.Write("new ");
             WriteChildExpression(expression, expression.Type);
@@ -241,7 +277,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.15
-        public int VisitCall(CallExpression expression)
+        int IExpressionVisitor<int>.VisitCall(CallExpression expression)
         {
             WriteChildExpression(expression, expression.Type);
             if (expression.HasTypeArgument)
@@ -260,7 +296,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.16
-        public int VisitTypeAssertion(TypeAssertionExpression expression)
+        int IExpressionVisitor<int>.VisitTypeAssertion(TypeAssertionExpression expression)
         {
             _Writer.Write('<');
             expression.Type.Accept(this);
@@ -271,7 +307,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.18
-        public int VisitUnary(UnaryExpression expression)
+        int IExpressionVisitor<int>.VisitUnary(UnaryExpression expression)
         {
             switch (expression.Operator)
             {
@@ -336,7 +372,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.19
-        public int VisitBinary(BinaryExpression expression)
+        int IExpressionVisitor<int>.VisitBinary(BinaryExpression expression)
         {
             WriteChildExpression(expression, expression.Left);
             _Writer.Write(' ');
@@ -348,7 +384,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.20
-        public int VisitConditional(ConditionalExpression expression)
+        int IExpressionVisitor<int>.VisitConditional(ConditionalExpression expression)
         {
             WriteChildExpression(expression, expression.Condition);
             _Writer.Write(" ? ");
@@ -359,7 +395,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.21
-        public int VisitAssignment(AssignmentExpression expression)
+        int IExpressionVisitor<int>.VisitAssignment(AssignmentExpression expression)
         {
             expression.Target.Accept(this);
 
@@ -394,7 +430,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.22
-        public int VisitComma(CommaExpression expression)
+        int IExpressionVisitor<int>.VisitComma(CommaExpression expression)
         {
             WriteChildExpression(expression, expression.Left);
             _Writer.Write(", ");
@@ -413,7 +449,399 @@ namespace Shipwreck.TypeScriptModels
 
         #endregion IExpressionVisitor<int>
 
-        public int VisitMethod(MethodDeclaration member)
+        #region IStatementVisitor<int>
+
+        // 5.2
+        int IStatementVistor<int>.VisitVariableDeclaration(VariableDeclaration statement)
+        {
+            if (statement.HasBinding)
+            {
+                _Writer.Write("var ");
+
+                WriteBindings(statement.Bindings);
+            }
+
+            return 0;
+        }
+
+        // 5.3
+        int IStatementVistor<int>.VisitLetDeclaration(LetDeclaration statement)
+        {
+            if (statement.HasBinding)
+            {
+                _Writer.Write("let ");
+
+                WriteBindings(statement.Bindings);
+            }
+
+            return 0;
+        }
+
+        // 5.3
+        int IStatementVistor<int>.VisitConstDeclaration(ConstDeclaration statement)
+        {
+            if (statement.HasBinding)
+            {
+                _Writer.Write("const ");
+
+                WriteBindings(statement.Bindings);
+            }
+
+            return 0;
+        }
+
+        private void WriteBindings(Collection<VariableBinding> bindings)
+        {
+            for (var i = 0; i < bindings.Count; i++)
+            {
+                if (i > 0)
+                {
+                    _Writer.Write(", ");
+                }
+
+                var b = bindings[0];
+
+                b.Variable.Accept(this);
+
+                if (b.Initializer != null)
+                {
+                    _Writer.Write(" = ");
+                    b.Initializer.Accept(this);
+                }
+            }
+            _Writer.WriteLine(';');
+        }
+
+        // 5.4
+        int IStatementVistor<int>.VisitIf(IfStatement statement)
+        {
+            _Writer.Write("if (");
+            statement.Condition.Accept(this);
+            _Writer.WriteLine(") {");
+
+            _Writer.Indent++;
+
+            if (statement.HasTruePart)
+            {
+                foreach (var s in statement.TruePart)
+                {
+                    s.Accept(this);
+                }
+            }
+
+            _Writer.Indent--;
+
+            if (statement.HasFalsePart)
+            {
+                if (statement.FalsePart.Count == 0 && statement.FalsePart[0] is IfStatement)
+                {
+                    _Writer.Write("} else ");
+
+                    return statement.FalsePart[0].Accept(this);
+                }
+                else
+                {
+                    _Writer.WriteLine("} else {");
+                    _Writer.Indent++;
+
+                    if (statement.HasTruePart)
+                    {
+                        foreach (var s in statement.TruePart)
+                        {
+                            s.Accept(this);
+                        }
+                    }
+
+                    _Writer.Indent--;
+                }
+            }
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        // 5.4
+        int IStatementVistor<int>.VisitDo(DoStatement statement)
+        {
+            _Writer.WriteLine("do {");
+
+            if (statement.HasStatement)
+            {
+                _Writer.Indent++;
+                foreach (var s in statement.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+
+            _Writer.Write("} while (");
+            statement.Condition.Accept(this);
+            _Writer.WriteLine(");");
+
+            return 0;
+        }
+
+        // 5.4
+        int IStatementVistor<int>.VisitWhile(WhileStatement statement)
+        {
+            _Writer.Write("while (");
+            statement.Condition.Accept(this);
+            _Writer.WriteLine(") {");
+
+            if (statement.HasStatement)
+            {
+                _Writer.Indent++;
+                foreach (var s in statement.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        // 5.5
+        int IStatementVistor<int>.VisitFor(ForStatement statement)
+        {
+            _Writer.Write("for (");
+            WriteForInitializer(statement.Initializer);
+            _Writer.WriteLine("; ");
+            statement.Condition?.Accept(this);
+            _Writer.WriteLine("; ");
+            statement.Increment?.Accept(this);
+            _Writer.WriteLine(") {");
+
+            if (statement.HasStatement)
+            {
+                _Writer.Indent++;
+                foreach (var s in statement.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        private void WriteForInitializer(Expression initializer)
+        {
+            var v = initializer as ForBindingExpression;
+            if (v != null)
+            {
+                _Writer.Write("var ");
+                v.Variable.Accept(this);
+                if (v.Variable != null)
+                {
+                    _Writer.Write(" = ");
+                    v.Variable.Accept(this);
+                }
+            }
+            else
+            {
+                initializer?.Accept(this);
+            }
+        }
+
+        // 5.6
+        int IStatementVistor<int>.VisitForIn(ForInStatement statement)
+        {
+            _Writer.Write("for (");
+            WriteForInitializer(statement.Variable);
+            _Writer.WriteLine(" in ");
+            statement.Value.Accept(this);
+            _Writer.WriteLine(") {");
+
+            if (statement.HasStatement)
+            {
+                _Writer.Indent++;
+                foreach (var s in statement.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        // 5.7
+        int IStatementVistor<int>.VisitForOf(ForOfStatement statement)
+        {
+            _Writer.Write("for (");
+            WriteForInitializer(statement.Variable);
+            _Writer.WriteLine(" of ");
+            statement.Value.Accept(this);
+            _Writer.WriteLine(") {");
+
+            if (statement.HasStatement)
+            {
+                _Writer.Indent++;
+                foreach (var s in statement.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        // 5.8
+        int IStatementVistor<int>.VisitContinue(ContinueStatement statement)
+        {
+            _Writer.WriteLine("continue;");
+            return 0;
+        }
+
+        // 5.9
+        int IStatementVistor<int>.VisitBreak(BreakStatement statement)
+        {
+            _Writer.WriteLine("break;");
+            return 0;
+        }
+
+        // 5.10
+        int IStatementVistor<int>.VisitReturn(ReturnStatement statement)
+        {
+            _Writer.Write("return");
+            if (statement.Value != null)
+            {
+                _Writer.Write(' ');
+                statement.Value.Accept(this);
+            }
+            _Writer.WriteLine(';');
+            return 0;
+        }
+
+        // 5.11
+        int IStatementVistor<int>.VisitWith(WithStatement statement)
+        {
+            throw new NotImplementedException("WithStatement is not supported in TypeScript.");
+        }
+
+        // 5.12
+        int IStatementVistor<int>.VisitSwitch(SwitchStatement statement)
+        {
+            _Writer.Write("swtch (");
+            statement.Condition.Accept(this);
+            _Writer.WriteLine(") {");
+
+            if (statement.HasCase)
+            {
+                _Writer.Indent++;
+                foreach (var c in statement.Cases)
+                {
+                    if (c.Label == null)
+                    {
+                        _Writer.Write("default");
+                    }
+                    else
+                    {
+                        _Writer.Write("case ");
+                        c.Label.Accept(this);
+                    }
+                    _Writer.WriteLine(':');
+                    if (c.HasStatement)
+                    {
+                        _Writer.Indent++;
+                        foreach (var s in c.Statements)
+                        {
+                            s.Accept(this);
+                        }
+                        _Writer.Indent--;
+                    }
+                }
+                _Writer.Indent--;
+            }
+
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        // 5.13
+        int IStatementVistor<int>.VisitThrow(ThrowStatement statement)
+        {
+            _Writer.Write("throw ");
+            statement.Value.Accept(this);
+            _Writer.WriteLine(';');
+
+            return 0;
+        }
+
+        // 5.14
+        int IStatementVistor<int>.VisitTry(TryStatement statement)
+        {
+            _Writer.WriteLine("try {");
+
+            if (statement.HasTryBlock)
+            {
+                _Writer.Indent++;
+                foreach (var s in statement.TryBlock)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+
+            if (statement.HasCatchBlock)
+            {
+                _Writer.Write("} catch(");
+                statement.CatchParameter.Accept(this);
+                _Writer.WriteLine(") {");
+
+                _Writer.Indent++;
+                foreach (var s in statement.CatchBlock)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+
+                if (statement.HasFinallyBlock)
+                {
+                    _Writer.WriteLine("} finally {");
+
+                    _Writer.Indent++;
+                    foreach (var s in statement.FinallyBlock)
+                    {
+                        s.Accept(this);
+                    }
+                    _Writer.Indent--;
+                }
+                _Writer.WriteLine('}');
+            }
+            else
+            {
+                _Writer.WriteLine("} finally {");
+                if (statement.HasFinallyBlock)
+                {
+                    _Writer.Indent++;
+                    foreach (var s in statement.FinallyBlock)
+                    {
+                        s.Accept(this);
+                    }
+                    _Writer.Indent--;
+                }
+                _Writer.WriteLine('}');
+            }
+
+            return 0;
+        }
+
+        #endregion IStatementVisitor<int>
+
+        private int VisitMethod(MethodDeclaration member)
         {
             VisitMethodDeclarationCore(member);
             _Writer.WriteLine();
@@ -426,17 +854,26 @@ namespace Shipwreck.TypeScriptModels
             _Writer.Write(member.MethodName);
             _Writer.WriteCallSignature(member);
 
-            WriteMethodBody();
+            if (member.HasStatement)
+            {
+                WriteMethodBody(member.Statements);
+                _Writer.WriteLine();
+            }
+            else
+            {
+                _Writer.WriteLine(" {");
+                _Writer.WriteLine('}');
+            }
         }
 
-        public int VisitGetAccessor(GetAccessorDeclaration member)
+        private int VisitGetAccessor(GetAccessorDeclaration member)
         {
             VisitGetAccessorCore(member);
             _Writer.WriteLine();
             return 0;
         }
 
-        public int VisitSetAccessor(SetAccessorDeclaration member)
+        private int VisitSetAccessor(SetAccessorDeclaration member)
         {
             VisitSetAccessorCore(member);
             _Writer.WriteLine();
@@ -454,7 +891,16 @@ namespace Shipwreck.TypeScriptModels
                 member.PropertyType.WriteTypeReference(_Writer);
             }
 
-            WriteMethodBody();
+            if (member.HasStatement)
+            {
+                WriteMethodBody(member.Statements);
+                _Writer.WriteLine();
+            }
+            else
+            {
+                _Writer.WriteLine(" {");
+                _Writer.WriteLine('}');
+            }
         }
 
         private void VisitSetAccessorCore(SetAccessorDeclaration member)
@@ -467,18 +913,33 @@ namespace Shipwreck.TypeScriptModels
             member.PropertyType.WriteTypeReference(_Writer);
             _Writer.Write(')');
 
-            WriteMethodBody();
+            if (member.HasStatement)
+            {
+                WriteMethodBody(member.Statements);
+                _Writer.WriteLine();
+            }
+            else
+            {
+                _Writer.WriteLine(" {");
+                _Writer.WriteLine('}');
+            }
         }
 
-        private void WriteMethodBody()
+        private void WriteMethodBody(Collection<Statement> statements)
         {
             _Writer.WriteLine(" {");
             _Writer.Indent++;
-            // TODO:
+
+            if (statements?.Count > 0)
+            {
+                foreach (var s in statements)
+                {
+                    s.Accept(this);
+                }
+            }
+
             _Writer.Indent--;
             _Writer.Write('}');
-
-            throw new NotImplementedException();
         }
     }
 }
