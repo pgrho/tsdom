@@ -10,13 +10,8 @@ namespace Shipwreck.TypeScriptModels
     public interface IStatementVistor<T>
     {
         // 5.2
+        // 5.3
         T VisitVariableDeclaration(VariableDeclaration statement);
-
-        // 5.3
-        T VisitLetDeclaration(LetDeclaration statement);
-
-        // 5.3
-        T VisitConstDeclaration(ConstDeclaration statement);
 
         // 5.4
         T VisitIf(IfStatement statement);

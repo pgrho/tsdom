@@ -90,15 +90,12 @@
     <Compile Include="IStatementVistor.cs" />
     <Compile Include="Statement.cs" />
     <Compile Include="Statements\BreakStatement.cs" />
-    <Compile Include="Statements\ConstDeclaration.cs" />
     <Compile Include="Statements\ContinueStatement.cs" />
     <Compile Include="Statements\DoStatement.cs" />
     <Compile Include="Statements\ForInStatement.cs" />
     <Compile Include="Statements\ForOfStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
-    <Compile Include="Statements\LetDeclaration.cs" />
-    <Compile Include="Statements\LexicalDeclaration.cs" />
     <Compile Include="Statements\ReturnStatement.cs" />
     <Compile Include="Statements\SwitchCase.cs" />
     <Compile Include="Statements\SwitchStatement.cs" />
@@ -106,6 +103,7 @@
     <Compile Include="Statements\TryStatement.cs" />
     <Compile Include="Statements\VariableBinding.cs" />
     <Compile Include="Statements\VariableDeclaration.cs" />
+    <Compile Include="Statements\VariableDeclarationType.cs" />
     <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Statements\WithStatement.cs" />
     <Compile Include="StringHelper.cs" />

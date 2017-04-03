@@ -543,60 +543,53 @@ namespace Shipwreck.TypeScriptModels
         {
             if (statement.HasBinding)
             {
-                _Writer.Write("var ");
-
-                WriteBindings(statement.Bindings);
-            }
-
-            return 0;
-        }
-
-        // 5.3
-        int IStatementVistor<int>.VisitLetDeclaration(LetDeclaration statement)
-        {
-            if (statement.HasBinding)
-            {
-                _Writer.Write("let ");
-
-                WriteBindings(statement.Bindings);
-            }
-
-            return 0;
-        }
-
-        // 5.3
-        int IStatementVistor<int>.VisitConstDeclaration(ConstDeclaration statement)
-        {
-            if (statement.HasBinding)
-            {
-                _Writer.Write("const ");
-
-                WriteBindings(statement.Bindings);
-            }
-
-            return 0;
-        }
-
-        private void WriteBindings(Collection<VariableBinding> bindings)
-        {
-            for (var i = 0; i < bindings.Count; i++)
-            {
-                if (i > 0)
+                WriteIsDeclare(statement.IsDeclare);
+                WriteIsExport(statement.IsExport);
+                switch (statement.Type)
                 {
-                    _Writer.Write(", ");
+                    case VariableDeclarationType.Var:
+                        _Writer.Write("var ");
+                        break;
+
+                    case VariableDeclarationType.Let:
+                        _Writer.Write("let ");
+                        break;
+
+                    case VariableDeclarationType.Const:
+                        _Writer.Write("const ");
+                        break;
+
+                    default:
+                        throw new NotImplementedException($"{nameof(VariableDeclarationType)}.{statement.Type}");
                 }
 
-                var b = bindings[0];
-
-                b.Variable.Accept(this);
-
-                if (b.Initializer != null)
+                for (var i = 0; i < statement.Bindings.Count; i++)
                 {
-                    _Writer.Write(" = ");
-                    b.Initializer.Accept(this);
+                    if (i > 0)
+                    {
+                        _Writer.Write(", ");
+                    }
+
+                    var b = statement.Bindings[i];
+
+                    b.Variable.Accept(this);
+
+                    if (b.Type != null)
+                    {
+                        _Writer.Write(" : ");
+                        b.Type.WriteTypeReference(_Writer);
+                    }
+
+                    if (b.Initializer != null)
+                    {
+                        _Writer.Write(" = ");
+                        b.Initializer.Accept(this);
+                    }
                 }
+                _Writer.WriteLine(';');
             }
-            _Writer.WriteLine(';');
+
+            return 0;
         }
 
         // 5.4
@@ -928,6 +921,38 @@ namespace Shipwreck.TypeScriptModels
 
         #endregion IStatementVisitor<int>
 
+        private void WriteIsDeclare(bool isDeclare)
+        {
+            if (isDeclare)
+            {
+                _Writer.Write("declare ");
+            }
+        }
+
+        private void WriteIsExport(bool isExport)
+        {
+            if (isExport)
+            {
+                _Writer.Write("export ");
+            }
+        }
+
+        private void WriteIsDefault(bool isExport)
+        {
+            if (isExport)
+            {
+                _Writer.Write("default ");
+            }
+        }
+
+        private void WriteIsStatic(bool isStatic)
+        {
+            if (isStatic)
+            {
+                _Writer.Write("static ");
+            }
+        }
+
         #region Declarations
 
         #region 6.1 Function Declarations
@@ -963,18 +988,9 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteFunctionSignature(FunctionDeclaration member, ICallSignature signature = null)
         {
-            if (member.IsDeclare)
-            {
-                _Writer.Write("declare ");
-            }
-            if (member.IsExport)
-            {
-                _Writer.Write("export ");
-            }
-            if (member.IsDeclare)
-            {
-                _Writer.Write("default ");
-            }
+            WriteIsDeclare(member.IsDeclare);
+            WriteIsExport(member.IsExport);
+            WriteIsDefault(member.IsDefault);
             _Writer.Write("function ");
             if (member.FunctionName != null)
             {
@@ -989,14 +1005,8 @@ namespace Shipwreck.TypeScriptModels
         // 7.1
         private int VisitInterface(InterfaceDeclaration member)
         {
-            if (member.IsDeclare)
-            {
-                _Writer.Write("declare ");
-            }
-            if (member.IsExport)
-            {
-                _Writer.Write("export ");
-            }
+            WriteIsDeclare(member.IsDeclare);
+            WriteIsExport(member.IsExport);
             _Writer.Write("interface ");
             _Writer.Write(member.Name);
 
@@ -1034,18 +1044,9 @@ namespace Shipwreck.TypeScriptModels
         // 8.1
         private int VisitClassDeclaration(ClassDeclaration member)
         {
-            if (member.IsDeclare)
-            {
-                _Writer.Write("declare ");
-            }
-            if (member.IsExport)
-            {
-                _Writer.Write("export ");
-            }
-            if (member.IsDefault)
-            {
-                _Writer.Write("default ");
-            }
+            WriteIsDeclare(member.IsDeclare);
+            WriteIsExport(member.IsExport);
+            WriteIsDefault(member.IsDefault);
             _Writer.Write("class ");
             _Writer.Write(member.Name);
 
@@ -1090,14 +1091,8 @@ namespace Shipwreck.TypeScriptModels
         // 9.1
         private int VisitEnumDeclaration(EnumDeclaration member)
         {
-            if (member.IsDeclare)
-            {
-                _Writer.Write("declare ");
-            }
-            if (member.IsExport)
-            {
-                _Writer.Write("export ");
-            }
+            WriteIsDeclare(member.IsDeclare);
+            WriteIsExport(member.IsExport);
             if (member.IsConst)
             {
                 _Writer.Write("const ");
@@ -1148,10 +1143,7 @@ namespace Shipwreck.TypeScriptModels
         private void WriteField(FieldDeclaration member)
         {
             _Writer.WriteAccessibility(member.Accessibility);
-            if (member.IsStatic)
-            {
-                _Writer.Write("static ");
-            }
+            WriteIsStatic(member.IsStatic);
             _Writer.Write(member.FieldName);
             if (member.FieldType != null)
             {
@@ -1222,10 +1214,7 @@ namespace Shipwreck.TypeScriptModels
         private void WriteGetAccessor(AccessorDeclaration member, bool skipBody)
         {
             _Writer.WriteAccessibility(member.Accessibility);
-            if (member.IsStatic)
-            {
-                _Writer.Write("static ");
-            }
+            WriteIsStatic(member.IsStatic);
             _Writer.Write(member.PropertyName);
             _Writer.Write(" get()");
             if (member.PropertyType != null)
@@ -1252,10 +1241,7 @@ namespace Shipwreck.TypeScriptModels
         private void WriteSetAccessor(SetAccessorDeclaration member, bool skipBody)
         {
             _Writer.WriteAccessibility(member.Accessibility);
-            if (member.IsStatic)
-            {
-                _Writer.Write("static ");
-            }
+            WriteIsStatic(member.IsStatic);
             _Writer.Write(member.PropertyName);
             _Writer.Write(" set(");
             _Writer.Write(member.ParameterName);
@@ -1309,10 +1295,7 @@ namespace Shipwreck.TypeScriptModels
         private void WriteMethodSignature(MethodDeclaration member, ICallSignature signature = null)
         {
             _Writer.WriteAccessibility(member.Accessibility);
-            if (member.IsStatic)
-            {
-                _Writer.Write("static ");
-            }
+            WriteIsStatic(member.IsStatic);
             _Writer.Write(member.MethodName);
             _Writer.WriteCallSignature(signature ?? member, this);
         }
