@@ -12,8 +12,127 @@ using Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public class TypeScriptWriter : IExpressionVisitor<int>, IObjectLiteralVisitor<int>, IStatementVistor<int>
+    public class TypeScriptWriter : IExpressionVisitor<int>, IStatementVistor<int>
     {
+        private sealed class ClassMemberVisitor : IClassMemberVisitor<int>
+        {
+            private readonly TypeScriptWriter _Writer;
+
+            private readonly bool _IsDeclare;
+
+            public ClassMemberVisitor(TypeScriptWriter writer, bool isDeclare)
+            {
+                _Writer = writer;
+                _IsDeclare = isDeclare;
+            }
+
+            int IClassMemberVisitor<int>.VisitConstructor(ConstructorDeclaration member)
+            {
+                _Writer.WriteConstructor(member, _IsDeclare);
+                _Writer._Writer.WriteLine(';');
+                return 0;
+            }
+
+            int IClassMemberVisitor<int>.VisitField(FieldDeclaration member)
+            {
+                _Writer.WriteField(member);
+                _Writer._Writer.WriteLine(';');
+                return 0;
+            }
+
+            int IClassMemberVisitor<int>.VisitMethod(MethodDeclaration member)
+            {
+                _Writer.WriteMethod(member, _IsDeclare);
+                WriteLineIfNeeded();
+                return 0;
+            }
+
+            int IClassMemberVisitor<int>.VisitGetAccessor(GetAccessorDeclaration member)
+            {
+                _Writer.WriteGetAccessor(member, _IsDeclare);
+                WriteLineIfNeeded();
+                return 0;
+            }
+
+            private void WriteLineIfNeeded()
+            {
+                if (_IsDeclare)
+                {
+                    _Writer._Writer.WriteLine(';');
+                }
+                else
+                {
+                    _Writer._Writer.WriteLine();
+                }
+            }
+
+            int IClassMemberVisitor<int>.VisitSetAccessor(SetAccessorDeclaration member)
+            {
+                _Writer.WriteSetAccessor(member, _IsDeclare);
+                WriteLineIfNeeded();
+                return 0;
+            }
+
+            int IClassMemberVisitor<int>.VisitIndex(IndexSignature member)
+            {
+                member.WriteSignature(_Writer._Writer);
+                _Writer._Writer.WriteLine(';');
+                return 0;
+            }
+        }
+
+        private sealed class InterfaceMemberVisitor : IInterfaceMemberVisitor<int>
+        {
+            private readonly TypeScriptWriter _Writer;
+            private readonly bool _IsObjectLiteral;
+
+            /// <summary>
+            /// <see cref="InterfaceMemberVisitor" />クラスの新しいインスタンスを初期化します。
+            /// </summary>
+            public InterfaceMemberVisitor(TypeScriptWriter writer, bool isObjectLiteral)
+            {
+                _Writer = writer;
+                _IsObjectLiteral = isObjectLiteral;
+            }
+
+            int IInterfaceMemberVisitor<int>.VisitField(FieldDeclaration member)
+            {
+                if (_IsObjectLiteral)
+                {
+                    _Writer.WriteFieldLiteral(member);
+                }
+                else
+                {
+                    _Writer.WriteField(member);
+                }
+                return 0;
+            }
+
+            int IInterfaceMemberVisitor<int>.VisitIndex(IndexSignature member)
+            {
+                member.WriteSignature(_Writer._Writer);
+                return 0;
+            }
+
+            int IInterfaceMemberVisitor<int>.VisitMethod(MethodDeclaration member)
+            {
+                _Writer.WriteMethod(member, !_IsObjectLiteral);
+                return 0;
+            }
+
+            int IInterfaceMemberVisitor<int>.VisitGetAccessor(GetAccessorDeclaration member)
+            {
+                _Writer.WriteGetAccessor(member, !_IsObjectLiteral);
+                return 0;
+            }
+
+            int IInterfaceMemberVisitor<int>.VisitSetAccessor(SetAccessorDeclaration member)
+            {
+                _Writer.WriteSetAccessor(member, !_IsObjectLiteral);
+                return 0;
+            }
+        }
+
         private readonly IndentedTextWriter _Writer;
 
         public TypeScriptWriter(TextWriter writer)
@@ -80,9 +199,10 @@ namespace Shipwreck.TypeScriptModels
             if (expression.HasMember)
             {
                 _Writer.Indent++;
+                var cv = new InterfaceMemberVisitor(this, true);
                 for (var i = 0; i < expression.Members.Count; i++)
                 {
-                    expression.Members[i].Accept(this);
+                    expression.Members[i].Accept(cv);
                     if (i < expression.Members.Count - 1)
                     {
                         _Writer.Write(',');
@@ -95,39 +215,6 @@ namespace Shipwreck.TypeScriptModels
 
             return 0;
         }
-
-        #region IObjectLiteralVisitor<int>
-
-        int IObjectLiteralVisitor<int>.VisitMemberInitializer(ObjectMemberInitializer member)
-        {
-            _Writer.Write(member.PropertyName);
-            if (member.Value != null)
-            {
-                _Writer.Write(": ");
-                member.Value.Accept(this);
-            }
-            return 0;
-        }
-
-        int IObjectLiteralVisitor<int>.VisitMethod(MethodDeclaration member)
-        {
-            VisitMethodDeclarationCore(member);
-            return 0;
-        }
-
-        int IObjectLiteralVisitor<int>.VisitGetAccessor(GetAccessorDeclaration member)
-        {
-            VisitGetAccessorCore(member);
-            return 0;
-        }
-
-        int IObjectLiteralVisitor<int>.VisitSetAccessor(SetAccessorDeclaration member)
-        {
-            VisitSetAccessorCore(member);
-            return 0;
-        }
-
-        #endregion IObjectLiteralVisitor<int>
 
         // 4.6
         int IExpressionVisitor<int>.VisitArray(ArrayExpression expression)
@@ -179,7 +266,7 @@ namespace Shipwreck.TypeScriptModels
                 _Writer.Write(' ');
                 _Writer.Write(expression.FunctionName);
             }
-            _Writer.WriteCallSignature(expression);
+            _Writer.WriteCallSignature(expression, this);
 
             if (expression.HasStatement)
             {
@@ -197,7 +284,7 @@ namespace Shipwreck.TypeScriptModels
         {
             if (expression.HasParameter)
             {
-                _Writer.WriteParameters(expression.Parameters);
+                _Writer.WriteParameters(expression.Parameters, this);
             }
             else
             {
@@ -841,23 +928,278 @@ namespace Shipwreck.TypeScriptModels
 
         #endregion IStatementVisitor<int>
 
-        private int VisitMethod(MethodDeclaration member)
+        #region Declarations
+
+        #region 6.1 Function Declarations
+
+        private int VisitFunction(FunctionDeclaration member)
         {
-            VisitMethodDeclarationCore(member);
-            _Writer.WriteLine();
+            if (member.HasOverload)
+            {
+                foreach (var ov in member.Overloads)
+                {
+                    WriteFunctionSignature(member, ov);
+                    _Writer.WriteLine();
+                }
+            }
+            WriteFunctionSignature(member);
+
+            if (member.IsDeclare)
+            {
+                _Writer.WriteLine(';');
+            }
+            else if (member.HasStatement)
+            {
+                WriteMethodBody(member.Statements);
+            }
+            else
+            {
+                _Writer.WriteLine(" {");
+                _Writer.WriteLine('}');
+            }
+
             return 0;
         }
 
-        private void VisitMethodDeclarationCore(MethodDeclaration member)
+        private void WriteFunctionSignature(FunctionDeclaration member, ICallSignature signature = null)
+        {
+            if (member.IsDeclare)
+            {
+                _Writer.Write("declare ");
+            }
+            if (member.IsExport)
+            {
+                _Writer.Write("export ");
+            }
+            if (member.IsDeclare)
+            {
+                _Writer.Write("default ");
+            }
+            _Writer.Write("function ");
+            if (member.FunctionName != null)
+            {
+                _Writer.Write(' ');
+                _Writer.Write(member.FunctionName);
+            }
+            _Writer.WriteCallSignature(signature ?? member, this);
+        }
+
+        #endregion 6.1 Function Declarations
+
+        // 7.1
+        private int VisitInterface(InterfaceDeclaration member)
+        {
+            if (member.IsDeclare)
+            {
+                _Writer.Write("declare ");
+            }
+            if (member.IsExport)
+            {
+                _Writer.Write("export ");
+            }
+            _Writer.Write("interface ");
+            _Writer.Write(member.Name);
+
+            if (member.HasTypeParameter)
+            {
+                _Writer.WriteTypeParameters(member.TypeParameters);
+            }
+            if (member.HasBaseType)
+            {
+                for (int i = 0; i < member.BaseTypes.Count; i++)
+                {
+                    _Writer.Write(i == 0 ? " : " : ", ");
+                    member.BaseTypes[i].WriteTypeReference(_Writer);
+                }
+            }
+
+            _Writer.WriteLine(" {");
+
+            if (member.HasMember)
+            {
+                _Writer.Indent++;
+                var cv = new InterfaceMemberVisitor(this, false);
+                for (var i = 0; i < member.Members.Count; i++)
+                {
+                    member.Members[i].Accept(cv);
+                    _Writer.WriteLine(';');
+                }
+                _Writer.Indent--;
+            }
+            _Writer.Write('}');
+
+            return 0;
+        }
+
+        // 8.1
+        private int VisitClassDeclaration(ClassDeclaration member)
+        {
+            if (member.IsDeclare)
+            {
+                _Writer.Write("declare ");
+            }
+            if (member.IsExport)
+            {
+                _Writer.Write("export ");
+            }
+            if (member.IsDefault)
+            {
+                _Writer.Write("default ");
+            }
+            _Writer.Write("class ");
+            _Writer.Write(member.Name);
+
+            if (member.HasTypeParameter)
+            {
+                _Writer.WriteTypeParameters(member.TypeParameters);
+            }
+
+            if (member.BaseType != null)
+            {
+                _Writer.Write(" extends ");
+                member.BaseType.WriteTypeReference(_Writer);
+            }
+
+            if (member.HasInterface)
+            {
+                for (int i = 0; i < member.Interface.Count; i++)
+                {
+                    _Writer.Write(i == 0 ? " implements " : ", ");
+                    member.Interface[i].WriteTypeReference(_Writer);
+                }
+            }
+
+            _Writer.WriteLine(" {");
+
+            if (member.HasMember)
+            {
+                _Writer.Indent++;
+                var cv = new ClassMemberVisitor(this, member.IsDeclare);
+                for (var i = 0; i < member.Members.Count; i++)
+                {
+                    member.Members[i].Accept(cv);
+                    _Writer.WriteLine(';');
+                }
+                _Writer.Indent--;
+            }
+            _Writer.Write('}');
+
+            return 0;
+        }
+
+        // 9.1
+        private int VisitEnumDeclaration(EnumDeclaration member)
+        {
+            if (member.IsDeclare)
+            {
+                _Writer.Write("declare ");
+            }
+            if (member.IsExport)
+            {
+                _Writer.Write("export ");
+            }
+            if (member.IsConst)
+            {
+                _Writer.Write("const ");
+            }
+            _Writer.Write("enum ");
+            _Writer.Write(member.Name);
+            _Writer.WriteLine(" {");
+            if (member.HasMember)
+            {
+                _Writer.Indent++;
+                for (var i = 0; i < member.Members.Count; i++)
+                {
+                    var m = member.Members[i];
+                    _Writer.Write(m.FieldName);
+                    if (m.Initializer != null)
+                    {
+                        _Writer.Write(" = ");
+                        m.Initializer.Accept(this);
+                    }
+                    if (i < member.Members.Count - 1)
+                    {
+                        _Writer.WriteLine(',');
+                    }
+                    else
+                    {
+                        _Writer.WriteLine();
+                    }
+                }
+                _Writer.Indent--;
+            }
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+
+        #region Member
+
+        // TODO: 6.4 Destructuring Parameter Declarations
+
+        // TODO: 6.7 Generator Functions
+
+        // TODO: 6.8 Asynchronous Functions
+
+        // TODO: 6.9 Type Guard Functions
+
+        #region WriteField
+
+        private void WriteField(FieldDeclaration member)
         {
             _Writer.WriteAccessibility(member.Accessibility);
-            _Writer.Write(member.MethodName);
-            _Writer.WriteCallSignature(member);
+            if (member.IsStatic)
+            {
+                _Writer.Write("static ");
+            }
+            _Writer.Write(member.FieldName);
+            if (member.FieldType != null)
+            {
+                _Writer.Write(": ");
+                member.FieldType.WriteTypeReference(_Writer);
+            }
+            if (member.Initializer != null)
+            {
+                _Writer.Write(" = ");
+                member.Initializer.Accept(this);
+            }
+            _Writer.WriteLine(';');
+        }
 
-            if (member.HasStatement)
+        private void WriteFieldLiteral(FieldDeclaration member)
+        {
+            _Writer.Write(member.FieldName);
+            if (member.Initializer != null)
+            {
+                _Writer.Write(": ");
+                member.Initializer.Accept(this);
+            }
+        }
+
+        #endregion WriteField
+
+        #region WriteConstructor
+
+        private void WriteConstructor(ConstructorDeclaration member, bool skipBody)
+        {
+            if (member.HasOverload)
+            {
+                foreach (var ov in member.Overloads)
+                {
+                    WriteConstructorSignature(member, ov);
+                    _Writer.WriteLine();
+                }
+            }
+            WriteConstructorSignature(member);
+
+            if (skipBody)
+            {
+                _Writer.WriteLine(';');
+            }
+            else if (member.HasStatement)
             {
                 WriteMethodBody(member.Statements);
-                _Writer.WriteLine();
+                _Writer.WriteLine(';');
             }
             else
             {
@@ -866,23 +1208,24 @@ namespace Shipwreck.TypeScriptModels
             }
         }
 
-        private int VisitGetAccessor(GetAccessorDeclaration member)
-        {
-            VisitGetAccessorCore(member);
-            _Writer.WriteLine();
-            return 0;
-        }
-
-        private int VisitSetAccessor(SetAccessorDeclaration member)
-        {
-            VisitSetAccessorCore(member);
-            _Writer.WriteLine();
-            return 0;
-        }
-
-        private void VisitGetAccessorCore(AccessorDeclaration member)
+        private void WriteConstructorSignature(ConstructorDeclaration member, ICallSignature signature = null)
         {
             _Writer.WriteAccessibility(member.Accessibility);
+            _Writer.Write("function ");
+            _Writer.WriteCallSignature(signature ?? member, this);
+        }
+
+        #endregion WriteConstructor
+
+        #region WriteGetAccessor/WriteSetAccessor
+
+        private void WriteGetAccessor(AccessorDeclaration member, bool skipBody)
+        {
+            _Writer.WriteAccessibility(member.Accessibility);
+            if (member.IsStatic)
+            {
+                _Writer.Write("static ");
+            }
             _Writer.Write(member.PropertyName);
             _Writer.Write(" get()");
             if (member.PropertyType != null)
@@ -891,7 +1234,10 @@ namespace Shipwreck.TypeScriptModels
                 member.PropertyType.WriteTypeReference(_Writer);
             }
 
-            if (member.HasStatement)
+            if (skipBody)
+            {
+            }
+            else if (member.HasStatement)
             {
                 WriteMethodBody(member.Statements);
                 _Writer.WriteLine();
@@ -903,9 +1249,13 @@ namespace Shipwreck.TypeScriptModels
             }
         }
 
-        private void VisitSetAccessorCore(SetAccessorDeclaration member)
+        private void WriteSetAccessor(SetAccessorDeclaration member, bool skipBody)
         {
             _Writer.WriteAccessibility(member.Accessibility);
+            if (member.IsStatic)
+            {
+                _Writer.Write("static ");
+            }
             _Writer.Write(member.PropertyName);
             _Writer.Write(" set(");
             _Writer.Write(member.ParameterName);
@@ -925,6 +1275,50 @@ namespace Shipwreck.TypeScriptModels
             }
         }
 
+        #endregion WriteGetAccessor/WriteSetAccessor
+
+        #region WriteMethod
+
+        private void WriteMethod(MethodDeclaration member, bool skipBody)
+        {
+            if (member.HasOverload)
+            {
+                foreach (var ov in member.Overloads)
+                {
+                    WriteMethodSignature(member, ov);
+                    _Writer.WriteLine();
+                }
+            }
+            WriteMethodSignature(member);
+
+            if (skipBody)
+            {
+            }
+            else if (member.HasStatement)
+            {
+                WriteMethodBody(member.Statements);
+                _Writer.WriteLine();
+            }
+            else
+            {
+                _Writer.WriteLine(" {");
+                _Writer.WriteLine('}');
+            }
+        }
+
+        private void WriteMethodSignature(MethodDeclaration member, ICallSignature signature = null)
+        {
+            _Writer.WriteAccessibility(member.Accessibility);
+            if (member.IsStatic)
+            {
+                _Writer.Write("static ");
+            }
+            _Writer.Write(member.MethodName);
+            _Writer.WriteCallSignature(signature ?? member, this);
+        }
+
+        #endregion WriteMethod
+
         private void WriteMethodBody(Collection<Statement> statements)
         {
             _Writer.WriteLine(" {");
@@ -941,5 +1335,9 @@ namespace Shipwreck.TypeScriptModels
             _Writer.Indent--;
             _Writer.Write('}');
         }
+
+        #endregion Member
+
+        #endregion Declarations
     }
 }

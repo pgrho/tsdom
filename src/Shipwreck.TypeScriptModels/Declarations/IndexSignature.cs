@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public sealed class IndexSignature : Signature
+    public sealed class IndexSignature : Signature, IClassMember, IInterfaceMember
     {
         public string ParameterName { get; set; }
         public bool IsNumeric { get; set; }
@@ -20,5 +20,11 @@ namespace Shipwreck.TypeScriptModels.Declarations
             writer.Write(IsNumeric ? ": number]: " : ": string]: ");
             (ReturnType ?? PredefinedType.Any).WriteTypeReference(writer);
         }
+
+        public void Accept<T>(IClassMemberVisitor<T> visitor)
+            => visitor.VisitIndex(this);
+
+        void IInterfaceMember.Accept<T>(IInterfaceMemberVisitor<T> visitor)
+            => visitor.VisitIndex(this);
     }
 }

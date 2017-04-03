@@ -38,8 +38,10 @@
     <Compile Include="Declarations\ArrayType.cs" />
     <Compile Include="Declarations\AccessibilityModifier.cs" />
     <Compile Include="Declarations\CallSignature.cs" />
+    <Compile Include="Declarations\ConstructorDeclaration.cs" />
     <Compile Include="Declarations\ConstructorType.cs" />
     <Compile Include="Declarations\FunctionDeclaration.cs" />
+    <Compile Include="Declarations\FunctionDeclarationBase.cs" />
     <Compile Include="Declarations\FunctionTypeBase.cs" />
     <Compile Include="Declarations\FunctionType.cs" />
     <Compile Include="Declarations\CallSignatureBase.cs" />
@@ -47,6 +49,8 @@
     <Compile Include="Declarations\GeneratorDeclaration.cs" />
     <Compile Include="Declarations\GetAccessorDeclaration.cs" />
     <Compile Include="Declarations\ICallSignature.cs" />
+    <Compile Include="Declarations\IClassMember.cs" />
+    <Compile Include="Declarations\IClassMemberVisitor.cs" />
     <Compile Include="Declarations\IndexSignature.cs" />
     <Compile Include="Declarations\InterfaceDeclaration.cs" />
     <Compile Include="Declarations\ClassDeclaration.cs" />
@@ -75,7 +79,7 @@
     <Compile Include="Expressions\FunctionExpression.cs" />
     <Compile Include="Expressions\FunctionExpressionBase.cs" />
     <Compile Include="Expressions\IdentifierExpression.cs" />
-    <Compile Include="Expressions\IObjectLiteralVisitor.cs" />
+    <Compile Include="Declarations\IInterfaceMemberVisitor.cs" />
     <Compile Include="Expressions\NewExpression.cs" />
     <Compile Include="Expressions\ParenthesesExpression.cs" />
     <Compile Include="Expressions\PropertyExpression.cs" />
@@ -106,11 +110,11 @@
     <Compile Include="Statements\WithStatement.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="TypeScriptWriter.cs" />
-    <Compile Include="Expressions\IObjectLiteralMember.cs" />
+    <Compile Include="Declarations\IInterfaceMember.cs" />
     <Compile Include="Expressions\NullExpression.cs" />
     <Compile Include="Expressions\NumberExpression.cs" />
     <Compile Include="Expressions\ObjectExpression.cs" />
-    <Compile Include="Expressions\ObjectMemberInitializer.cs" />
+    <Compile Include="Declarations\FieldDeclaration.cs" />
     <Compile Include="Expressions\RegExpExpression.cs" />
     <Compile Include="Expressions\StringExpression.cs" />
     <Compile Include="Expressions\ThisExpression.cs" />

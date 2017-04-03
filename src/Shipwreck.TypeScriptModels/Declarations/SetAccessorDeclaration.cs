@@ -12,7 +12,9 @@ namespace Shipwreck.TypeScriptModels.Declarations
         public string ParameterName { get; set; }
 
         internal override bool GetIsSet() => true;
-        public override void Accept<T>(IObjectLiteralVisitor<T> visitor)
+        public override void Accept<T>(IClassMemberVisitor<T> visitor)
+            => visitor.VisitSetAccessor(this);
+        public override void Accept<T>(IInterfaceMemberVisitor<T> visitor)
             => visitor.VisitSetAccessor(this);
     }
 }

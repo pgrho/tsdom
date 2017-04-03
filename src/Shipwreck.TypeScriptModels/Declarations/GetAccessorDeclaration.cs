@@ -10,7 +10,11 @@ namespace Shipwreck.TypeScriptModels.Declarations
     public sealed class GetAccessorDeclaration : AccessorDeclaration
     {
         internal override bool GetIsSet() => false;
-        public override void Accept<T>(IObjectLiteralVisitor<T> visitor)
+
+        public override void Accept<T>(IClassMemberVisitor<T> visitor)
+            => visitor.VisitGetAccessor(this);
+
+        public override void Accept<T>(IInterfaceMemberVisitor<T> visitor)
             => visitor.VisitGetAccessor(this);
     }
 }

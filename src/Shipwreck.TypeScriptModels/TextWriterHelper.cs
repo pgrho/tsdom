@@ -88,6 +88,9 @@ namespace Shipwreck.TypeScriptModels
 
 
         public static void WriteCallSignature(this TextWriter writer, ICallSignature signature)
+            => writer.WriteCallSignature<object>(signature, null);
+
+        internal static void WriteCallSignature<T>(this TextWriter writer, ICallSignature signature, IExpressionVisitor<T> visitor)
         {
             writer.WriteTypeParameters(signature.TypeParameters);
             if (signature.HasParameter)
@@ -149,7 +152,11 @@ namespace Shipwreck.TypeScriptModels
                 writer.Write('>');
             }
         }
+
         public static void WriteParameters(this TextWriter writer, Collection<Parameter> parameters)
+            => writer.WriteParameters<object>(parameters, null);
+
+        internal static void WriteParameters<T>(this TextWriter writer, Collection<Parameter> parameters, IExpressionVisitor<T> visitor = null)
         {
             writer.Write('(');
 
@@ -169,7 +176,7 @@ namespace Shipwreck.TypeScriptModels
                     }
                     writer.WriteAccessibility(tp.Accessibility);
                     writer.Write(tp.ParameterName);
-                    if (tp.IsOptional)
+                    if (tp.IsOptional && tp.Initializer != null)
                     {
                         writer.Write('?');
                     }
@@ -179,8 +186,21 @@ namespace Shipwreck.TypeScriptModels
                         writer.Write(": ");
                         tp.ParameterType.WriteTypeReference(writer);
                     }
-                }
 
+                    if (tp.Initializer != null)
+                    {
+                        writer.Write(" = ");
+
+                        if (visitor == null)
+                        {
+                            tp.Initializer.WriteExpression(writer);
+                        }
+                        else
+                        {
+                            tp.Initializer.Accept(visitor);
+                        }
+                    }
+                }
             }
             writer.Write(')');
         }
