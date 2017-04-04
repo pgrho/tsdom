@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public abstract class Expression
+    public abstract class Expression: Syntax
     {
         [ThreadStatic]
         private static WeakReference<TextWriter> _CachedTextWriter;

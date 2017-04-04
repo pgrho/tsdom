@@ -266,7 +266,7 @@ namespace Shipwreck.TypeScriptModels
                 _Writer.Write(' ');
                 _Writer.Write(expression.FunctionName);
             }
-            _Writer.WriteCallSignature(expression, this);
+            WriteCallSignature(expression);
 
             if (expression.HasStatement)
             {
@@ -284,7 +284,7 @@ namespace Shipwreck.TypeScriptModels
         {
             if (expression.HasParameter)
             {
-                _Writer.WriteParameters(expression.Parameters, this);
+                WriteParameters(expression.Parameters);
             }
             else
             {
@@ -997,7 +997,7 @@ namespace Shipwreck.TypeScriptModels
                 _Writer.Write(' ');
                 _Writer.Write(member.FunctionName);
             }
-            _Writer.WriteCallSignature(signature ?? member, this);
+            WriteCallSignature(signature ?? member);
         }
 
         #endregion 6.1 Function Declarations
@@ -1047,6 +1047,10 @@ namespace Shipwreck.TypeScriptModels
             WriteIsDeclare(member.IsDeclare);
             WriteIsExport(member.IsExport);
             WriteIsDefault(member.IsDefault);
+            if (member.IsAbstract)
+            {
+                _Writer.Write("abstract ");
+            }
             _Writer.Write("class ");
             _Writer.Write(member.Name);
 
@@ -1142,6 +1146,10 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteField(FieldDeclaration member)
         {
+            if (member.HasDecorator)
+            {
+                WriteDecorators(member.Decorators, false);
+            }
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
             _Writer.Write(member.FieldName);
@@ -1204,7 +1212,7 @@ namespace Shipwreck.TypeScriptModels
         {
             _Writer.WriteAccessibility(member.Accessibility);
             _Writer.Write("function ");
-            _Writer.WriteCallSignature(signature ?? member, this);
+            WriteCallSignature(signature ?? member);
         }
 
         #endregion WriteConstructor
@@ -1213,6 +1221,10 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteGetAccessor(AccessorDeclaration member, bool skipBody)
         {
+            if (member.HasDecorator)
+            {
+                WriteDecorators(member.Decorators, false);
+            }
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
             _Writer.Write(member.PropertyName);
@@ -1240,6 +1252,10 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteSetAccessor(SetAccessorDeclaration member, bool skipBody)
         {
+            if (member.HasDecorator)
+            {
+                WriteDecorators(member.Decorators, false);
+            }
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
             _Writer.Write(member.PropertyName);
@@ -1267,6 +1283,10 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteMethod(MethodDeclaration member, bool skipBody)
         {
+            if (member.HasDecorator)
+            {
+                WriteDecorators(member.Decorators, false);
+            }
             if (member.HasOverload)
             {
                 foreach (var ov in member.Overloads)
@@ -1297,7 +1317,7 @@ namespace Shipwreck.TypeScriptModels
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
             _Writer.Write(member.MethodName);
-            _Writer.WriteCallSignature(signature ?? member, this);
+            WriteCallSignature(signature ?? member);
         }
 
         #endregion WriteMethod
@@ -1322,5 +1342,93 @@ namespace Shipwreck.TypeScriptModels
         #endregion Member
 
         #endregion Declarations
+
+        private void WriteDecorators(Collection<Decorator> decorators, bool inline)
+        {
+            foreach (var d in decorators)
+            {
+                _Writer.Write('@');
+                _Writer.Write(d.Name);
+                if (d.HasParameter)
+                {
+                    _Writer.WriteParameters(d.Parameters, this);
+                }
+                if (inline)
+                {
+                    _Writer.Write(' ');
+                }
+                else
+                {
+                    _Writer.WriteLine();
+                }
+            }
+        }
+
+        private void WriteCallSignature(ICallSignature signature)
+        {
+            _Writer.WriteTypeParameters(signature.TypeParameters);
+            if (signature.HasParameter)
+            {
+                WriteParameters(signature.Parameters);
+            }
+            else
+            {
+                _Writer.Write("()");
+            }
+            if (signature.ReturnType != null)
+            {
+                _Writer.Write(": ");
+                signature.ReturnType.WriteTypeReference(_Writer);
+            }
+        }
+
+        internal void WriteParameters(Collection<Parameter> parameters)
+        {
+            _Writer.Write('(');
+
+            if (parameters?.Count > 0)
+            {
+                for (var i = 0; i < parameters.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        _Writer.Write(", ");
+                    }
+
+                    var tp = parameters[i];
+                    if (tp.IsRest)
+                    {
+                        _Writer.Write("...");
+                    }
+
+                    if (tp.HasDecorator)
+                    {
+                        WriteDecorators(tp.Decorators, true);
+                    }
+
+                    _Writer.WriteAccessibility(tp.Accessibility);
+                    _Writer.Write(tp.ParameterName);
+                    if (tp.IsOptional && tp.Initializer != null)
+                    {
+                        _Writer.Write('?');
+                    }
+
+                    if (tp.ParameterType != null)
+                    {
+                        _Writer.Write(": ");
+                        tp.ParameterType.WriteTypeReference(_Writer);
+                    }
+
+                    if (tp.Initializer != null)
+                    {
+                        _Writer.Write(" = ");
+
+                        tp.Initializer.Accept(this);
+                    }
+                }
+            }
+            _Writer.Write(')');
+        }
+
     }
 }

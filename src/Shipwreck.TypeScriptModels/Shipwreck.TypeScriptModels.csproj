@@ -40,6 +40,7 @@
     <Compile Include="Declarations\CallSignature.cs" />
     <Compile Include="Declarations\ConstructorDeclaration.cs" />
     <Compile Include="Declarations\ConstructorType.cs" />
+    <Compile Include="Declarations\Decorator.cs" />
     <Compile Include="Declarations\FunctionDeclaration.cs" />
     <Compile Include="Declarations\FunctionDeclarationBase.cs" />
     <Compile Include="Declarations\FunctionTypeBase.cs" />
@@ -51,13 +52,20 @@
     <Compile Include="Declarations\ICallSignature.cs" />
     <Compile Include="Declarations\IClassMember.cs" />
     <Compile Include="Declarations\IClassMemberVisitor.cs" />
+    <Compile Include="Declarations\IModuleDeclaration.cs" />
+    <Compile Include="Declarations\IModuleMember.cs" />
+    <Compile Include="Declarations\INamespaceMember.cs" />
     <Compile Include="Declarations\IndexSignature.cs" />
     <Compile Include="Declarations\InterfaceDeclaration.cs" />
     <Compile Include="Declarations\ClassDeclaration.cs" />
     <Compile Include="CollectionHelper.cs" />
     <Compile Include="Declarations\EnumDeclaration.cs" />
+    <Compile Include="Declarations\ITypeDeclaration.cs" />
     <Compile Include="Declarations\MethodDeclaration.cs" />
     <Compile Include="Declarations\MethodSignature.cs" />
+    <Compile Include="Declarations\ModuleDeclaration.cs" />
+    <Compile Include="Declarations\ModuleDeclarationBase.cs" />
+    <Compile Include="Declarations\NamespaceDeclaration.cs" />
     <Compile Include="Declarations\Parameter.cs" />
     <Compile Include="Declarations\PropertySignature.cs" />
     <Compile Include="Declarations\SetAccessorDeclaration.cs" />
@@ -107,6 +115,7 @@
     <Compile Include="Statements\WhileStatement.cs" />
     <Compile Include="Statements\WithStatement.cs" />
     <Compile Include="StringHelper.cs" />
+    <Compile Include="Syntax.cs" />
     <Compile Include="TypeScriptWriter.cs" />
     <Compile Include="Declarations\IInterfaceMember.cs" />
     <Compile Include="Expressions\NullExpression.cs" />

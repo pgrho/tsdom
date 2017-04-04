@@ -88,9 +88,6 @@ namespace Shipwreck.TypeScriptModels
 
 
         public static void WriteCallSignature(this TextWriter writer, ICallSignature signature)
-            => writer.WriteCallSignature<object>(signature, null);
-
-        internal static void WriteCallSignature<T>(this TextWriter writer, ICallSignature signature, IExpressionVisitor<T> visitor)
         {
             writer.WriteTypeParameters(signature.TypeParameters);
             if (signature.HasParameter)

@@ -9,13 +9,19 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public sealed class ClassDeclaration : TypeDeclaration
+    public sealed class ClassDeclaration : TypeDeclaration<IClassMember>
     {
         /// <summary>
         /// Gets or sets the value indicating whether the class has a <c>default</c> modifier.
         /// </summary>
         [DefaultValue(false)]
         public bool IsDefault { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether the class has a <c>abstract</c> modifier.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsAbstract { get; set; }
 
         [DefaultValue(false)]
         public ITypeReference BaseType { get; set; }
@@ -99,46 +105,6 @@ namespace Shipwreck.TypeScriptModels.Declarations
             => _TypeParameters?.Clear();
 
         #endregion TypeParameters
-
-        #region Members
-
-        private Collection<IClassMember> _Members;
-
-        /// <summary>
-        /// Gets a value indicating whether the value of <see cref="Members" /> contains any element;
-        /// </summary>
-        public bool HasMember
-            => _Members?.Count > 0;
-
-        /// <summary>
-        /// Gets or sets the all members of the class.
-        /// </summary>
-        public Collection<IClassMember> Members
-        {
-            get
-            {
-                return CollectionHelper.GetOrCreate(ref _Members);
-            }
-            set
-            {
-                CollectionHelper.Set(ref _Members, value);
-            }
-        }
-
-        /// <summary>
-        /// Determines a value indicating whether the value of <see cref="Members" /> needs to be persisted.
-        /// </summary>
-        /// <returns><c>true</c> if the property should be persisted; otherwise, <c>false</c>.</returns>
-        public bool ShouldSerializMembers()
-            => HasMember;
-
-        /// <summary>
-        /// Resets the value for <see cref="Members" /> of the class to the default value.
-        /// </summary>
-        public void ResetMembers()
-            => _Members?.Clear();
-
-        #endregion Members
 
         public override void WriteTypeReference(TextWriter writer)
         {

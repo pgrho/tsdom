@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.TypeScriptModels"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.TypeScriptModels.Tests", "Shipwreck.TypeScriptModels.Tests\Shipwreck.TypeScriptModels.Tests.csproj", "{D0B60A6F-D801-4FC2-A5B0-CB10FCC52492}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.TypeScriptModels.Decompiler", "Shipwreck.TypeScriptModels.Decompiler\Shipwreck.TypeScriptModels.Decompiler.csproj", "{C9C20A83-56B4-4D9C-8EFE-80B1E6A04F64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.TypeScriptModels.Decompiler.Tests", "Shipwreck.TypeScriptModels.Decompiler.Tests\Shipwreck.TypeScriptModels.Decompiler.Tests.csproj", "{CAC2D534-FA93-4E4D-94D8-D7F878F97FD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{D0B60A6F-D801-4FC2-A5B0-CB10FCC52492}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0B60A6F-D801-4FC2-A5B0-CB10FCC52492}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0B60A6F-D801-4FC2-A5B0-CB10FCC52492}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9C20A83-56B4-4D9C-8EFE-80B1E6A04F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9C20A83-56B4-4D9C-8EFE-80B1E6A04F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9C20A83-56B4-4D9C-8EFE-80B1E6A04F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9C20A83-56B4-4D9C-8EFE-80B1E6A04F64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAC2D534-FA93-4E4D-94D8-D7F878F97FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC2D534-FA93-4E4D-94D8-D7F878F97FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC2D534-FA93-4E4D-94D8-D7F878F97FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC2D534-FA93-4E4D-94D8-D7F878F97FD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

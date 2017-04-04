@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,46 @@ namespace Shipwreck.TypeScriptModels.Declarations
         public ITypeReference FieldType { get; set; }
 
         public Expression Initializer { get; set; }
+
+        #region Decorators
+
+        private Collection<Decorator> _Decorators;
+
+        /// <summary>
+        /// Gets a value indicating whether the value of <see cref="Decorators" /> contains any element;
+        /// </summary>
+        public bool HasDecorator
+            => _Decorators?.Count > 0;
+
+        /// <summary>
+        /// Gets or sets the all decorators of the field.
+        /// </summary>
+        public Collection<Decorator> Decorators
+        {
+            get
+            {
+                return CollectionHelper.GetOrCreate(ref _Decorators);
+            }
+            set
+            {
+                CollectionHelper.Set(ref _Decorators, value);
+            }
+        }
+
+        /// <summary>
+        /// Determines a value indicating whether the value of <see cref="Decorators" /> needs to be persisted.
+        /// </summary>
+        /// <returns><c>true</c> if the property should be persisted; otherwise, <c>false</c>.</returns>
+        public bool ShouldSerializeDecorators()
+            => HasDecorator;
+
+        /// <summary>
+        /// Resets the value for <see cref="Decorators" /> of the field to the default value.
+        /// </summary>
+        public void ResetDecorators()
+            => _Decorators?.Clear();
+
+        #endregion Decorators
 
         public void Accept<T>(IClassMemberVisitor<T> visitor)
             => visitor.VisitField(this);
