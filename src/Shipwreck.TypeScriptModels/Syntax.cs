@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,5 +12,18 @@ namespace Shipwreck.TypeScriptModels
     /// </summary>
     public abstract class Syntax
     {
+        internal Syntax() { }
+
+        public override string ToString()
+        {
+            using (var w = new StringWriter())
+            using (var tsw = new TypeScriptWriter(w))
+            {
+                tsw.Write(this);
+                tsw.Flush();
+
+                return w.ToString();
+            }
+        }
     }
 }

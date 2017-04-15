@@ -1,18 +1,14 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shipwreck.TypeScriptModels.Declarations;
+﻿using Shipwreck.TypeScriptModels.Declarations;
 using Shipwreck.TypeScriptModels.Expressions;
 using Shipwreck.TypeScriptModels.Statements;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public class TypeScriptWriter : IExpressionVisitor<int>, IStatementVistor<int>, IModuleMemberVisitor<int>, INamespaceMemberVisitor<int>, IRootStatementVisitor<int>
+    public class TypeScriptWriter : IDisposable, IExpressionVisitor<int>, IStatementVistor<int>, IModuleMemberVisitor<int>, INamespaceMemberVisitor<int>, IRootStatementVisitor<int>
     {
         private sealed class ClassMemberVisitor : IClassMemberVisitor<int>
         {
@@ -87,7 +83,7 @@ namespace Shipwreck.TypeScriptModels
             private readonly bool _IsObjectLiteral;
 
             /// <summary>
-            /// <see cref="InterfaceMemberVisitor" />クラスの新しいインスタンスを初期化します。
+            /// <see cref="InterfaceMemberVisitor" /> クラスの新しいインスタンスを初期化します。
             /// </summary>
             public InterfaceMemberVisitor(TypeScriptWriter writer, bool isObjectLiteral)
             {
@@ -134,11 +130,117 @@ namespace Shipwreck.TypeScriptModels
         }
 
         private readonly IndentedTextWriter _Writer;
+        private readonly TextWriter _BaseWriter;
+        private readonly bool _LeaveOpen;
 
-        public TypeScriptWriter(TextWriter writer)
+        public TypeScriptWriter(TextWriter writer, bool leaveOpen = false)
         {
-            _Writer = (writer as IndentedTextWriter) ?? new IndentedTextWriter(writer);
+            _Writer = writer as IndentedTextWriter ?? new IndentedTextWriter(writer);
+            _LeaveOpen = leaveOpen;
+            _BaseWriter = writer;
         }
+
+        public void Flush()
+        {
+            _Writer.Flush();
+            _BaseWriter.Flush();
+        }
+
+        public void Write(Syntax syntax)
+        {
+            var rs = syntax as IRootStatement;
+            if (rs != null)
+            {
+                rs.Accept(this);
+                return;
+            }
+
+            var ns = syntax as INamespaceMember;
+            if (ns != null)
+            {
+                ns.Accept(this);
+                return;
+            }
+
+            var ms = syntax as IModuleMember;
+            if (ms != null)
+            {
+                ms.Accept(this);
+                return;
+            }
+
+            var s = syntax as Statement;
+            if (s != null)
+            {
+                s.Accept(this);
+            }
+            else
+            {
+                ((Expression)syntax).Accept(this);
+            }
+        }
+
+        /// <summary>
+        /// インスタンスが破棄されているかどうかを示す値を取得します。
+        /// </summary>
+        protected bool IsDisposed { get; private set; }
+
+        #region IDisposable メソッド
+
+        /// <summary>
+        /// アンマネージ リソースの解放およびリセットに関連付けられているアプリケーション定義のタスクを実行します。
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable メソッド
+
+        #region デストラクタ
+
+        /// <summary>
+        /// オブジェクトがガベジ コレクションにより収集される前に、そのオブジェクトがリソースを解放し、その他のクリーンアップ操作を実行できるようにします。
+        /// </summary>
+        ~TypeScriptWriter()
+        {
+            Dispose(false);
+        }
+
+        #endregion デストラクタ
+
+        #region 仮想メソッド
+
+        /// <summary>
+        /// アンマネージ リソースの解放およびリセットに関連付けられているアプリケーション定義のタスクを実行します。
+        /// </summary>
+        /// <param name="disposing">
+        /// メソッドが <see cref="TypeScriptWriter.Dispose()" /> から呼び出された場合は <c>true</c>。その他の場合は <c>false</c>。
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            IsDisposed = true;
+
+            if (disposing)
+            {
+                if (_Writer != _BaseWriter)
+                {
+                    _Writer.Dispose();
+                }
+                if (!_LeaveOpen)
+                {
+                    _BaseWriter.Dispose();
+                }
+            }
+        }
+
+        #endregion 仮想メソッド
 
         #region IExpressionVisitor<int>
 
@@ -959,7 +1061,7 @@ namespace Shipwreck.TypeScriptModels
 
         private int VisitFunction(FunctionDeclaration member)
         {
-            // TODO: 
+            // TODO:
             if (member.HasOverload)
             {
                 foreach (var ov in member.Overloads)
@@ -1005,19 +1107,31 @@ namespace Shipwreck.TypeScriptModels
 
         #region Module Member
 
-
-
-
         // 7.1
 
         int IRootStatementVisitor<int>.VisitInterfaceDeclaration(InterfaceDeclaration declaration)
-          => WriteInterfaceDeclaration(declaration);
+        {
+            WriteInterfaceDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         int IModuleMemberVisitor<int>.VisitInterfaceDeclaration(InterfaceDeclaration declaration)
-            => WriteInterfaceDeclaration(declaration);
+        {
+            WriteInterfaceDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         int INamespaceMemberVisitor<int>.VisitInterfaceDeclaration(InterfaceDeclaration declaration)
-            => WriteInterfaceDeclaration(declaration);
+        {
+            WriteInterfaceDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         private int WriteInterfaceDeclaration(InterfaceDeclaration declaration)
         {
@@ -1059,16 +1173,35 @@ namespace Shipwreck.TypeScriptModels
 
         // 8.1
         int IRootStatementVisitor<int>.VisitClassDeclaration(ClassDeclaration declaration)
-          => WriteClassDeclaration(declaration);
+        {
+            WriteClassDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         int IModuleMemberVisitor<int>.VisitClassDeclaration(ClassDeclaration declaration)
-            => WriteClassDeclaration(declaration);
+        {
+            WriteClassDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         int INamespaceMemberVisitor<int>.VisitClassDeclaration(ClassDeclaration declaration)
-            => WriteClassDeclaration(declaration);
+        {
+            WriteClassDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         private int WriteClassDeclaration(ClassDeclaration declaration)
         {
+            if (declaration.HasDecorator)
+            {
+                WriteDecorators(declaration.Decorators, false);
+            }
             WriteIsDeclare(declaration.IsDeclare);
             WriteIsExport(declaration.IsExport);
             WriteIsDefault(declaration.IsDefault);
@@ -1119,38 +1252,57 @@ namespace Shipwreck.TypeScriptModels
 
         // 9.1
         int IRootStatementVisitor<int>.VisitEnumDeclaration(EnumDeclaration declaration)
-            => WriteEnumDeclaration(declaration);
+        {
+            WriteEnumDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         int IModuleMemberVisitor<int>.VisitEnumDeclaration(EnumDeclaration declaration)
-            => WriteEnumDeclaration(declaration);
+        {
+            WriteEnumDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
 
         int INamespaceMemberVisitor<int>.VisitEnumDeclaration(EnumDeclaration declaration)
-            => WriteEnumDeclaration(declaration);
-
-        private int WriteEnumDeclaration(EnumDeclaration member)
         {
-            WriteIsDeclare(member.IsDeclare);
-            WriteIsExport(member.IsExport);
-            if (member.IsConst)
+            WriteEnumDeclaration(declaration);
+            _Writer.WriteLine();
+
+            return 0;
+        }
+
+        private int WriteEnumDeclaration(EnumDeclaration declaration)
+        {
+            if (declaration.HasDecorator)
+            {
+                WriteDecorators(declaration.Decorators, false);
+            }
+            WriteIsDeclare(declaration.IsDeclare);
+            WriteIsExport(declaration.IsExport);
+            if (declaration.IsConst)
             {
                 _Writer.Write("const ");
             }
             _Writer.Write("enum ");
-            _Writer.Write(member.Name);
+            _Writer.Write(declaration.Name);
             _Writer.WriteLine(" {");
-            if (member.HasMember)
+            if (declaration.HasMember)
             {
                 _Writer.Indent++;
-                for (var i = 0; i < member.Members.Count; i++)
+                for (var i = 0; i < declaration.Members.Count; i++)
                 {
-                    var m = member.Members[i];
+                    var m = declaration.Members[i];
                     _Writer.Write(m.FieldName);
                     if (m.Initializer != null)
                     {
                         _Writer.Write(" = ");
                         m.Initializer.Accept(this);
                     }
-                    if (i < member.Members.Count - 1)
+                    if (i < declaration.Members.Count - 1)
                     {
                         _Writer.WriteLine(',');
                     }
@@ -1166,7 +1318,7 @@ namespace Shipwreck.TypeScriptModels
             return 0;
         }
 
-        #endregion
+        #endregion Module Member
 
         #region Member
 
@@ -1466,7 +1618,6 @@ namespace Shipwreck.TypeScriptModels
 
         #endregion Declarations
 
-
         int IRootStatementVisitor<int>.VisitModuleDeclaration(ModuleDeclaration module)
         {
             WriteIsDeclare(module.IsDeclare);
@@ -1487,6 +1638,7 @@ namespace Shipwreck.TypeScriptModels
 
             return 0;
         }
+
         int IRootStatementVisitor<int>.VisitNamespaceDeclaration(NamespaceDeclaration module)
         {
             WriteIsDeclare(module.IsDeclare);

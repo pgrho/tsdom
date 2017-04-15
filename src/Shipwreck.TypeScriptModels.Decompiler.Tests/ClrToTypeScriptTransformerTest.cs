@@ -23,6 +23,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             var clr2ts = new ClrToTypeScriptTransformer();
             clr2ts.Transform(typeof(PublicClass));
+
+            foreach (var m in clr2ts.Modules)
+            {
+                Console.WriteLine(m);
+            }
         }
     }
 }

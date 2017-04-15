@@ -15,7 +15,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     public class ClrToTypeScriptTransformer : IAstVisitor<string, IEnumerable<Syntax>>
     {
-        public void Transform(Type clrType)
+        private List<D.IModuleDeclaration> _Modules;
+
+        public List<D.IModuleDeclaration> Modules
+            => _Modules ?? (_Modules = new List<D.IModuleDeclaration>());
+
+        public IEnumerable<Syntax> Transform(Type clrType)
         {
             var ad = AssemblyDefinition.ReadAssembly(clrType.Assembly.Location);
             var b = new AstBuilder(new DecompilerContext(ad.MainModule)
@@ -38,14 +43,24 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             b.AddType(ad.MainModule.GetType(clrType.FullName));
             b.RunTransformations();
 
-            b.SyntaxTree.AcceptVisitor(this, "temp").Count();
+            return b.SyntaxTree.AcceptVisitor(this, "temp").ToArray();
         }
 
         protected virtual D.IModuleDeclaration ResolveModule(string data, string fullName)
-            => new D.NamespaceDeclaration()
+        {
+            var ms = Modules;
+            var m = ms.FirstOrDefault(e => e.Name == fullName);
+            if (m == null)
             {
-                Name = fullName
-            };
+                m = new D.NamespaceDeclaration()
+                {
+                    Name = fullName
+                };
+                ms.Add(m);
+            }
+
+            return m;
+        }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, string data)
         {

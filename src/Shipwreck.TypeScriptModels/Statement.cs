@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public abstract class Statement
+    public abstract class Statement : Syntax
     {
         public abstract T Accept<T>(IStatementVistor<T> visitor);
     }
