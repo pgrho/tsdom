@@ -16,5 +16,17 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// </summary>
         [DefaultValue(false)]
         public bool IsConst { get; set; }
+
+        /// <inheritdoc />
+        public override void Accept<T>(IRootStatementVisitor<T> visitor)
+            => visitor.VisitEnumDeclaration(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(IModuleMemberVisitor<T> visitor)
+            => visitor.VisitEnumDeclaration(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(INamespaceMemberVisitor<T> visitor)
+            => visitor.VisitEnumDeclaration(this);
     }
 }

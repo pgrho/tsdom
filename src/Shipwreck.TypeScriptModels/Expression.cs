@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public abstract class Expression: Syntax
+    /// <summary>
+    /// Provides the base class from which the classes that represent expression tree nodes are derived.
+    /// </summary>
+    public abstract class Expression : Syntax
     {
         [ThreadStatic]
         private static WeakReference<TextWriter> _CachedTextWriter;
@@ -16,6 +19,11 @@ namespace Shipwreck.TypeScriptModels
         [ThreadStatic]
         private static WeakReference<TypeScriptWriter> _CachedTypeScriptWriter;
 
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The visitor to visit this node with.</param>
         public abstract void Accept<T>(IExpressionVisitor<T> visitor);
 
         public void WriteExpression(TextWriter writer)

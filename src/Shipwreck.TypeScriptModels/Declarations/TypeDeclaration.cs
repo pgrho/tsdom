@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class TypeDeclaration<T> : ITypeReference, ITypeDeclaration
+    public abstract class TypeDeclaration<TMember> : Syntax, ITypeReference, ITypeDeclaration
     {
         /// <summary>
         /// Gets or sets the value indicating whether the type has a <c>declare</c> modifier.
@@ -24,14 +24,15 @@ namespace Shipwreck.TypeScriptModels.Declarations
         [DefaultValue(false)]
         public bool IsExport { get; set; }
 
+        /// <summary>
+        /// Gets or sets the identifier of the type.
+        /// </summary>
+        [DefaultValue(null)]
         public string Name { get; set; }
-
-        public virtual void WriteTypeReference(TextWriter writer)
-            => writer.Write(Name);
 
         #region Members
 
-        private Collection<T> _Members;
+        private Collection<TMember> _Members;
 
         /// <summary>
         /// Gets a value indicating whether the value of <see cref="Members" /> contains any element;
@@ -42,7 +43,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// <summary>
         /// Gets or sets the all members of the type.
         /// </summary>
-        public Collection<T> Members
+        public Collection<TMember> Members
         {
             get
             {
@@ -110,5 +111,29 @@ namespace Shipwreck.TypeScriptModels.Declarations
             => _Decorators?.Clear();
 
         #endregion Decorators
+
+        public virtual void WriteTypeReference(TextWriter writer)
+            => writer.Write(Name);
+
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The visitor to visit this node with.</param>
+        public abstract void Accept<T>(IRootStatementVisitor<T> visitor);
+
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The visitor to visit this node with.</param>
+        public abstract void Accept<T>(IModuleMemberVisitor<T> visitor);
+
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The visitor to visit this node with.</param>
+        public abstract void Accept<T>(INamespaceMemberVisitor<T> visitor);
     }
 }

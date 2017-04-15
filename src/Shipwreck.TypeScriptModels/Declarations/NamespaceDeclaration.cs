@@ -2,6 +2,8 @@
 {
     public sealed class NamespaceDeclaration : ModuleDeclarationBase<INamespaceMember>
     {
-        // TODO: Visitor
+        /// <inheritdoc />
+        public override void Accept<T>(IRootStatementVisitor<T> visitor)
+            => visitor.VisitNamespaceDeclaration(this);
     }
 }

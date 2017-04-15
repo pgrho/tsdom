@@ -5,11 +5,23 @@ using System.ComponentModel;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class ModuleDeclarationBase<T> : Syntax, IModuleDeclaration
+    public abstract class ModuleDeclarationBase<TMember> : Syntax, IModuleDeclaration
     {
         internal ModuleDeclarationBase()
         {
         }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether the module or namespace has a <c>declare</c> modifier.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsDeclare { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether the module or namespace has a <c>export</c> modifier.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsExport { get; set; }
 
         /// <summary>
         /// Gets of sets the identifier of the module or namespace declaration.
@@ -19,7 +31,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         #region Members
 
-        private Collection<T> _Members;
+        private Collection<TMember> _Members;
 
         /// <summary>
         /// Gets a value indicating whether the value of <see cref="Members" /> contains any element;
@@ -30,7 +42,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// <summary>
         /// Gets or sets the all members of the module or namespace.
         /// </summary>
-        public Collection<T> Members
+        public Collection<TMember> Members
         {
             get
             {
@@ -59,5 +71,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
             => _Members?.Clear();
 
         #endregion Members
+
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The visitor to visit this node with.</param>
+        public abstract void Accept<T>(IRootStatementVisitor<T> visitor);
     }
 }

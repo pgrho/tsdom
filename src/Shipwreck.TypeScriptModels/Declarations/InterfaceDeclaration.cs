@@ -96,5 +96,17 @@ namespace Shipwreck.TypeScriptModels.Declarations
             writer.Write(Name);
             writer.WriteTypeParameters(_TypeParameters);
         }
+
+        /// <inheritdoc />
+        public override void Accept<T>(IRootStatementVisitor<T> visitor)
+            => visitor.VisitInterfaceDeclaration(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(IModuleMemberVisitor<T> visitor)
+            => visitor.VisitInterfaceDeclaration(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(INamespaceMemberVisitor<T> visitor)
+            => visitor.VisitInterfaceDeclaration(this);
     }
 }

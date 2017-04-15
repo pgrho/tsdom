@@ -8,6 +8,7 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
+using E = Shipwreck.TypeScriptModels.Expressions;
 using D = Shipwreck.TypeScriptModels.Declarations;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
@@ -35,6 +36,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             b.DecompileMethodBodies = true;
 
             b.AddType(ad.MainModule.GetType(clrType.FullName));
+            b.RunTransformations();
 
             b.SyntaxTree.AcceptVisitor(this, "temp").Count();
         }
@@ -87,12 +89,47 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, string data)
         {
-            throw new NotImplementedException();
+            var d = new D.Decorator();
+            d.Name = GetTypeName(attribute.Type);
+
+            foreach (var c in attribute.Children)
+            {
+                if (c is SimpleType)
+                {
+                    continue;
+                }
+                else
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        d.Parameters.Add((Expression)cr);
+                    }
+                }
+            }
+
+            yield return d;
+        }
+
+
+        private string GetTypeName(AstType type)
+        {
+            var tr = type.Annotations.OfType<TypeReference>()?.FirstOrDefault();
+            if (tr != null)
+            {
+                return tr.FullName;
+            }
+            return ((SimpleType)type).Identifier;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, string data)
         {
-            throw new NotImplementedException();
+            foreach (var c in attributeSection.Children)
+            {
+                foreach (var cr in c.AcceptVisitor(this, data))
+                {
+                    yield return cr;
+                }
+            }
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, string data)
@@ -445,7 +482,29 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, string data)
         {
-            throw new NotImplementedException();
+            if (primitiveExpression.Value == null)
+            {
+                yield return new E.NullExpression();
+            }
+            else
+            {
+                var sv = primitiveExpression.Value as string;
+                if (sv != null)
+                {
+                    yield return new E.StringExpression() { Value = sv };
+                }
+                else if (primitiveExpression.Value is bool)
+                {
+                    yield return new E.BooleanExpression() { Value = (bool)primitiveExpression.Value };
+                }
+                else
+                {
+                    yield return new E.NumberExpression()
+                    {
+                        Value = Convert.ToDouble(primitiveExpression.Value)
+                    };
+                }
+            }
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPrimitiveType(PrimitiveType primitiveType, string data)

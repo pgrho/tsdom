@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public sealed class Parameter
+    public sealed class Parameter : Syntax
     {
         public AccessibilityModifier Accessibility { get; set; }
         public string ParameterName { get; set; }

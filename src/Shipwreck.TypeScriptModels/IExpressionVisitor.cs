@@ -7,6 +7,10 @@ using Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels
 {
+    /// <summary>
+    /// Represents a visitor for expression trees that returns a value of <see cref="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the return value.</typeparam>
     public interface IExpressionVisitor<T>
     {
         // 4.2

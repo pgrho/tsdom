@@ -89,8 +89,18 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         #endregion Decorators
 
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The class member visitor to visit this node with.</param>
         public abstract void Accept<T>(IClassMemberVisitor<T> visitor);
 
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="visitor">The interface member visitor to visit this node with.</param>
         public abstract void Accept<T>(IInterfaceMemberVisitor<T> visitor);
     }
 }

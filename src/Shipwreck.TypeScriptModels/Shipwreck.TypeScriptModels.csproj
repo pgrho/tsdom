@@ -54,12 +54,16 @@
     <Compile Include="Declarations\IClassMemberVisitor.cs" />
     <Compile Include="Declarations\IModuleDeclaration.cs" />
     <Compile Include="Declarations\IModuleMember.cs" />
+    <Compile Include="Declarations\IModuleMemberVisitor.cs" />
     <Compile Include="Declarations\INamespaceMember.cs" />
+    <Compile Include="Declarations\INamespaceMemberVisitor.cs" />
     <Compile Include="Declarations\IndexSignature.cs" />
     <Compile Include="Declarations\InterfaceDeclaration.cs" />
     <Compile Include="Declarations\ClassDeclaration.cs" />
     <Compile Include="CollectionHelper.cs" />
     <Compile Include="Declarations\EnumDeclaration.cs" />
+    <Compile Include="Declarations\IRootStatement.cs" />
+    <Compile Include="Declarations\IRootStatementVisitor.cs" />
     <Compile Include="Declarations\ITypeDeclaration.cs" />
     <Compile Include="Declarations\MethodDeclaration.cs" />
     <Compile Include="Declarations\MethodSignature.cs" />

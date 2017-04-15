@@ -12,7 +12,7 @@ using Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public class TypeScriptWriter : IExpressionVisitor<int>, IStatementVistor<int>
+    public class TypeScriptWriter : IExpressionVisitor<int>, IStatementVistor<int>, IModuleMemberVisitor<int>, INamespaceMemberVisitor<int>, IRootStatementVisitor<int>
     {
         private sealed class ClassMemberVisitor : IClassMemberVisitor<int>
         {
@@ -959,6 +959,7 @@ namespace Shipwreck.TypeScriptModels
 
         private int VisitFunction(FunctionDeclaration member)
         {
+            // TODO: 
             if (member.HasOverload)
             {
                 foreach (var ov in member.Overloads)
@@ -1002,36 +1003,51 @@ namespace Shipwreck.TypeScriptModels
 
         #endregion 6.1 Function Declarations
 
-        // 7.1
-        private int VisitInterface(InterfaceDeclaration member)
-        {
-            WriteIsDeclare(member.IsDeclare);
-            WriteIsExport(member.IsExport);
-            _Writer.Write("interface ");
-            _Writer.Write(member.Name);
+        #region Module Member
 
-            if (member.HasTypeParameter)
+
+
+
+        // 7.1
+
+        int IRootStatementVisitor<int>.VisitInterfaceDeclaration(InterfaceDeclaration declaration)
+          => WriteInterfaceDeclaration(declaration);
+
+        int IModuleMemberVisitor<int>.VisitInterfaceDeclaration(InterfaceDeclaration declaration)
+            => WriteInterfaceDeclaration(declaration);
+
+        int INamespaceMemberVisitor<int>.VisitInterfaceDeclaration(InterfaceDeclaration declaration)
+            => WriteInterfaceDeclaration(declaration);
+
+        private int WriteInterfaceDeclaration(InterfaceDeclaration declaration)
+        {
+            WriteIsDeclare(declaration.IsDeclare);
+            WriteIsExport(declaration.IsExport);
+            _Writer.Write("interface ");
+            _Writer.Write(declaration.Name);
+
+            if (declaration.HasTypeParameter)
             {
-                _Writer.WriteTypeParameters(member.TypeParameters);
+                _Writer.WriteTypeParameters(declaration.TypeParameters);
             }
-            if (member.HasBaseType)
+            if (declaration.HasBaseType)
             {
-                for (int i = 0; i < member.BaseTypes.Count; i++)
+                for (int i = 0; i < declaration.BaseTypes.Count; i++)
                 {
                     _Writer.Write(i == 0 ? " : " : ", ");
-                    member.BaseTypes[i].WriteTypeReference(_Writer);
+                    declaration.BaseTypes[i].WriteTypeReference(_Writer);
                 }
             }
 
             _Writer.WriteLine(" {");
 
-            if (member.HasMember)
+            if (declaration.HasMember)
             {
                 _Writer.Indent++;
                 var cv = new InterfaceMemberVisitor(this, false);
-                for (var i = 0; i < member.Members.Count; i++)
+                for (var i = 0; i < declaration.Members.Count; i++)
                 {
-                    member.Members[i].Accept(cv);
+                    declaration.Members[i].Accept(cv);
                     _Writer.WriteLine(';');
                 }
                 _Writer.Indent--;
@@ -1042,47 +1058,56 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 8.1
-        private int VisitClassDeclaration(ClassDeclaration member)
+        int IRootStatementVisitor<int>.VisitClassDeclaration(ClassDeclaration declaration)
+          => WriteClassDeclaration(declaration);
+
+        int IModuleMemberVisitor<int>.VisitClassDeclaration(ClassDeclaration declaration)
+            => WriteClassDeclaration(declaration);
+
+        int INamespaceMemberVisitor<int>.VisitClassDeclaration(ClassDeclaration declaration)
+            => WriteClassDeclaration(declaration);
+
+        private int WriteClassDeclaration(ClassDeclaration declaration)
         {
-            WriteIsDeclare(member.IsDeclare);
-            WriteIsExport(member.IsExport);
-            WriteIsDefault(member.IsDefault);
-            if (member.IsAbstract)
+            WriteIsDeclare(declaration.IsDeclare);
+            WriteIsExport(declaration.IsExport);
+            WriteIsDefault(declaration.IsDefault);
+            if (declaration.IsAbstract)
             {
                 _Writer.Write("abstract ");
             }
             _Writer.Write("class ");
-            _Writer.Write(member.Name);
+            _Writer.Write(declaration.Name);
 
-            if (member.HasTypeParameter)
+            if (declaration.HasTypeParameter)
             {
-                _Writer.WriteTypeParameters(member.TypeParameters);
+                _Writer.WriteTypeParameters(declaration.TypeParameters);
             }
 
-            if (member.BaseType != null)
+            if (declaration.BaseType != null)
             {
                 _Writer.Write(" extends ");
-                member.BaseType.WriteTypeReference(_Writer);
+                declaration.BaseType.WriteTypeReference(_Writer);
             }
 
-            if (member.HasInterface)
+            if (declaration.HasInterface)
             {
-                for (int i = 0; i < member.Interface.Count; i++)
+                for (int i = 0; i < declaration.Interface.Count; i++)
                 {
                     _Writer.Write(i == 0 ? " implements " : ", ");
-                    member.Interface[i].WriteTypeReference(_Writer);
+                    declaration.Interface[i].WriteTypeReference(_Writer);
                 }
             }
 
             _Writer.WriteLine(" {");
 
-            if (member.HasMember)
+            if (declaration.HasMember)
             {
                 _Writer.Indent++;
-                var cv = new ClassMemberVisitor(this, member.IsDeclare);
-                for (var i = 0; i < member.Members.Count; i++)
+                var cv = new ClassMemberVisitor(this, declaration.IsDeclare);
+                for (var i = 0; i < declaration.Members.Count; i++)
                 {
-                    member.Members[i].Accept(cv);
+                    declaration.Members[i].Accept(cv);
                     _Writer.WriteLine(';');
                 }
                 _Writer.Indent--;
@@ -1093,7 +1118,16 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 9.1
-        private int VisitEnumDeclaration(EnumDeclaration member)
+        int IRootStatementVisitor<int>.VisitEnumDeclaration(EnumDeclaration declaration)
+            => WriteEnumDeclaration(declaration);
+
+        int IModuleMemberVisitor<int>.VisitEnumDeclaration(EnumDeclaration declaration)
+            => WriteEnumDeclaration(declaration);
+
+        int INamespaceMemberVisitor<int>.VisitEnumDeclaration(EnumDeclaration declaration)
+            => WriteEnumDeclaration(declaration);
+
+        private int WriteEnumDeclaration(EnumDeclaration member)
         {
             WriteIsDeclare(member.IsDeclare);
             WriteIsExport(member.IsExport);
@@ -1131,6 +1165,8 @@ namespace Shipwreck.TypeScriptModels
 
             return 0;
         }
+
+        #endregion
 
         #region Member
 
@@ -1341,8 +1377,6 @@ namespace Shipwreck.TypeScriptModels
 
         #endregion Member
 
-        #endregion Declarations
-
         private void WriteDecorators(Collection<Decorator> decorators, bool inline)
         {
             foreach (var d in decorators)
@@ -1430,5 +1464,48 @@ namespace Shipwreck.TypeScriptModels
             _Writer.Write(')');
         }
 
+        #endregion Declarations
+
+
+        int IRootStatementVisitor<int>.VisitModuleDeclaration(ModuleDeclaration module)
+        {
+            WriteIsDeclare(module.IsDeclare);
+            WriteIsExport(module.IsExport);
+            _Writer.Write("module ");
+            _Writer.Write(module.Name);
+            _Writer.WriteLine(" {");
+            if (module.HasMember)
+            {
+                _Writer.Indent++;
+                foreach (var m in module.Members)
+                {
+                    m.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
+        int IRootStatementVisitor<int>.VisitNamespaceDeclaration(NamespaceDeclaration module)
+        {
+            WriteIsDeclare(module.IsDeclare);
+            WriteIsExport(module.IsExport);
+            _Writer.Write("module ");
+            _Writer.Write(module.Name);
+            _Writer.WriteLine(" {");
+            if (module.HasMember)
+            {
+                _Writer.Indent++;
+                foreach (var m in module.Members)
+                {
+                    m.Accept(this);
+                }
+                _Writer.Indent--;
+            }
+            _Writer.WriteLine('}');
+
+            return 0;
+        }
     }
 }
