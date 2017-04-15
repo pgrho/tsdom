@@ -8,6 +8,6 @@ namespace Shipwreck.TypeScriptModels
 {
     public abstract class Statement : Syntax
     {
-        public abstract T Accept<T>(IStatementVistor<T> visitor);
+        public abstract T Accept<T>(IStatementVisitor<T> visitor);
     }
 }

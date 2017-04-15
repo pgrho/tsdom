@@ -11,7 +11,7 @@ using Shipwreck.TypeScriptModels.Expressions;
 namespace Shipwreck.TypeScriptModels.Declarations
 {
     // 8.4.1
-    public sealed class FieldDeclaration : IClassMember, IInterfaceMember
+    public sealed class FieldDeclaration : Syntax, IClassMember, IInterfaceMember
     {
         /// <summary>
         /// Gets or sets the value representing the accessibility modifier of the field.

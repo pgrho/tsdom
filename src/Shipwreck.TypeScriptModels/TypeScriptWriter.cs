@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public class TypeScriptWriter : IDisposable, IExpressionVisitor<int>, IStatementVistor<int>, IModuleMemberVisitor<int>, INamespaceMemberVisitor<int>, IRootStatementVisitor<int>
+    public class TypeScriptWriter : IDisposable, IExpressionVisitor<int>, IStatementVisitor<int>, IModuleMemberVisitor<int>, INamespaceMemberVisitor<int>, IRootStatementVisitor<int>
     {
         private sealed class ClassMemberVisitor : IClassMemberVisitor<int>
         {
@@ -32,7 +32,6 @@ namespace Shipwreck.TypeScriptModels
             int IClassMemberVisitor<int>.VisitField(FieldDeclaration member)
             {
                 _Writer.WriteField(member);
-                _Writer._Writer.WriteLine(';');
                 return 0;
             }
 
@@ -430,7 +429,7 @@ namespace Shipwreck.TypeScriptModels
         // 4.13
         int IExpressionVisitor<int>.VisitProperty(PropertyExpression property)
         {
-            property.Accept(this);
+            property.Object.Accept(this);
             if (property.IsValidIdentifier)
             {
                 _Writer.Write('.');
@@ -641,7 +640,7 @@ namespace Shipwreck.TypeScriptModels
         #region IStatementVisitor<int>
 
         // 5.2
-        int IStatementVistor<int>.VisitVariableDeclaration(VariableDeclaration statement)
+        int IStatementVisitor<int>.VisitVariableDeclaration(VariableDeclaration statement)
         {
             if (statement.HasBinding)
             {
@@ -695,7 +694,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.4
-        int IStatementVistor<int>.VisitIf(IfStatement statement)
+        int IStatementVisitor<int>.VisitIf(IfStatement statement)
         {
             _Writer.Write("if (");
             statement.Condition.Accept(this);
@@ -743,7 +742,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.4
-        int IStatementVistor<int>.VisitDo(DoStatement statement)
+        int IStatementVisitor<int>.VisitDo(DoStatement statement)
         {
             _Writer.WriteLine("do {");
 
@@ -765,7 +764,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.4
-        int IStatementVistor<int>.VisitWhile(WhileStatement statement)
+        int IStatementVisitor<int>.VisitWhile(WhileStatement statement)
         {
             _Writer.Write("while (");
             statement.Condition.Accept(this);
@@ -787,7 +786,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.5
-        int IStatementVistor<int>.VisitFor(ForStatement statement)
+        int IStatementVisitor<int>.VisitFor(ForStatement statement)
         {
             _Writer.Write("for (");
             WriteForInitializer(statement.Initializer);
@@ -832,7 +831,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.6
-        int IStatementVistor<int>.VisitForIn(ForInStatement statement)
+        int IStatementVisitor<int>.VisitForIn(ForInStatement statement)
         {
             _Writer.Write("for (");
             WriteForInitializer(statement.Variable);
@@ -856,7 +855,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.7
-        int IStatementVistor<int>.VisitForOf(ForOfStatement statement)
+        int IStatementVisitor<int>.VisitForOf(ForOfStatement statement)
         {
             _Writer.Write("for (");
             WriteForInitializer(statement.Variable);
@@ -880,21 +879,21 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.8
-        int IStatementVistor<int>.VisitContinue(ContinueStatement statement)
+        int IStatementVisitor<int>.VisitContinue(ContinueStatement statement)
         {
             _Writer.WriteLine("continue;");
             return 0;
         }
 
         // 5.9
-        int IStatementVistor<int>.VisitBreak(BreakStatement statement)
+        int IStatementVisitor<int>.VisitBreak(BreakStatement statement)
         {
             _Writer.WriteLine("break;");
             return 0;
         }
 
         // 5.10
-        int IStatementVistor<int>.VisitReturn(ReturnStatement statement)
+        int IStatementVisitor<int>.VisitReturn(ReturnStatement statement)
         {
             _Writer.Write("return");
             if (statement.Value != null)
@@ -907,13 +906,13 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.11
-        int IStatementVistor<int>.VisitWith(WithStatement statement)
+        int IStatementVisitor<int>.VisitWith(WithStatement statement)
         {
             throw new NotImplementedException("WithStatement is not supported in TypeScript.");
         }
 
         // 5.12
-        int IStatementVistor<int>.VisitSwitch(SwitchStatement statement)
+        int IStatementVisitor<int>.VisitSwitch(SwitchStatement statement)
         {
             _Writer.Write("swtch (");
             statement.Condition.Accept(this);
@@ -953,7 +952,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.13
-        int IStatementVistor<int>.VisitThrow(ThrowStatement statement)
+        int IStatementVisitor<int>.VisitThrow(ThrowStatement statement)
         {
             _Writer.Write("throw ");
             statement.Value.Accept(this);
@@ -963,7 +962,7 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 5.14
-        int IStatementVistor<int>.VisitTry(TryStatement statement)
+        int IStatementVisitor<int>.VisitTry(TryStatement statement)
         {
             _Writer.WriteLine("try {");
 
@@ -1018,6 +1017,17 @@ namespace Shipwreck.TypeScriptModels
                 _Writer.WriteLine('}');
             }
 
+            return 0;
+        }
+
+        // 定義なし
+        int IStatementVisitor<int>.VisitExpression(ExpressionStatement expressionStatement)
+        {
+            if (expressionStatement.Expression != null)
+            {
+                expressionStatement.Expression.Accept(this);
+            }
+            _Writer.WriteLine(';');
             return 0;
         }
 
@@ -1241,7 +1251,6 @@ namespace Shipwreck.TypeScriptModels
                 for (var i = 0; i < declaration.Members.Count; i++)
                 {
                     declaration.Members[i].Accept(cv);
-                    _Writer.WriteLine(';');
                 }
                 _Writer.Indent--;
             }
@@ -1415,8 +1424,9 @@ namespace Shipwreck.TypeScriptModels
             }
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
+            _Writer.Write("get ");
             _Writer.Write(member.PropertyName);
-            _Writer.Write(" get()");
+            _Writer.Write("()");
             if (member.PropertyType != null)
             {
                 _Writer.Write(": ");
@@ -1446,8 +1456,9 @@ namespace Shipwreck.TypeScriptModels
             }
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
+            _Writer.Write("set ");
             _Writer.Write(member.PropertyName);
-            _Writer.Write(" set(");
+            _Writer.Write("(");
             _Writer.Write(member.ParameterName);
             _Writer.Write(": ");
             member.PropertyType.WriteTypeReference(_Writer);

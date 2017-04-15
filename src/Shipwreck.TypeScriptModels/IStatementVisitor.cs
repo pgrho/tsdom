@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shipwreck.TypeScriptModels.Statements;
+﻿using Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public interface IStatementVistor<T>
+    public interface IStatementVisitor<T>
     {
-        // 5.2
-        // 5.3
+        // 5.2 5.3
         T VisitVariableDeclaration(VariableDeclaration statement);
 
         // 5.4
@@ -51,5 +45,8 @@ namespace Shipwreck.TypeScriptModels
 
         // 5.14
         T VisitTry(TryStatement statement);
+
+        // 定義なし
+        T VisitExpression(ExpressionStatement expressionStatement);
     }
 }

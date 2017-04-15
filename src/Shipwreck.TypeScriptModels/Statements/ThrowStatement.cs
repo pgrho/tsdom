@@ -11,7 +11,7 @@ namespace Shipwreck.TypeScriptModels.Statements
     {
         public Expression Value { get; set; }
 
-        public override T Accept<T>(IStatementVistor<T> visitor)
+        public override T Accept<T>(IStatementVisitor<T> visitor)
             => visitor.VisitThrow(this);
     }
 }

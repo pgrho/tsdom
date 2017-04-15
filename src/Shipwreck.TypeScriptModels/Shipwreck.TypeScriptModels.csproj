@@ -99,11 +99,12 @@
     <Compile Include="Expressions\TypeAssertionExpression.cs" />
     <Compile Include="Expressions\UnaryExpression.cs" />
     <Compile Include="Expressions\UnaryOperator.cs" />
-    <Compile Include="IStatementVistor.cs" />
+    <Compile Include="IStatementVisitor.cs" />
     <Compile Include="Statement.cs" />
     <Compile Include="Statements\BreakStatement.cs" />
     <Compile Include="Statements\ContinueStatement.cs" />
     <Compile Include="Statements\DoStatement.cs" />
+    <Compile Include="Statements\ExpressionStatement.cs" />
     <Compile Include="Statements\ForInStatement.cs" />
     <Compile Include="Statements\ForOfStatement.cs" />
     <Compile Include="Statements\ForStatement.cs" />

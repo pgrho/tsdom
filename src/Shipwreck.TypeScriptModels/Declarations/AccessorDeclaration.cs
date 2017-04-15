@@ -9,7 +9,7 @@ using Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class AccessorDeclaration : IClassMember, IInterfaceMember
+    public abstract class AccessorDeclaration : Syntax, IClassMember, IInterfaceMember
     {
         /// <summary>
         /// Gets or sets the value representing the accessibility modifier of the property.

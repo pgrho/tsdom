@@ -65,7 +65,7 @@ namespace Shipwreck.TypeScriptModels.Statements
 
         #endregion Bindings
 
-        public override T Accept<T>(IStatementVistor<T> visitor)
+        public override T Accept<T>(IStatementVisitor<T> visitor)
             => visitor.VisitVariableDeclaration(this);
     }
 }

@@ -41,7 +41,7 @@ namespace Shipwreck.TypeScriptModels.Statements
             }
         }
 
-        public override T Accept<T>(IStatementVistor<T> visitor)
+        public override T Accept<T>(IStatementVisitor<T> visitor)
             => visitor.VisitIf(this);
     }
 }
