@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class FunctionDeclarationBase : ICallSignature
+    public abstract class FunctionDeclarationBase : Syntax, ICallSignature
     {
         #region Overloads
 

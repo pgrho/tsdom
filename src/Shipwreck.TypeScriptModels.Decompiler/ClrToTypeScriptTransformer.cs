@@ -64,6 +64,270 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return m;
         }
 
+        #region 名前空間レベル
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, string data)
+        {
+            var ns = ResolveModule(data, namespaceDeclaration.FullName);
+            foreach (var c in namespaceDeclaration.Children)
+            {
+                if (c is MemberType)
+                {
+                    continue;
+                }
+                if (c is NamespaceDeclaration)
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        yield return cr;
+                    }
+                }
+                else
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        ns.Members.Add(cr);
+                    }
+                }
+            }
+
+            yield return (Syntax)ns;
+        }
+
+        #endregion
+        #region 型レベル
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, string data)
+        {
+            D.ITypeDeclaration td;
+            switch (typeDeclaration.ClassType)
+            {
+                case ClassType.Class:
+                    td = new D.ClassDeclaration()
+                    {
+                        IsAbstract = typeDeclaration.HasModifier(Modifiers.Abstract)
+                    };
+                    break;
+
+                case ClassType.Struct:
+                    td = new D.ClassDeclaration();
+                    break;
+
+                case ClassType.Interface:
+                    td = new D.InterfaceDeclaration();
+                    break;
+
+                case ClassType.Enum:
+                    td = new D.EnumDeclaration();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+            td.Name = typeDeclaration.Name;
+            td.IsExport = typeDeclaration.HasModifier(Modifiers.Public);
+
+            foreach (var c in typeDeclaration.Children)
+            {
+                if (c is CSharpModifierToken)
+                {
+                    continue;
+                }
+                else if (c is Identifier)
+                {
+                    continue;
+                }
+                else if (c is AttributeSection)
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        td.Decorators.Add((D.Decorator)cr);
+                    }
+                }
+                else
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        td.Members.Add(cr);
+                    }
+                }
+            }
+
+            yield return (Syntax)td;
+        }
+
+        #endregion
+
+        private Collection<D.Decorator> GetDecorators(IEnumerable<AttributeSection> section, string data)
+        {
+            Collection<D.Decorator> c = null;
+            foreach (var s in section)
+            {
+                foreach (var a in s.Attributes)
+                {
+                    foreach (D.Decorator d in a.AcceptVisitor(this, data))
+                    {
+                        (c ?? (c = new Collection<D.Decorator>())).Add(d);
+                    }
+                }
+            }
+            return c;
+        }
+
+        #region メンバーレベル
+
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, string data)
+        {
+            // TODO: オーバーロード
+
+            var md = new D.MethodDeclaration();
+            md.Decorators = GetDecorators(methodDeclaration.Attributes, data);
+            md.Accessibility = GetAccessibility(methodDeclaration.Modifiers);
+            md.IsStatic = methodDeclaration.HasModifier(Modifiers.Static);
+            md.IsAbstract = methodDeclaration.HasModifier(Modifiers.Abstract);
+
+            md.MethodName = methodDeclaration.Name;
+
+            foreach (var p in methodDeclaration.TypeParameters)
+            {
+                // TODO: ジェネリクス
+            }
+
+            foreach (var p in methodDeclaration.Parameters)
+            {
+                var dp = new D.Parameter()
+                {
+                    ParameterName = p.Name,
+                };
+                bool op;
+                dp.ParameterType = GetTypeReference(p.Type, out op);
+
+                dp.Decorators = GetDecorators(p.Attributes, data);
+
+                if (p.DefaultExpression?.IsNull == false)
+                {
+                    dp.Initializer = (Expression)p.DefaultExpression.AcceptVisitor(this, data).LastOrDefault();
+                }
+                dp.IsOptional = op || dp.Initializer != null;
+
+                md.Parameters.Add(dp);
+            }
+            md.ReturnType = GetTypeReference(methodDeclaration.ReturnType);
+
+            if (methodDeclaration.Body.IsNull)
+            {
+                md.Statements = GetStatements(data, methodDeclaration.Body);
+            }
+
+            yield return md;
+        }
+
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, string data)
+        {
+            var acc = GetAccessibility(propertyDeclaration.Modifiers);
+            var tr = GetTypeReference(propertyDeclaration.ReturnType);
+
+            // TODO: デコレーター
+
+            // TODO: virtualの場合メソッドを生成する
+            //if (propertyDeclaration.HasModifier(Modifiers.Abstract) || propertyDeclaration.HasModifier(Modifiers.Virtual))
+            //{
+
+            //}
+            //else
+            if (propertyDeclaration.Getter.IsNull
+                    || propertyDeclaration.Getter.HasChildren
+                    || propertyDeclaration.Setter.IsNull
+                    || propertyDeclaration.Setter.HasChildren)
+            {
+
+                if (propertyDeclaration.Getter.Body.IsNull
+                    && propertyDeclaration.Setter.Body.IsNull)
+                {
+                    var pd = new D.FieldDeclaration();
+                    pd.Accessibility = D.AccessibilityModifier.Private;
+                    pd.FieldName = "__" + propertyDeclaration.Name;
+                    pd.FieldType = tr;
+
+                    yield return pd;
+                }
+
+                if (!propertyDeclaration.Getter.IsNull)
+                {
+                    var getter = new D.GetAccessorDeclaration();
+                    getter.Accessibility = propertyDeclaration.Getter.Modifiers != Modifiers.None ? GetAccessibility(propertyDeclaration.Getter.Modifiers) : acc;
+                    getter.PropertyName = propertyDeclaration.Name;
+                    getter.PropertyType = tr;
+
+                    if (propertyDeclaration.Getter.Body.IsNull)
+                    {
+                        getter.Statements.Add(new S.ReturnStatement()
+                        {
+                            Value = new E.PropertyExpression()
+                            {
+                                Object = new E.ThisExpression(),
+                                Property = "__" + propertyDeclaration.Name
+                            }
+                        });
+                    }
+                    else
+                    {
+                        getter.Statements = GetStatements(data, propertyDeclaration.Getter.Body);
+                    }
+
+                    yield return getter;
+                }
+
+                if (!propertyDeclaration.Setter.IsNull)
+                {
+                    var setter = new D.SetAccessorDeclaration();
+                    setter.Accessibility = propertyDeclaration.Setter.Modifiers != Modifiers.None ? GetAccessibility(propertyDeclaration.Setter.Modifiers) : acc;
+                    setter.PropertyName = propertyDeclaration.Name;
+                    setter.PropertyType = tr;
+                    setter.ParameterName = "value";
+
+                    if (propertyDeclaration.Setter.Body.IsNull)
+                    {
+                        setter.Statements.Add(new S.ExpressionStatement()
+                        {
+                            Expression = new E.AssignmentExpression()
+                            {
+                                Target = new E.PropertyExpression()
+                                {
+                                    Object = new E.ThisExpression(),
+                                    Property = "__" + propertyDeclaration.Name
+                                },
+                                Value = new E.IdentifierExpression()
+                                {
+                                    Name = "value"
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        setter.Statements = GetStatements(data, propertyDeclaration.Setter.Body);
+                    }
+
+                    yield return setter;
+                }
+            }
+            else
+            {
+                var pd = new D.FieldDeclaration();
+                pd.Accessibility = acc;
+                pd.FieldName = propertyDeclaration.Name;
+                pd.FieldType = tr;
+
+                yield return pd;
+            }
+        }
+
+
+        #endregion
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, string data)
         {
             throw new NotImplementedException();
@@ -404,11 +668,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, string data)
         {
             throw new NotImplementedException();
@@ -417,34 +676,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamedExpression(NamedExpression namedExpression, string data)
         {
             throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, string data)
-        {
-            var ns = ResolveModule(data, namespaceDeclaration.FullName);
-            foreach (var c in namespaceDeclaration.Children)
-            {
-                if (c is MemberType)
-                {
-                    continue;
-                }
-                if (c is NamespaceDeclaration)
-                {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        yield return cr;
-                    }
-                }
-                else
-                {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        ns.Members.Add(cr);
-                    }
-                }
-            }
-
-            yield return (Syntax)ns;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNewLine(NewLineNode newLineNode, string data)
@@ -529,105 +760,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, string data)
-        {
-            var acc = GetAccessibility(propertyDeclaration.Modifiers);
-            var tr = GetTypeReference(propertyDeclaration.ReturnType);
-
-            // TODO: virtualの場合メソッドを生成する
-            //if (propertyDeclaration.HasModifier(Modifiers.Abstract) || propertyDeclaration.HasModifier(Modifiers.Virtual))
-            //{
-
-            //}
-            //else
-            if (propertyDeclaration.Getter.IsNull
-                    || propertyDeclaration.Getter.HasChildren
-                    || propertyDeclaration.Setter.IsNull
-                    || propertyDeclaration.Setter.HasChildren)
-            {
-
-                if (propertyDeclaration.Getter.Body.IsNull
-                    && propertyDeclaration.Setter.Body.IsNull)
-                {
-                    var pd = new D.FieldDeclaration();
-                    pd.Accessibility = D.AccessibilityModifier.Private;
-                    pd.FieldName = "__" + propertyDeclaration.Name;
-                    pd.FieldType = tr;
-
-                    yield return pd;
-                }
-
-                if (!propertyDeclaration.Getter.IsNull)
-                {
-                    var getter = new D.GetAccessorDeclaration();
-                    getter.Accessibility = propertyDeclaration.Getter.Modifiers != Modifiers.None ? GetAccessibility(propertyDeclaration.Getter.Modifiers) : acc;
-                    getter.PropertyName = propertyDeclaration.Name;
-                    getter.PropertyType = tr;
-
-                    if (propertyDeclaration.Getter.Body.IsNull)
-                    {
-                        getter.Statements.Add(new S.ReturnStatement()
-                        {
-                            Value = new E.PropertyExpression()
-                            {
-                                Object = new E.ThisExpression(),
-                                Property = "__" + propertyDeclaration.Name
-                            }
-                        });
-                    }
-                    else
-                    {
-                        getter.Statements = GetStatements(data, propertyDeclaration.Getter.Body);
-                    }
-
-                    yield return getter;
-                }
-
-                if (!propertyDeclaration.Setter.IsNull)
-                {
-                    var setter = new D.SetAccessorDeclaration();
-                    setter.Accessibility = propertyDeclaration.Setter.Modifiers != Modifiers.None ? GetAccessibility(propertyDeclaration.Setter.Modifiers) : acc;
-                    setter.PropertyName = propertyDeclaration.Name;
-                    setter.PropertyType = tr;
-                    setter.ParameterName = "value";
-
-                    if (propertyDeclaration.Setter.Body.IsNull)
-                    {
-                        setter.Statements.Add(new S.ExpressionStatement()
-                        {
-                            Expression = new E.AssignmentExpression()
-                            {
-                                Target = new E.PropertyExpression()
-                                {
-                                    Object = new E.ThisExpression(),
-                                    Property = "__" + propertyDeclaration.Name
-                                },
-                                Value = new E.IdentifierExpression()
-                                {
-                                    Name = "value"
-                                }
-                            }
-                        });
-                    }
-                    else
-                    {
-                        setter.Statements = GetStatements(data, propertyDeclaration.Setter.Body);
-                    }
-
-                    yield return setter;
-                }
-            }
-            else
-            {
-                var pd = new D.FieldDeclaration();
-                pd.Accessibility = acc;
-                pd.FieldName = propertyDeclaration.Name;
-                pd.FieldType = tr;
-
-                yield return pd;
-            }
-        }
-
         private Collection<Statement> GetStatements(string data, BlockStatement body)
         {
             Collection<Statement> sts = null;
@@ -699,6 +831,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 switch (pt.Keyword)
                 {
+                    case "void":
+                        return D.PredefinedType.Void;
+
                     case "bool":
                         isOptional = false;
                         return D.PredefinedType.Boolean;
@@ -719,6 +854,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                     case "string":
                         return D.PredefinedType.String;
+
+                    default:
+                        throw new NotImplementedException();
                 }
             }
 
@@ -847,65 +985,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTryCatchStatement(TryCatchStatement tryCatchStatement, string data)
         {
             throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, string data)
-        {
-            D.ITypeDeclaration td;
-            switch (typeDeclaration.ClassType)
-            {
-                case ClassType.Class:
-                    td = new D.ClassDeclaration()
-                    {
-                        IsAbstract = typeDeclaration.HasModifier(Modifiers.Abstract)
-                    };
-                    break;
-
-                case ClassType.Struct:
-                    td = new D.ClassDeclaration();
-                    break;
-
-                case ClassType.Interface:
-                    td = new D.InterfaceDeclaration();
-                    break;
-
-                case ClassType.Enum:
-                    td = new D.EnumDeclaration();
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-            td.Name = typeDeclaration.Name;
-            td.IsExport = typeDeclaration.HasModifier(Modifiers.Public);
-
-            foreach (var c in typeDeclaration.Children)
-            {
-                if (c is CSharpModifierToken)
-                {
-                    continue;
-                }
-                else if (c is Identifier)
-                {
-                    continue;
-                }
-                else if (c is AttributeSection)
-                {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        td.Decorators.Add((D.Decorator)cr);
-                    }
-                }
-                else
-                {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        td.Members.Add(cr);
-                    }
-                }
-            }
-
-            yield return (Syntax)td;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeOfExpression(TypeOfExpression typeOfExpression, string data)

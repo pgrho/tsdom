@@ -1065,6 +1065,14 @@ namespace Shipwreck.TypeScriptModels
             }
         }
 
+        private void WriteIsAbstract(bool isStatic)
+        {
+            if (isStatic)
+            {
+                _Writer.Write("abstract ");
+            }
+        }
+
         #region Declarations
 
         #region 6.1 Function Declarations
@@ -1215,10 +1223,7 @@ namespace Shipwreck.TypeScriptModels
             WriteIsDeclare(declaration.IsDeclare);
             WriteIsExport(declaration.IsExport);
             WriteIsDefault(declaration.IsDefault);
-            if (declaration.IsAbstract)
-            {
-                _Writer.Write("abstract ");
-            }
+            WriteIsAbstract(declaration.IsAbstract);
             _Writer.Write("class ");
             _Writer.Write(declaration.Name);
 
@@ -1515,6 +1520,7 @@ namespace Shipwreck.TypeScriptModels
         {
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
+            WriteIsAbstract(member.IsAbstract);
             _Writer.Write(member.MethodName);
             WriteCallSignature(signature ?? member);
         }

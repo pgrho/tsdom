@@ -20,6 +20,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             get { return 0; }
             set { }
         }
+
+
+        private void Method1(bool b, int n, string s)
+        {
+        }
     }
 
     [TestClass]

@@ -26,6 +26,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
         public bool IsStatic { get; set; }
 
         /// <summary>
+        /// Gets or sets the value indicating whether the method has a <c>abstract</c> modifier.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsAbstract { get; set; }
+
+        /// <summary>
         /// Gets or sets the binding identifier of this method.
         /// </summary>
         [DefaultValue(null)]
