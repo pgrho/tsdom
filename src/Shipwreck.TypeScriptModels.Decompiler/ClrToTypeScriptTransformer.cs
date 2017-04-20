@@ -270,6 +270,44 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region メンバーレベル
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, string data)
+        {
+            var bfd = new D.FieldDeclaration();
+            bfd.Accessibility = GetAccessibility(fieldDeclaration.Modifiers);
+            bfd.IsStatic = fieldDeclaration.HasModifier(Modifiers.Static);
+            bfd.FieldName = fieldDeclaration.Name;
+            bfd.FieldType = GetTypeReference(fieldDeclaration.ReturnType);
+
+            yield return bfd;
+
+            if (fieldDeclaration.Variables.Any())
+            {
+                foreach (var v in fieldDeclaration.Variables)
+                {
+                    if (v.Name == bfd.FieldName)
+                    {
+                        if (v.Initializer?.IsNull != false)
+                        {
+                            continue;
+                        }
+                        // TODO: initializer
+                    }
+                    else
+                    {
+                        var fd = new D.FieldDeclaration();
+                        fd.Accessibility = GetAccessibility(fieldDeclaration.Modifiers);
+                        fd.IsStatic = fieldDeclaration.HasModifier(Modifiers.Static);
+                        fd.FieldName = v.Name;
+                        fd.FieldType = GetTypeReference(fieldDeclaration.ReturnType);
+
+                        // TODO: initializer
+
+                        yield return fd;
+                    }
+                }
+            }
+        }
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, string data)
         {
             var cd = new D.ConstructorDeclaration();
@@ -452,7 +490,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 yield return new S.ReturnStatement()
                 {
-                    Value = returnStatement.Expression.AcceptVisitor(this, data).Cast<Expression>().Single()
+                    Value = GetExpression(returnStatement.Expression, data)
                 };
             }
             else
@@ -484,6 +522,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #endregion キーワード
 
+
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, string data)
         {
             var inv = new E.CallExpression();
@@ -500,22 +540,40 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                 inv.Type = new E.PropertyExpression()
                 {
-                    Object = mre.Target?.IsNull == false ? mre.Target.AcceptVisitor(this, data).Cast<Expression>().Single() : null,
+                    Object = GetExpression(mre.Target, data),
                     Property = mre.MemberName
                 };
             }
             else
             {
-                inv.Type = invocationExpression.Target.AcceptVisitor(this, data).Cast<Expression>().Single();
+                inv.Type = GetExpression(invocationExpression.Target, data);
             }
 
             foreach (var p in invocationExpression.Arguments)
             {
-                inv.Parameters.Add(p.AcceptVisitor(this, data).Cast<Expression>().Single());
+                inv.Parameters.Add(GetExpression(p, data));
             }
 
             yield return inv;
         }
+
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, string data)
+        {
+            if (memberReferenceExpression.TypeArguments.Any())
+            {
+                throw new NotImplementedException();
+            }
+
+            yield return new E.PropertyExpression()
+            {
+                Object = GetExpression(memberReferenceExpression.Target, data),
+                Property = memberReferenceExpression.MemberName
+            };
+        }
+
+        private Expression GetExpression(ICSharpCode.NRefactory.CSharp.Expression expression, string data)
+               => expression?.IsNull != false ? null : expression.AcceptVisitor(this, data).Cast<Expression>().Single();
 
         #endregion 式レベル
 
@@ -720,11 +778,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, string data)
         {
             throw new NotImplementedException();
@@ -801,11 +854,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, string data)
         {
             throw new NotImplementedException();
         }

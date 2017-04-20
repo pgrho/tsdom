@@ -10,6 +10,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     [DefaultProperty("property")]
     public abstract class PublicClass
     {
+        private int _IntegerField;
+
         public PublicClass(float n, object obj)
         {
         }
@@ -21,7 +23,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public int ManualInt32Property
         {
-            get { return 0; }
+            get { return _IntegerField; }
             set { }
         }
 
