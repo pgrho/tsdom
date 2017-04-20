@@ -272,39 +272,17 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, string data)
         {
-            var bfd = new D.FieldDeclaration();
-            bfd.Accessibility = GetAccessibility(fieldDeclaration.Modifiers);
-            bfd.IsStatic = fieldDeclaration.HasModifier(Modifiers.Static);
-            bfd.FieldName = fieldDeclaration.Name;
-            bfd.FieldType = GetTypeReference(fieldDeclaration.ReturnType);
-
-            yield return bfd;
-
-            if (fieldDeclaration.Variables.Any())
+            foreach (var v in fieldDeclaration.Variables)
             {
-                foreach (var v in fieldDeclaration.Variables)
-                {
-                    if (v.Name == bfd.FieldName)
-                    {
-                        if (v.Initializer?.IsNull != false)
-                        {
-                            continue;
-                        }
-                        // TODO: initializer
-                    }
-                    else
-                    {
-                        var fd = new D.FieldDeclaration();
-                        fd.Accessibility = GetAccessibility(fieldDeclaration.Modifiers);
-                        fd.IsStatic = fieldDeclaration.HasModifier(Modifiers.Static);
-                        fd.FieldName = v.Name;
-                        fd.FieldType = GetTypeReference(fieldDeclaration.ReturnType);
+                var fd = new D.FieldDeclaration();
+                fd.Accessibility = GetAccessibility(fieldDeclaration.Modifiers);
+                fd.IsStatic = fieldDeclaration.HasModifier(Modifiers.Static);
+                fd.FieldName = v.Name;
+                fd.FieldType = GetTypeReference(fieldDeclaration.ReturnType);
 
-                        // TODO: initializer
+                // TODO: initializer
 
-                        yield return fd;
-                    }
-                }
+                yield return fd;
             }
         }
 
