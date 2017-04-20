@@ -35,11 +35,30 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             where T1 : class, IConvertible, new()
             where T2 : PublicClass
         {
-
         }
 
         private PublicClass This => this;
         private string BaseToString => base.ToString();
+
+        private int UnaryPlus(int a)
+            => +a;
+        private int UnaryMinus(int a)
+            => -a;
+
+        private int BitwiseNot(int a)
+            => ~a;
+
+        private int PrefixIncrement(int a)
+            => ++a;
+
+        private int PrefixDecrement(int a)
+            => --a;
+
+        private int PostfixIncrement(int a)
+            => a++;
+
+        private int PostfixDecrement(int a)
+            => a--;
     }
 
     [TestClass]

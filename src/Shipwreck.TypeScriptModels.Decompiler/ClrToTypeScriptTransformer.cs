@@ -297,7 +297,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 cd.Parameters.Add(p);
             }
 
-            if (constructorDeclaration.Body.IsNull)
+            if (!constructorDeclaration.Body.IsNull)
             {
                 cd.Statements = GetStatements(data, constructorDeclaration.Body);
             }
@@ -329,7 +329,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             md.ReturnType = GetTypeReference(methodDeclaration.ReturnType);
 
-            if (methodDeclaration.Body.IsNull)
+            if (!methodDeclaration.Body.IsNull)
             {
                 md.Statements = GetStatements(data, methodDeclaration.Body);
             }
@@ -462,6 +462,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region ステートメントレベル
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitExpressionStatement(ExpressionStatement expressionStatement, string data)
+        {
+            yield return new S.ExpressionStatement()
+            {
+                Expression = GetExpression(expressionStatement.Expression, data)
+            };
+        }
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitReturnStatement(ReturnStatement returnStatement, string data)
         {
             if (returnStatement.Expression?.IsNull == false)
@@ -498,8 +506,64 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return new E.SuperExpression();
         }
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, string data)
+        {
+            yield return new E.IdentifierExpression()
+            {
+                Name = identifierExpression.Identifier
+            };
+        }
+
         #endregion キーワード
 
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, string data)
+        {
+            var e = new E.UnaryExpression();
+            e.Operand = GetExpression(unaryOperatorExpression.Expression, data);
+            switch (unaryOperatorExpression.Operator)
+            {
+                case UnaryOperatorType.Plus:
+                    e.Operator = E.UnaryOperator.Plus;
+                    break;
+
+                case UnaryOperatorType.Minus:
+                    e.Operator = E.UnaryOperator.Minus;
+                    break;
+
+                case UnaryOperatorType.Increment:
+                    e.Operator = E.UnaryOperator.PrefixIncrement;
+                    break;
+
+                case UnaryOperatorType.PostIncrement:
+                    e.Operator = E.UnaryOperator.PostfixIncrement;
+                    break;
+
+                case UnaryOperatorType.Decrement:
+                    e.Operator = E.UnaryOperator.PrefixDecrement;
+                    break;
+
+                case UnaryOperatorType.PostDecrement:
+                    e.Operator = E.UnaryOperator.PostfixDecrement;
+                    break;
+
+                case UnaryOperatorType.Not:
+                    e.Operator = E.UnaryOperator.LogicalNot;
+                    break;
+
+                case UnaryOperatorType.BitNot:
+                    e.Operator = E.UnaryOperator.BitwiseNot;
+                    break;
+
+                case UnaryOperatorType.Await:
+                //TODO: await
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            yield return e;
+        }
 
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, string data)
@@ -746,11 +810,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitExpressionStatement(ExpressionStatement expressionStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, string data)
         {
             throw new NotImplementedException();
@@ -797,11 +856,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIdentifier(Identifier identifier, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, string data)
         {
             throw new NotImplementedException();
         }
@@ -1159,11 +1213,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, string data)
         {
             throw new NotImplementedException();
         }
