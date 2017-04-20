@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ICSharpCode.Decompiler;
+﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
-using E = Shipwreck.TypeScriptModels.Expressions;
-using D = Shipwreck.TypeScriptModels.Declarations;
-using S = Shipwreck.TypeScriptModels.Statements;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using D = Shipwreck.TypeScriptModels.Declarations;
+using E = Shipwreck.TypeScriptModels.Expressions;
+using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -104,18 +102,42 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             switch (typeDeclaration.ClassType)
             {
                 case ClassType.Class:
-                    td = new D.ClassDeclaration()
                     {
-                        IsAbstract = typeDeclaration.HasModifier(Modifiers.Abstract)
-                    };
+                        var cd = new D.ClassDeclaration()
+                        {
+                            IsAbstract = typeDeclaration.HasModifier(Modifiers.Abstract)
+                        };
+                        td = cd;
+
+                        foreach (var p in GetTypeParameters(typeDeclaration.TypeParameters, typeDeclaration.Constraints))
+                        {
+                            cd.TypeParameters.Add(p);
+                        }
+                    }
                     break;
 
                 case ClassType.Struct:
-                    td = new D.ClassDeclaration();
+                    {
+                        var cd = new D.ClassDeclaration();
+
+                        td = cd;
+
+                        foreach (var p in GetTypeParameters(typeDeclaration.TypeParameters, typeDeclaration.Constraints))
+                        {
+                            cd.TypeParameters.Add(p);
+                        }
+                    }
                     break;
 
                 case ClassType.Interface:
-                    td = new D.InterfaceDeclaration();
+                    var id = new D.InterfaceDeclaration();
+                    td = id;
+
+                    foreach (var p in GetTypeParameters(typeDeclaration.TypeParameters, typeDeclaration.Constraints))
+                    {
+                        id.TypeParameters.Add(p);
+                    }
+
                     break;
 
                 case ClassType.Enum:
@@ -196,6 +218,54 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return c;
         }
 
+        private IEnumerable<D.TypeParameter> GetTypeParameters(AstNodeCollection<TypeParameterDeclaration> typeParameters, AstNodeCollection<Constraint> constraints)
+        {
+            foreach (var p in typeParameters)
+            {
+                var gp = new D.TypeParameter();
+                gp.Name = p.Name;
+
+                ITypeReference ct = null;
+                foreach (var c in constraints)
+                {
+                    if (c.TypeParameter.Identifier == p.Name)
+                    {
+                        foreach (var bt in c.BaseTypes)
+                        {
+                            var pt = bt as PrimitiveType;
+                            if (pt?.Keyword == "struct"
+                                || pt?.Keyword == "class"
+                                || pt?.Keyword == "new")
+                            {
+                                continue;
+                            }
+
+                            var nt = GetTypeReference(bt);
+
+                            if (ct == null)
+                            {
+                                ct = nt;
+                            }
+                            else if (ct is D.UnionType)
+                            {
+                                ((D.UnionType)ct).ElementTypes.Add(nt);
+                            }
+                            else
+                            {
+                                var ut = new D.UnionType();
+                                ut.ElementTypes.Add(ct);
+                                ut.ElementTypes.Add(nt);
+                                ct = ut;
+                            }
+                        }
+                    }
+                }
+                gp.Constraint = ct;
+
+                yield return gp;
+            }
+        }
+
         #endregion 型レベル
 
         #region メンバーレベル
@@ -231,9 +301,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             md.MethodName = methodDeclaration.Name;
 
-            foreach (var p in methodDeclaration.TypeParameters)
+            foreach (var p in GetTypeParameters(methodDeclaration.TypeParameters, methodDeclaration.Constraints))
             {
-                // TODO: ジェネリクス
+                md.TypeParameters.Add(p);
             }
 
             foreach (var p in GetParameters(data, methodDeclaration.Parameters))
