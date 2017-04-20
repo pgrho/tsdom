@@ -35,6 +35,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
 
         }
+
+        private PublicClass This => this;
+        private string BaseToString => base.ToString();
     }
 
     [TestClass]

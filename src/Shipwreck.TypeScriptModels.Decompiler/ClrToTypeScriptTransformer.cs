@@ -444,6 +444,81 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #endregion メンバーレベル
 
+        #region ステートメントレベル
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitReturnStatement(ReturnStatement returnStatement, string data)
+        {
+            if (returnStatement.Expression?.IsNull == false)
+            {
+                yield return new S.ReturnStatement()
+                {
+                    Value = returnStatement.Expression.AcceptVisitor(this, data).Cast<Expression>().Single()
+                };
+            }
+            else
+            {
+                yield return new S.ReturnStatement();
+            }
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIfElseStatement(IfElseStatement ifElseStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion ステートメントレベル
+
+        #region 式レベル
+
+        #region キーワード
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, string data)
+        {
+            yield return new E.ThisExpression();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, string data)
+        {
+            yield return new E.SuperExpression();
+        }
+
+        #endregion キーワード
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, string data)
+        {
+            var inv = new E.CallExpression();
+
+            var mre = invocationExpression.Target as MemberReferenceExpression;
+            if (mre != null)
+            {
+                // TODO: method mapping
+
+                foreach (var t in mre.TypeArguments)
+                {
+                    inv.TypeArguments.Add(GetTypeReference(t));
+                }
+
+                inv.Type = new E.PropertyExpression()
+                {
+                    Object = mre.Target?.IsNull == false ? mre.Target.AcceptVisitor(this, data).Cast<Expression>().Single() : null,
+                    Property = mre.MemberName
+                };
+            }
+            else
+            {
+                inv.Type = invocationExpression.Target.AcceptVisitor(this, data).Cast<Expression>().Single();
+            }
+
+            foreach (var p in invocationExpression.Arguments)
+            {
+                inv.Parameters.Add(p.AcceptVisitor(this, data).Cast<Expression>().Single());
+            }
+
+            yield return inv;
+        }
+
+        #endregion 式レベル
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, string data)
         {
             throw new NotImplementedException();
@@ -503,11 +578,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     yield return cr;
                 }
             }
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, string data)
-        {
-            throw new NotImplementedException();
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, string data)
@@ -705,22 +775,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIfElseStatement(IfElseStatement ifElseStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, string data)
         {
             throw new NotImplementedException();
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, string data)
         {
             throw new NotImplementedException();
         }
@@ -1011,21 +1071,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitReturnStatement(ReturnStatement returnStatement, string data)
-        {
-            if (returnStatement.Expression?.IsNull == false)
-            {
-                yield return new S.ReturnStatement()
-                {
-                    Value = returnStatement.Expression.AcceptVisitor(this, data).Cast<Expression>().Single()
-                };
-            }
-            else
-            {
-                yield return new S.ReturnStatement();
-            }
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSimpleType(SimpleType simpleType, string data)
         {
             throw new NotImplementedException();
@@ -1063,11 +1108,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitText(TextNode textNode, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, string data)
         {
             throw new NotImplementedException();
         }

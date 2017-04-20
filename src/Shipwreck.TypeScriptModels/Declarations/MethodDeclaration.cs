@@ -1,12 +1,5 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
@@ -36,7 +29,6 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// </summary>
         [DefaultValue(null)]
         public string MethodName { get; set; }
-
 
         #region Decorators
 
