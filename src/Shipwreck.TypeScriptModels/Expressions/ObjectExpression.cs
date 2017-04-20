@@ -12,6 +12,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.5
     public sealed class ObjectExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Grouping;
+
         #region Members
 
         private Collection<IInterfaceMember> _Members;

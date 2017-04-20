@@ -8,6 +8,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
 {
     public sealed class AssignmentExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Assignment;
+
         public Expression Target { get; set; }
 
         public Expression Value { get; set; }

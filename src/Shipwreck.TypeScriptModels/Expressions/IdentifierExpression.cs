@@ -10,6 +10,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.3
     public sealed class IdentifierExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Grouping;
+
         public string Name { get; set; }
 
         public override void Accept<T>(IExpressionVisitor<T> visitor)

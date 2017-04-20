@@ -8,6 +8,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
 {
     public sealed class ForBindingExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Grouping;
+
         public Expression Variable { get; }
         public Expression Value { get; }
 

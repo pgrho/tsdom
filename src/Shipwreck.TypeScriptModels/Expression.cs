@@ -1,10 +1,5 @@
 ﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels
 {
@@ -18,6 +13,9 @@ namespace Shipwreck.TypeScriptModels
 
         [ThreadStatic]
         private static WeakReference<TypeScriptWriter> _CachedTypeScriptWriter;
+
+        public virtual ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Unknown;
 
         /// <summary>
         /// Dispatches to the specific visit method for this node type.

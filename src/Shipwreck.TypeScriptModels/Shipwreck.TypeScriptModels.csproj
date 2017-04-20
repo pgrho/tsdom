@@ -78,6 +78,7 @@
     <Compile Include="Declarations\TypeAliasDeclaration.cs" />
     <Compile Include="Declarations\TypeQuery.cs" />
     <Compile Include="Expression.cs" />
+    <Compile Include="ExpressionPrecedence.cs" />
     <Compile Include="Expressions\ArrayExpression.cs" />
     <Compile Include="Expressions\ArrowFunctionExpression.cs" />
     <Compile Include="Expressions\AssignmentExpression.cs" />

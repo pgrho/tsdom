@@ -8,6 +8,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
 {
     public sealed class FunctionExpression : FunctionExpressionBase
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.FunctionCall;
+
         public string FunctionName { get; set; }
 
         public override void Accept<T>(IExpressionVisitor<T> visitor)

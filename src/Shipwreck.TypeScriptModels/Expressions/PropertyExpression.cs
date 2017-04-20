@@ -10,6 +10,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.13
     public sealed class PropertyExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.MemberAccess;
+
         public Expression Object { get; set; }
 
         public string Property { get; set; }

@@ -12,8 +12,13 @@ namespace Shipwreck.TypeScriptModels.Expressions
 
         private Collection<Expression> _Elements;
 
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Grouping;
+
         public bool HasElement
             => _Elements?.Count > 0;
+
+
 
         public Collection<Expression> Elements
         {

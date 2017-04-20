@@ -2,6 +2,9 @@
 {
     public sealed class SuperExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Grouping;
+
         /// <inheritdoc />
         /// <summary>
         /// This method always calls <see cref="IExpressionVisitor{T}.VisitSuper" />.

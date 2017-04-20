@@ -10,6 +10,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.4
     public sealed class NullExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Grouping;
+
         public override void Accept<T>(IExpressionVisitor<T> visitor)
             => visitor.VisitNull();
     }

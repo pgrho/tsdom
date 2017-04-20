@@ -9,6 +9,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.22
     public sealed class CommaExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Comma;
+
         public Expression Left { get; set; }
         public Expression Right { get; set; }
 

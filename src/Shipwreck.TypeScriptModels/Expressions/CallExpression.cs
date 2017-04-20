@@ -10,6 +10,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.15
     public sealed class CallExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.FunctionCall;
+
         public Expression Type { get; set; }
 
         private Collection<ITypeReference> _TypeArguments;

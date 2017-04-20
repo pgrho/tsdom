@@ -628,10 +628,18 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteChildExpression(Expression parent, Expression child)
         {
-            // TODO: Determine precedence
-            _Writer.Write('(');
-            child.Accept(this);
-            _Writer.Write(')');
+            var pp = parent.Precedence;
+            var cp = child.Precedence;
+            if (pp != ExpressionPrecedence.Unknown && cp != ExpressionPrecedence.Unknown && cp > pp)
+            {
+                child.Accept(this);
+            }
+            else
+            {
+                _Writer.Write('(');
+                child.Accept(this);
+                _Writer.Write(')');
+            }
         }
 
         #endregion IExpressionVisitor<int>

@@ -10,6 +10,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.14
     public sealed class NewExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.NewWithArguments;
+
         public Expression Type { get; set; }
 
         private Collection<ITypeReference> _TypeArguments;

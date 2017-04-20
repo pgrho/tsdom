@@ -8,6 +8,9 @@ namespace Shipwreck.TypeScriptModels.Expressions
 {
     public sealed class ConditionalExpression : Expression
     {
+        public override ExpressionPrecedence Precedence
+            => ExpressionPrecedence.Conditional;
+
         public Expression Condition { get; set; }
 
         public Expression TruePart { get; set; }
