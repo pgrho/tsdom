@@ -10,6 +10,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     [DefaultProperty("property")]
     public abstract class PublicClass
     {
+        public PublicClass(float n, object obj)
+        {
+        }
+
         public int AutoInt32Property { get; set; }
         protected abstract int ReadOnlyInt32Property { get; }
         protected abstract int WriteOnlyInt32Property { set; }
@@ -20,7 +24,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             get { return 0; }
             set { }
         }
-
 
         private void Method1(bool b, int n, string s)
         {

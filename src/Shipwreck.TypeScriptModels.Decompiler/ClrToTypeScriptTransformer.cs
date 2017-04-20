@@ -94,7 +94,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return (Syntax)ns;
         }
 
-        #endregion
+        #endregion 名前空間レベル
+
         #region 型レベル
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, string data)
@@ -156,7 +157,28 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return (Syntax)td;
         }
 
-        #endregion
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, string data)
+        {
+            var d = new D.Decorator();
+            d.Name = GetTypeName(attribute.Type);
+
+            foreach (var c in attribute.Children)
+            {
+                if (c is SimpleType)
+                {
+                    continue;
+                }
+                else
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        d.Parameters.Add((Expression)cr);
+                    }
+                }
+            }
+
+            yield return d;
+        }
 
         private Collection<D.Decorator> GetDecorators(IEnumerable<AttributeSection> section, string data)
         {
@@ -174,8 +196,28 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return c;
         }
 
+        #endregion 型レベル
+
         #region メンバーレベル
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, string data)
+        {
+            var cd = new D.ConstructorDeclaration();
+
+            // TODO: Accessiblity
+
+            foreach (var p in GetParameters(data, constructorDeclaration.Parameters))
+            {
+                cd.Parameters.Add(p);
+            }
+
+            if (constructorDeclaration.Body.IsNull)
+            {
+                cd.Statements = GetStatements(data, constructorDeclaration.Body);
+            }
+
+            yield return cd;
+        }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, string data)
         {
@@ -194,7 +236,24 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 // TODO: ジェネリクス
             }
 
-            foreach (var p in methodDeclaration.Parameters)
+            foreach (var p in GetParameters(data, methodDeclaration.Parameters))
+            {
+                md.Parameters.Add(p);
+            }
+
+            md.ReturnType = GetTypeReference(methodDeclaration.ReturnType);
+
+            if (methodDeclaration.Body.IsNull)
+            {
+                md.Statements = GetStatements(data, methodDeclaration.Body);
+            }
+
+            yield return md;
+        }
+
+        private IEnumerable<D.Parameter> GetParameters(string data, AstNodeCollection<ParameterDeclaration> parameters)
+        {
+            foreach (var p in parameters)
             {
                 var dp = new D.Parameter()
                 {
@@ -210,19 +269,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     dp.Initializer = (Expression)p.DefaultExpression.AcceptVisitor(this, data).LastOrDefault();
                 }
                 dp.IsOptional = op || dp.Initializer != null;
-
-                md.Parameters.Add(dp);
+                yield return dp;
             }
-            md.ReturnType = GetTypeReference(methodDeclaration.ReturnType);
-
-            if (methodDeclaration.Body.IsNull)
-            {
-                md.Statements = GetStatements(data, methodDeclaration.Body);
-            }
-
-            yield return md;
         }
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, string data)
         {
@@ -234,7 +283,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             // TODO: virtualの場合メソッドを生成する
             //if (propertyDeclaration.HasModifier(Modifiers.Abstract) || propertyDeclaration.HasModifier(Modifiers.Virtual))
             //{
-
             //}
             //else
             if (propertyDeclaration.Getter.IsNull
@@ -242,7 +290,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     || propertyDeclaration.Setter.IsNull
                     || propertyDeclaration.Setter.HasChildren)
             {
-
                 if (propertyDeclaration.Getter.Body.IsNull
                     && propertyDeclaration.Setter.Body.IsNull)
                 {
@@ -325,8 +372,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-
-        #endregion
+        #endregion メンバーレベル
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, string data)
         {
@@ -367,30 +413,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             throw new NotImplementedException();
         }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, string data)
-        {
-            var d = new D.Decorator();
-            d.Name = GetTypeName(attribute.Type);
-
-            foreach (var c in attribute.Children)
-            {
-                if (c is SimpleType)
-                {
-                    continue;
-                }
-                else
-                {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        d.Parameters.Add((Expression)cr);
-                    }
-                }
-            }
-
-            yield return d;
-        }
-
 
         private string GetTypeName(AstType type)
         {
@@ -474,11 +496,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstraint(Constraint constraint, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, string data)
         {
             throw new NotImplementedException();
         }
@@ -784,6 +801,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             bool b;
             return GetTypeReference(type, out b);
         }
+
         private ITypeReference GetTypeReference(AstType type, out bool isOptional)
         {
             var t = type.Annotations?.OfType<Type>().FirstOrDefault();
@@ -795,6 +813,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 if (ut == typeof(void))
                 {
                     return D.PredefinedType.Void;
+                }
+
+                if (ut == typeof(object))
+                {
+                    return D.PredefinedType.Any;
                 }
 
                 if (ut == typeof(bool))
@@ -834,6 +857,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     case "void":
                         return D.PredefinedType.Void;
 
+                    case "object":
+                        return D.PredefinedType.Any;
+
                     case "bool":
                         isOptional = false;
                         return D.PredefinedType.Boolean;
@@ -864,7 +890,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             return new D.NamedTypeReference() { Name = ((SimpleType)type).Identifier };
         }
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, string data)
         {

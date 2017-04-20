@@ -25,7 +25,6 @@ namespace Shipwreck.TypeScriptModels
             int IClassMemberVisitor<int>.VisitConstructor(ConstructorDeclaration member)
             {
                 _Writer.WriteConstructor(member, _IsDeclare);
-                _Writer._Writer.WriteLine(';');
                 return 0;
             }
 
@@ -1401,7 +1400,6 @@ namespace Shipwreck.TypeScriptModels
             else if (member.HasStatement)
             {
                 WriteMethodBody(member.Statements);
-                _Writer.WriteLine(';');
             }
             else
             {
@@ -1413,7 +1411,7 @@ namespace Shipwreck.TypeScriptModels
         private void WriteConstructorSignature(ConstructorDeclaration member, ICallSignature signature = null)
         {
             _Writer.WriteAccessibility(member.Accessibility);
-            _Writer.Write("function ");
+            _Writer.Write("constructor ");
             WriteCallSignature(signature ?? member);
         }
 
