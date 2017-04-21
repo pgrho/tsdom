@@ -47,6 +47,7 @@ namespace Shipwreck.TypeScriptModels
         T VisitTry(TryStatement statement);
 
         // 定義なし
-        T VisitExpression(ExpressionStatement expressionStatement);
+        T VisitExpression(ExpressionStatement statement);
+        T VisitBlock(BlockStatement statement);
     }
 }

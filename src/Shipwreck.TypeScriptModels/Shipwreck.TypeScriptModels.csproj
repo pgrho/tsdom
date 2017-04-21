@@ -102,6 +102,7 @@
     <Compile Include="Expressions\UnaryOperator.cs" />
     <Compile Include="IStatementVisitor.cs" />
     <Compile Include="Statement.cs" />
+    <Compile Include="Statements\BlockStatement.cs" />
     <Compile Include="Statements\BreakStatement.cs" />
     <Compile Include="Statements\ContinueStatement.cs" />
     <Compile Include="Statements\DoStatement.cs" />

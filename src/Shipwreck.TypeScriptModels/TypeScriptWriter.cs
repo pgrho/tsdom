@@ -1028,13 +1028,30 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 定義なし
-        int IStatementVisitor<int>.VisitExpression(ExpressionStatement expressionStatement)
+        int IStatementVisitor<int>.VisitExpression(ExpressionStatement statement)
         {
-            if (expressionStatement.Expression != null)
+            if (statement.Expression != null)
             {
-                expressionStatement.Expression.Accept(this);
+                statement.Expression.Accept(this);
             }
             _Writer.WriteLine(';');
+            return 0;
+        }
+
+        int IStatementVisitor<int>.VisitBlock(BlockStatement statement)
+        {
+            if (statement.HasStatement)
+            {
+                _Writer.WriteLine(") {");
+                _Writer.Indent++;
+                foreach (var s in statement.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+                _Writer.WriteLine('}');
+            }
+
             return 0;
         }
 

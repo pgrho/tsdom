@@ -179,6 +179,17 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return (Syntax)td;
         }
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, string data)
+        {
+            foreach (var c in attributeSection.Children)
+            {
+                foreach (var cr in c.AcceptVisitor(this, data))
+                {
+                    yield return cr;
+                }
+            }
+        }
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, string data)
         {
             var d = new D.Decorator();
@@ -462,6 +473,73 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region ステートメントレベル
 
+        #region ブロック
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBlockStatement(BlockStatement blockStatement, string data)
+        {
+            var bs = new S.BlockStatement();
+            bs.Statements = GetStatements(data, blockStatement);
+
+            yield return bs;
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIfElseStatement(IfElseStatement ifElseStatement, string data)
+        {
+            var ib = new S.IfStatement();
+            ib.Condition = GetExpression(ifElseStatement.Condition, data);
+            ib.TruePart = GetStatements(data, ifElseStatement.TrueStatement);
+            ib.FalsePart = GetStatements(data, ifElseStatement.FalseStatement);
+
+            yield return ib;
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitForStatement(ForStatement forStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitForeachStatement(ForeachStatement foreachStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDoWhileStatement(DoWhileStatement doWhileStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitWhileStatement(WhileStatement whileStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTryCatchStatement(TryCatchStatement tryCatchStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingStatement(UsingStatement usingStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSwitchStatement(SwitchStatement switchStatement, string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, string data)
+        {
+            // TODO: lock var
+
+            var bs = new S.BlockStatement();
+            bs.Statements = GetStatements(data, lockStatement.EmbeddedStatement);
+
+            yield return bs;
+        }
+
+        #endregion ブロック
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitExpressionStatement(ExpressionStatement expressionStatement, string data)
         {
             yield return new S.ExpressionStatement()
@@ -485,11 +563,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIfElseStatement(IfElseStatement ifElseStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion ステートメントレベル
 
         #region 式レベル
@@ -506,6 +579,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return new E.SuperExpression();
         }
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, string data)
+        {
+            yield return new E.NullExpression();
+        }
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, string data)
         {
             yield return new E.IdentifierExpression()
@@ -515,7 +593,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         #endregion キーワード
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, string data)
         {
@@ -565,7 +642,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return e;
         }
 
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, string data)
         {
             var inv = new E.CallExpression();
@@ -598,7 +674,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             yield return inv;
         }
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, string data)
         {
@@ -669,23 +744,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return ((SimpleType)type).Identifier;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, string data)
-        {
-            foreach (var c in attributeSection.Children)
-            {
-                foreach (var cr in c.AcceptVisitor(this, data))
-                {
-                    yield return cr;
-                }
-            }
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBlockStatement(BlockStatement blockStatement, string data)
         {
             throw new NotImplementedException();
         }
@@ -785,11 +844,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDoWhileStatement(DoWhileStatement doWhileStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitEmptyStatement(EmptyStatement emptyStatement, string data)
         {
             throw new NotImplementedException();
@@ -826,16 +880,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitForeachStatement(ForeachStatement foreachStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitForStatement(ForStatement forStatement, string data)
         {
             throw new NotImplementedException();
         }
@@ -885,11 +929,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberType(MemberType memberType, string data)
         {
             throw new NotImplementedException();
@@ -911,11 +950,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNullNode(AstNode nullNode, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, string data)
         {
             throw new NotImplementedException();
         }
@@ -987,17 +1021,28 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        private Collection<Statement> GetStatements(string data, BlockStatement body)
+        private Collection<Statement> GetStatements(string data, ICSharpCode.NRefactory.CSharp.Statement statement)
         {
             Collection<Statement> sts = null;
-            foreach (var s in body)
+
+            var block = statement as BlockStatement;
+            if (block != null)
             {
-                foreach (var cr in s.AcceptVisitor(this, data))
+                foreach (var s in block.Statements)
+                {
+                    foreach (var cr in s.AcceptVisitor(this, data))
+                    {
+                        (sts ?? (sts = new Collection<Statement>())).Add((Statement)cr);
+                    }
+                }
+            }
+            else if (statement != null)
+            {
+                foreach (var cr in statement.AcceptVisitor(this, data))
                 {
                     (sts ?? (sts = new Collection<Statement>())).Add((Statement)cr);
                 }
             }
-
             return sts;
         }
 
@@ -1101,6 +1146,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new D.NamedTypeReference() { Name = ((SimpleType)type).Identifier };
         }
 
+        #region クエリー
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, string data)
         {
             throw new NotImplementedException();
@@ -1151,6 +1198,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
+        #endregion クエリー
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSimpleType(SimpleType simpleType, string data)
         {
             throw new NotImplementedException();
@@ -1167,11 +1216,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSwitchSection(SwitchSection switchSection, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSwitchStatement(SwitchStatement switchStatement, string data)
         {
             throw new NotImplementedException();
         }
@@ -1193,11 +1237,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitThrowStatement(ThrowStatement throwStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTryCatchStatement(TryCatchStatement tryCatchStatement, string data)
         {
             throw new NotImplementedException();
         }
@@ -1247,10 +1286,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingStatement(UsingStatement usingStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, string data)
         {
@@ -1258,11 +1293,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitVariableInitializer(VariableInitializer variableInitializer, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitWhileStatement(WhileStatement whileStatement, string data)
         {
             throw new NotImplementedException();
         }
