@@ -166,6 +166,19 @@ namespace Shipwreck.TypeScriptModels
                 ms.Accept(this);
                 return;
             }
+            var cl = syntax as IClassMember;
+            if (cl != null)
+            {
+                cl.Accept(new ClassMemberVisitor(this, false));
+                return;
+            }
+
+            var inf = syntax as IInterfaceMember;
+            if (inf != null)
+            {
+                inf.Accept(new InterfaceMemberVisitor(this, false));
+                return;
+            }
 
             var s = syntax as Statement;
             if (s != null)

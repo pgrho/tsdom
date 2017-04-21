@@ -50,8 +50,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ClrToTypeScriptTransformerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transformations\Expressions\SuperExpressionTest.cs" />
+    <Compile Include="Transformations\Expressions\ThisExpressionTest.cs" />
+    <Compile Include="Transformations\Expressions\UnaryExpressionTest.cs" />
+    <Compile Include="Transformations\Members\ConstructorDeclarationTest.cs" />
+    <Compile Include="Transformations\Members\PropertydDeclarationTest.cs" />
+    <Compile Include="Transformations\Members\MethodDeclarationTest.cs" />
+    <Compile Include="Transformations\Members\FieldDeclarationTest.cs" />
+    <Compile Include="Transformations\Statements\ExpressionStatementTest.cs" />
+    <Compile Include="Transformations\Statements\VariableDeclarationStatementTest.cs" />
+    <Compile Include="Transformations\Statements\ReturnStatementTest.cs" />
+    <Compile Include="Transformations\TransformationTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shipwreck.TypeScriptModels.Decompiler\Shipwreck.TypeScriptModels.Decompiler.csproj">
@@ -63,6 +73,7 @@
       <Name>Shipwreck.TypeScriptModels</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
