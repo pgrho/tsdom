@@ -59,6 +59,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         private int PostfixDecrement(int a)
             => a--;
+
+        int VariableDeclarationTest()
+        {
+            var a = 1;
+            const int b = 2;
+
+            return a + b;
+        }
     }
 
     [TestClass]
