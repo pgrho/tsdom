@@ -113,7 +113,60 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingStatement(UsingStatement usingStatement, string data)
         {
-            throw new NotImplementedException();
+            var b = new S.BlockStatement();
+
+            var rvd = usingStatement.ResourceAcquisition as VariableDeclarationStatement;
+            var vds = new S.VariableDeclaration();
+            vds.Type = S.VariableDeclarationType.Let;
+            if (rvd != null)
+            {
+                foreach (var v in rvd.Variables)
+                {
+                    vds.Bindings.Add(new S.VariableBinding()
+                    {
+                        Variable = new E.IdentifierExpression() { Name = v.Name },
+                        Type = GetTypeReference(rvd.Type),
+                        Initializer = GetExpression(v.Initializer, data)
+                    });
+                }
+            }
+            else
+            {
+                var ex = (ICSharpCode.NRefactory.CSharp.Expression)usingStatement.ResourceAcquisition;
+                vds.Bindings.Add(new S.VariableBinding()
+                {
+                    Variable = new E.IdentifierExpression() { Name = "__usingResource" },
+                    Initializer = GetExpression(ex, data)
+                });
+            }
+
+            b.Statements.Add(vds);
+            var tf = new S.TryStatement();
+            tf.TryBlock = GetStatements(data, usingStatement.EmbeddedStatement);
+
+            foreach (var bd in vds.Bindings)
+            {
+                var ib = new S.IfStatement();
+                ib.Condition = bd.Variable;
+
+                ib.TruePart.Add(new S.ExpressionStatement()
+                {
+                    Expression = new E.CallExpression()
+                    {
+                        Target = new E.PropertyExpression()
+                        {
+                            Object = bd.Variable,
+                            Property = "Dispose"
+                        }
+                    }
+                });
+
+                tf.FinallyBlock.Add(ib);
+            }
+
+            b.Statements.Add(tf);
+
+            yield return b;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSwitchStatement(SwitchStatement switchStatement, string data)
@@ -123,10 +176,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, string data)
         {
-            // TODO: lock var
-
             var bs = new S.BlockStatement();
             bs.Statements = GetStatements(data, lockStatement.EmbeddedStatement);
+            bs.Statements.Insert(0, new S.ExpressionStatement()
+            {
+                Expression = GetExpression(lockStatement.Expression, data)
+            });
 
             yield return bs;
         }

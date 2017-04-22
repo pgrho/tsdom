@@ -489,7 +489,7 @@ namespace Shipwreck.TypeScriptModels
         // 4.15
         int IExpressionVisitor<int>.VisitCall(CallExpression expression)
         {
-            WriteChildExpression(expression, expression.Type);
+            WriteChildExpression(expression, expression.Target);
             if (expression.HasTypeArgument)
             {
                 _Writer.WriteTypeParameters(expression.TypeArguments);
@@ -1065,7 +1065,7 @@ namespace Shipwreck.TypeScriptModels
         {
             if (statement.HasStatement)
             {
-                _Writer.WriteLine(") {");
+                _Writer.WriteLine('{');
                 _Writer.Indent++;
                 foreach (var s in statement.Statements)
                 {

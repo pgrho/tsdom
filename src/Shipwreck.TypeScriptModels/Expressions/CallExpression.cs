@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,8 @@ namespace Shipwreck.TypeScriptModels.Expressions
         public override ExpressionPrecedence Precedence
             => ExpressionPrecedence.FunctionCall;
 
-        public Expression Type { get; set; }
+        [DefaultValue(null)]
+        public Expression Target { get; set; }
 
         private Collection<ITypeReference> _TypeArguments;
 

@@ -226,7 +226,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     inv.TypeArguments.Add(GetTypeReference(t));
                 }
 
-                inv.Type = new E.PropertyExpression()
+                inv.Target = new E.PropertyExpression()
                 {
                     Object = GetExpression(mre.Target, data),
                     Property = mre.MemberName
@@ -234,7 +234,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
             else
             {
-                inv.Type = GetExpression(invocationExpression.Target, data);
+                inv.Target = GetExpression(invocationExpression.Target, data);
             }
 
             foreach (var p in invocationExpression.Arguments)
@@ -252,6 +252,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 Object = GetExpression(indexerExpression.Target, data),
                 Index = GetExpression(indexerExpression.Arguments.Single(), data),
             };
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, string data)
+        {
+            throw new NotImplementedException();
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, string data)

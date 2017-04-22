@@ -276,11 +276,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, string data)
         {
             throw new NotImplementedException();
