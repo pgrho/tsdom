@@ -31,6 +31,112 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
+        private static E.BinaryOperator GetOperator(BinaryOperatorType @operator)
+        {
+            switch (@operator)
+            {
+                case BinaryOperatorType.Add:
+                    return E.BinaryOperator.Add;
+
+                case BinaryOperatorType.Subtract:
+                    return E.BinaryOperator.Subtract;
+
+                case BinaryOperatorType.Multiply:
+                    // TODO: integer divide
+                    return E.BinaryOperator.Multiply;
+
+                case BinaryOperatorType.Divide:
+                    return E.BinaryOperator.Divide;
+
+                case BinaryOperatorType.Modulus:
+                    return E.BinaryOperator.Modulo;
+
+                case BinaryOperatorType.ShiftLeft:
+                    return E.BinaryOperator.LeftShift;
+
+                case BinaryOperatorType.ShiftRight:
+                    // TODO: Unsigned
+                    return E.BinaryOperator.SignedRightShift;
+
+                case BinaryOperatorType.BitwiseAnd:
+                    return E.BinaryOperator.BitwiseAnd;
+
+                case BinaryOperatorType.BitwiseOr:
+                    return E.BinaryOperator.BitwiseOr;
+
+                case BinaryOperatorType.ExclusiveOr:
+                    return E.BinaryOperator.BitwiseXor;
+
+                case BinaryOperatorType.Equality:
+                    return E.BinaryOperator.StrictEqual;
+
+                case BinaryOperatorType.InEquality:
+                    return E.BinaryOperator.StrictNotEqual;
+
+                case BinaryOperatorType.LessThan:
+                    return E.BinaryOperator.LessThan;
+
+                case BinaryOperatorType.LessThanOrEqual:
+                    return E.BinaryOperator.LessThanOrEqual;
+
+                case BinaryOperatorType.GreaterThan:
+                    return E.BinaryOperator.GreaterThan;
+
+                case BinaryOperatorType.GreaterThanOrEqual:
+                    return E.BinaryOperator.GreaterThanOrEqual;
+
+                case BinaryOperatorType.ConditionalAnd:
+                    return E.BinaryOperator.LogicalAnd;
+
+                case BinaryOperatorType.ConditionalOr:
+                    return E.BinaryOperator.LogicalOr;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static E.BinaryOperator GetOperator(AssignmentOperatorType @operator)
+        {
+            switch (@operator)
+            {
+                case AssignmentOperatorType.Add:
+                    return E.BinaryOperator.Add;
+
+                case AssignmentOperatorType.Subtract:
+                    return E.BinaryOperator.Subtract;
+
+                case AssignmentOperatorType.Multiply:
+                    // TODO: integer divide
+                    return E.BinaryOperator.Multiply;
+
+                case AssignmentOperatorType.Divide:
+                    return E.BinaryOperator.Divide;
+
+                case AssignmentOperatorType.Modulus:
+                    return E.BinaryOperator.Modulo;
+
+                case AssignmentOperatorType.ShiftLeft:
+                    return E.BinaryOperator.LeftShift;
+
+                case AssignmentOperatorType.ShiftRight:
+                    // TODO: Unsigned
+                    return E.BinaryOperator.SignedRightShift;
+
+                case AssignmentOperatorType.BitwiseAnd:
+                    return E.BinaryOperator.BitwiseAnd;
+
+                case AssignmentOperatorType.BitwiseOr:
+                    return E.BinaryOperator.BitwiseOr;
+
+                case AssignmentOperatorType.ExclusiveOr:
+                    return E.BinaryOperator.BitwiseXor;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         #region キーワード
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, string data)
@@ -150,89 +256,22 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, string data)
         {
-            var e = new E.BinaryExpression();
-            e.Left = GetExpression(binaryOperatorExpression.Left, data);
-            e.Right = GetExpression(binaryOperatorExpression.Right, data);
-            switch (binaryOperatorExpression.Operator)
+            yield return new E.BinaryExpression()
             {
-                case BinaryOperatorType.Add:
-                    e.Operator = E.BinaryOperator.Add;
-                    break;
+                Left = GetExpression(binaryOperatorExpression.Left, data),
+                Right = GetExpression(binaryOperatorExpression.Right, data),
+                Operator = GetOperator(binaryOperatorExpression.Operator)
+            };
+        }
 
-                case BinaryOperatorType.Subtract:
-                    e.Operator = E.BinaryOperator.Subtract;
-                    break;
-
-                case BinaryOperatorType.Multiply:
-                    // TODO: integer divide
-                    e.Operator = E.BinaryOperator.Multiply;
-                    break;
-
-                case BinaryOperatorType.Divide:
-                    e.Operator = E.BinaryOperator.Divide;
-                    break;
-
-                case BinaryOperatorType.Modulus:
-                    e.Operator = E.BinaryOperator.Modulo;
-                    break;
-
-                case BinaryOperatorType.ShiftLeft:
-                    e.Operator = E.BinaryOperator.LeftShift;
-                    break;
-
-                case BinaryOperatorType.ShiftRight:
-                    // TODO: Unsigned
-                    e.Operator = E.BinaryOperator.SignedRightShift;
-                    break;
-
-                case BinaryOperatorType.BitwiseAnd:
-                    e.Operator = E.BinaryOperator.BitwiseAnd;
-                    break;
-
-                case BinaryOperatorType.BitwiseOr:
-                    e.Operator = E.BinaryOperator.BitwiseOr;
-                    break;
-
-                case BinaryOperatorType.ExclusiveOr:
-                    e.Operator = E.BinaryOperator.BitwiseXor;
-                    break;
-
-                case BinaryOperatorType.Equality:
-                    e.Operator = E.BinaryOperator.StrictEqual;
-                    break;
-
-                case BinaryOperatorType.InEquality:
-                    e.Operator = E.BinaryOperator.StrictNotEqual;
-                    break;
-
-                case BinaryOperatorType.LessThan:
-                    e.Operator = E.BinaryOperator.LessThan;
-                    break;
-
-                case BinaryOperatorType.LessThanOrEqual:
-                    e.Operator = E.BinaryOperator.LessThanOrEqual;
-                    break;
-
-                case BinaryOperatorType.GreaterThan:
-                    e.Operator = E.BinaryOperator.GreaterThan;
-                    break;
-
-                case BinaryOperatorType.GreaterThanOrEqual:
-                    e.Operator = E.BinaryOperator.GreaterThanOrEqual;
-                    break;
-
-                case BinaryOperatorType.ConditionalAnd:
-                    e.Operator = E.BinaryOperator.LogicalAnd;
-                    break;
-
-                case BinaryOperatorType.ConditionalOr:
-                    e.Operator = E.BinaryOperator.LogicalOr;
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-            yield return e;
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAssignmentExpression(AssignmentExpression assignmentExpression, string data)
+        {
+            yield return new E.AssignmentExpression()
+            {
+                Target = GetExpression(assignmentExpression.Left, data),
+                Value = GetExpression(assignmentExpression.Right, data),
+                CompoundOperator = GetOperator(assignmentExpression.Operator)
+            };
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, string data)

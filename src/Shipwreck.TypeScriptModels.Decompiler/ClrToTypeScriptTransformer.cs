@@ -81,11 +81,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAssignmentExpression(AssignmentExpression assignmentExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         private string GetTypeName(AstType type)
         {
             var tr = type.Annotations.OfType<TypeReference>()?.FirstOrDefault();
