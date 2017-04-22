@@ -2,7 +2,6 @@
 
 namespace Shipwreck.TypeScriptModels.Statements
 {
-
     // 5.5
     public sealed class ForStatement : Statement
     {
@@ -10,7 +9,7 @@ namespace Shipwreck.TypeScriptModels.Statements
 
         public Expression Initializer { get; set; }
         public Expression Condition { get; set; }
-        public Expression Increment { get; set; }
+        public Expression Iterator { get; set; }
 
         public bool HasStatement
             => _Statements?.Count > 0;

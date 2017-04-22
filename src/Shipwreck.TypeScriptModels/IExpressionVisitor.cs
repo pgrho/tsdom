@@ -49,7 +49,8 @@ namespace Shipwreck.TypeScriptModels
         // TODO: 4.12 Class Expressions
 
         // 4.13
-        T VisitProperty(PropertyExpression property);
+        T VisitProperty(PropertyExpression expression);
+        T VisitIndexer(IndexerExpression expression);
 
         // 4.14
         T VisitNew(NewExpression expression);

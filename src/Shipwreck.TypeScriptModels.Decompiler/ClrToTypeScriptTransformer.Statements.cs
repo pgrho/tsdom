@@ -37,12 +37,55 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitForStatement(ForStatement forStatement, string data)
         {
-            throw new NotImplementedException();
+            var fs = new S.ForStatement();
+
+            foreach (var s in forStatement.Initializers)
+            {
+                var vds = s as VariableDeclarationStatement;
+                if (vds != null)
+                {
+                    foreach (var v in vds.Variables)
+                    {
+                        var b = new E.ForBindingExpression()
+                        {
+                            Variable = new E.IdentifierExpression() { Name = v.Name },
+                            Initializer = GetExpression(v.Initializer, data)
+                        };
+
+                        fs.Initializer = Concat(fs.Initializer, b);
+                    }
+                }
+                else
+                {
+                    var es = (ExpressionStatement)s;
+
+                    fs.Initializer = Concat(fs.Initializer, GetExpression(es.Expression, data));
+                }
+            }
+
+            fs.Condition = GetExpression(forStatement.Condition, data);
+
+            foreach (var iter in forStatement.Iterators)
+            {
+                var es = (ExpressionStatement)iter;
+
+                fs.Iterator = Concat(fs.Iterator, GetExpression(es.Expression, data));
+            }
+
+            fs.Statements = GetStatements(data, forStatement.EmbeddedStatement);
+
+            yield return fs;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitForeachStatement(ForeachStatement foreachStatement, string data)
         {
-            throw new NotImplementedException();
+            var fs = new S.ForOfStatement();
+            fs.Variable = new E.IdentifierExpression() { Name = foreachStatement.VariableName };
+            fs.Value = GetExpression(foreachStatement.InExpression, data);
+
+            fs.Statements = GetStatements(data, foreachStatement.EmbeddedStatement);
+
+            yield return fs;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDoWhileStatement(DoWhileStatement doWhileStatement, string data)

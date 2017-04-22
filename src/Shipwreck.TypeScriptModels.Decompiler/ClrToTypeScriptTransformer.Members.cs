@@ -90,8 +90,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 {
                     ParameterName = p.Name,
                 };
-                bool op;
-                dp.ParameterType = GetTypeReference(p.Type, out op);
+                dp.ParameterType = GetTypeReference(p.Type);
 
                 dp.Decorators = GetDecorators(p.Attributes, data);
 
@@ -99,7 +98,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 {
                     dp.Initializer = (Expression)p.DefaultExpression.AcceptVisitor(this, data).LastOrDefault();
                 }
-                dp.IsOptional = op || dp.Initializer != null;
+                dp.IsOptional = dp.Initializer != null;
                 yield return dp;
             }
         }

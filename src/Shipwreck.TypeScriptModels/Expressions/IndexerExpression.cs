@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Expressions
-{
-    public sealed class ForBindingExpression : Expression
+{ 
+    public sealed class IndexerExpression : Expression
     {
         public override ExpressionPrecedence Precedence
-            => ExpressionPrecedence.Grouping;
+            => ExpressionPrecedence.MemberAccess;
 
-        public Expression Variable { get; set; }
-        public Expression Initializer { get; set; }
+        public Expression Object { get; set; }
 
+        public Expression Index { get; set; }
+         
         public override void Accept<T>(IExpressionVisitor<T> visitor)
-        {
-            throw new NotSupportedException();
-        }
+            => visitor.VisitIndexer(this);
     }
 }

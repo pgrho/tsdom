@@ -95,6 +95,7 @@
     <Compile Include="Declarations\IInterfaceMemberVisitor.cs" />
     <Compile Include="Expressions\NewExpression.cs" />
     <Compile Include="Expressions\ParenthesesExpression.cs" />
+    <Compile Include="Expressions\IndexerExpression.cs" />
     <Compile Include="Expressions\PropertyExpression.cs" />
     <Compile Include="Expressions\SuperExpression.cs" />
     <Compile Include="Expressions\TypeAssertionExpression.cs" />

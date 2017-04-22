@@ -439,20 +439,30 @@ namespace Shipwreck.TypeScriptModels
         }
 
         // 4.13
-        int IExpressionVisitor<int>.VisitProperty(PropertyExpression property)
+        int IExpressionVisitor<int>.VisitProperty(PropertyExpression expression)
         {
-            property.Object.Accept(this);
-            if (property.IsValidIdentifier)
+            expression.Object.Accept(this);
+            if (expression.IsValidIdentifier)
             {
                 _Writer.Write('.');
-                _Writer.Write(property.Property);
+                _Writer.Write(expression.Property);
             }
             else
             {
                 _Writer.Write('[');
-                _Writer.WriteLiteral(property.Property);
+                _Writer.WriteLiteral(expression.Property);
                 _Writer.Write(']');
             }
+            return 0;
+        }
+
+        int IExpressionVisitor<int>.VisitIndexer(IndexerExpression expression)
+        {
+            expression.Object.Accept(this);
+            _Writer.Write('[');
+            expression.Index.Accept(this);
+            _Writer.Write(']');
+
             return 0;
         }
 
@@ -810,10 +820,10 @@ namespace Shipwreck.TypeScriptModels
         {
             _Writer.Write("for (");
             WriteForInitializer(statement.Initializer);
-            _Writer.WriteLine("; ");
+            _Writer.Write("; ");
             statement.Condition?.Accept(this);
-            _Writer.WriteLine("; ");
-            statement.Increment?.Accept(this);
+            _Writer.Write("; ");
+            statement.Iterator?.Accept(this);
             _Writer.WriteLine(") {");
 
             if (statement.HasStatement)
@@ -838,10 +848,10 @@ namespace Shipwreck.TypeScriptModels
             {
                 _Writer.Write("var ");
                 v.Variable.Accept(this);
-                if (v.Variable != null)
+                if (v.Initializer != null)
                 {
                     _Writer.Write(" = ");
-                    v.Variable.Accept(this);
+                    v.Initializer.Accept(this);
                 }
             }
             else
@@ -855,7 +865,7 @@ namespace Shipwreck.TypeScriptModels
         {
             _Writer.Write("for (");
             WriteForInitializer(statement.Variable);
-            _Writer.WriteLine(" in ");
+            _Writer.Write(" in ");
             statement.Value.Accept(this);
             _Writer.WriteLine(") {");
 
@@ -879,7 +889,7 @@ namespace Shipwreck.TypeScriptModels
         {
             _Writer.Write("for (");
             WriteForInitializer(statement.Variable);
-            _Writer.WriteLine(" of ");
+            _Writer.Write(" of ");
             statement.Value.Accept(this);
             _Writer.WriteLine(") {");
 

@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -58,7 +59,11 @@
     <Compile Include="Transformations\Members\PropertydDeclarationTest.cs" />
     <Compile Include="Transformations\Members\MethodDeclarationTest.cs" />
     <Compile Include="Transformations\Members\FieldDeclarationTest.cs" />
+    <Compile Include="Transformations\Statements\ForStatementTest.cs" />
+    <Compile Include="Transformations\Statements\ForOfStatementTest.cs" />
+    <Compile Include="Transformations\Statements\WhileStatementTest.cs" />
     <Compile Include="Transformations\Statements\ExpressionStatementTest.cs" />
+    <Compile Include="Transformations\Statements\DoStatementTest.cs" />
     <Compile Include="Transformations\Statements\VariableDeclarationStatementTest.cs" />
     <Compile Include="Transformations\Statements\ReturnStatementTest.cs" />
     <Compile Include="Transformations\TransformationTestBase.cs" />

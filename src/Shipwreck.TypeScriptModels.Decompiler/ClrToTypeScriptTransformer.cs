@@ -45,7 +45,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             return b.SyntaxTree.AcceptVisitor(this, "temp").ToArray();
         }
-         
+
 
         #region ステートメントレベル
 
@@ -260,11 +260,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIsExpression(IsExpression isExpression, string data)
         {
             throw new NotImplementedException();
@@ -413,43 +408,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             var t = type.Annotations?.OfType<Type>().FirstOrDefault();
             if (t != null)
             {
-                var ut = t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>) ? t.GetGenericArguments()[0] : t;
-                isOptional = !t.IsValueType || ut != t;
-
-                if (ut == typeof(void))
-                {
-                    return D.PredefinedType.Void;
-                }
-
-                if (ut == typeof(object))
-                {
-                    return D.PredefinedType.Any;
-                }
-
-                if (ut == typeof(bool))
-                {
-                    return D.PredefinedType.Boolean;
-                }
-
-                if (ut == typeof(int)
-                    || ut == typeof(float)
-                    || ut == typeof(double)
-                    || ut == typeof(decimal)
-                    || ut == typeof(long)
-                    || ut == typeof(byte)
-                    || ut == typeof(short)
-                    || ut == typeof(uint)
-                    || ut == typeof(ulong)
-                    || ut == typeof(sbyte)
-                    || ut == typeof(ulong))
-                {
-                    return D.PredefinedType.Number;
-                }
-
-                if (ut == typeof(string))
-                {
-                    return D.PredefinedType.String;
-                }
+                return GetTypeReference(t, out isOptional);
             }
 
             isOptional = true;
@@ -492,9 +451,83 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 }
             }
 
+            var ct = type as ComposedType;
+
+            if (ct != null)
+            {
+                return new D.ArrayType()
+                {
+                    ElementType = GetTypeReference(ct.BaseType)
+                };
+            }
+
             // TODO: キャッシュおよびモジュール内の検索
 
             return new D.NamedTypeReference() { Name = ((SimpleType)type).Identifier };
+        }
+
+        private ITypeReference GetTypeReference(Type type)
+        {
+            bool b;
+            return GetTypeReference(type, out b);
+        }
+
+        private ITypeReference GetTypeReference(Type type, out bool isOptional)
+        {
+            if (type.IsArray)
+            {
+                if (type.GetArrayRank() != 1)
+                {
+                    throw new NotSupportedException();
+                }
+
+                isOptional = true;
+                return new D.ArrayType()
+                {
+                    ElementType = GetTypeReference(type.GetElementType())
+                };
+            }
+
+
+            var ut = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) ? type.GetGenericArguments()[0] : type;
+            isOptional = !type.IsValueType || ut != type;
+
+            if (ut == typeof(void))
+            {
+                return D.PredefinedType.Void;
+            }
+
+            if (ut == typeof(object))
+            {
+                return D.PredefinedType.Any;
+            }
+
+            if (ut == typeof(bool))
+            {
+                return D.PredefinedType.Boolean;
+            }
+
+            if (ut == typeof(int)
+                || ut == typeof(float)
+                || ut == typeof(double)
+                || ut == typeof(decimal)
+                || ut == typeof(long)
+                || ut == typeof(byte)
+                || ut == typeof(short)
+                || ut == typeof(uint)
+                || ut == typeof(ulong)
+                || ut == typeof(sbyte)
+                || ut == typeof(ulong))
+            {
+                return D.PredefinedType.Number;
+            }
+
+            if (ut == typeof(string))
+            {
+                return D.PredefinedType.String;
+            }
+
+            return new D.NamedTypeReference() { Name = type.FullName };
         }
 
         #region クエリー

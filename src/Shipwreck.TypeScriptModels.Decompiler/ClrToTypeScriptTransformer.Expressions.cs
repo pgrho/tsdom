@@ -15,6 +15,21 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     partial class ClrToTypeScriptTransformer
     {
+        private Expression Concat(Expression current, Expression other)
+        {
+            if (current == null)
+            {
+                return other;
+            }
+            else
+            {
+                return new E.CommaExpression()
+                {
+                    Left = current,
+                    Right = other
+                };
+            }
+        }
 
         #region キーワード
 
@@ -124,6 +139,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return inv;
         }
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, string data)
+        {
+            yield return new E.IndexerExpression()
+            {
+                Object = GetExpression(indexerExpression.Target, data),
+                Index = GetExpression(indexerExpression.Arguments.Single(), data),
+            };
+        }
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, string data)
         {
             var e = new E.BinaryExpression();
@@ -134,6 +158,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 case BinaryOperatorType.Add:
                     e.Operator = E.BinaryOperator.Add;
                     break;
+
                 case BinaryOperatorType.Subtract:
                     e.Operator = E.BinaryOperator.Subtract;
                     break;
@@ -142,9 +167,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     // TODO: integer divide
                     e.Operator = E.BinaryOperator.Multiply;
                     break;
+
                 case BinaryOperatorType.Divide:
                     e.Operator = E.BinaryOperator.Divide;
                     break;
+
                 case BinaryOperatorType.Modulus:
                     e.Operator = E.BinaryOperator.Modulo;
                     break;
@@ -152,6 +179,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 case BinaryOperatorType.ShiftLeft:
                     e.Operator = E.BinaryOperator.LeftShift;
                     break;
+
                 case BinaryOperatorType.ShiftRight:
                     // TODO: Unsigned
                     e.Operator = E.BinaryOperator.SignedRightShift;
@@ -160,9 +188,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 case BinaryOperatorType.BitwiseAnd:
                     e.Operator = E.BinaryOperator.BitwiseAnd;
                     break;
+
                 case BinaryOperatorType.BitwiseOr:
                     e.Operator = E.BinaryOperator.BitwiseOr;
                     break;
+
                 case BinaryOperatorType.ExclusiveOr:
                     e.Operator = E.BinaryOperator.BitwiseXor;
                     break;
@@ -170,6 +200,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 case BinaryOperatorType.Equality:
                     e.Operator = E.BinaryOperator.StrictEqual;
                     break;
+
                 case BinaryOperatorType.InEquality:
                     e.Operator = E.BinaryOperator.StrictNotEqual;
                     break;
@@ -177,12 +208,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 case BinaryOperatorType.LessThan:
                     e.Operator = E.BinaryOperator.LessThan;
                     break;
+
                 case BinaryOperatorType.LessThanOrEqual:
                     e.Operator = E.BinaryOperator.LessThanOrEqual;
                     break;
+
                 case BinaryOperatorType.GreaterThan:
                     e.Operator = E.BinaryOperator.GreaterThan;
                     break;
+
                 case BinaryOperatorType.GreaterThanOrEqual:
                     e.Operator = E.BinaryOperator.GreaterThanOrEqual;
                     break;
@@ -190,9 +224,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 case BinaryOperatorType.ConditionalAnd:
                     e.Operator = E.BinaryOperator.LogicalAnd;
                     break;
+
                 case BinaryOperatorType.ConditionalOr:
                     e.Operator = E.BinaryOperator.LogicalOr;
                     break;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -215,6 +251,5 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         private Expression GetExpression(ICSharpCode.NRefactory.CSharp.Expression expression, string data)
                => expression?.IsNull != false ? null : expression.AcceptVisitor(this, data).Cast<Expression>().Single();
-
     }
 }
