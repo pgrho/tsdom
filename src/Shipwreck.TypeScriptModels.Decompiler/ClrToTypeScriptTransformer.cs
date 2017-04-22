@@ -46,15 +46,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return b.SyntaxTree.AcceptVisitor(this, "temp").ToArray();
         }
 
-
-        #region ステートメントレベル
-
-        #endregion ステートメントレベル
-
-        #region 式レベル
-
-        #endregion 式レベル
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, string data)
         {
             throw new NotImplementedException();
@@ -392,9 +383,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return sts;
         }
 
-        private static D.AccessibilityModifier GetAccessibility(Modifiers m)
-            => (m & (Modifiers.Public | Modifiers.Internal)) != Modifiers.None ? D.AccessibilityModifier.Public
-                : (m & Modifiers.Protected) != Modifiers.None ? D.AccessibilityModifier.Protected
+        private static D.AccessibilityModifier GetAccessibility(Modifiers modifiers)
+            => (modifiers & (Modifiers.Public | Modifiers.Internal)) != Modifiers.None ? D.AccessibilityModifier.Public
+                : (modifiers & Modifiers.Protected) != Modifiers.None ? D.AccessibilityModifier.Protected
                 : D.AccessibilityModifier.Private;
 
         private ITypeReference GetTypeReference(AstType type)
@@ -487,7 +478,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     ElementType = GetTypeReference(type.GetElementType())
                 };
             }
-
 
             var ut = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) ? type.GetGenericArguments()[0] : type;
             isOptional = !type.IsValueType || ut != type;
@@ -656,16 +646,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnsafeStatement(UnsafeStatement unsafeStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingDeclaration(UsingDeclaration usingDeclaration, string data)
         {
             throw new NotImplementedException();
         }

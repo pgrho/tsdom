@@ -247,5 +247,19 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         #endregion 型レベル
+
+        #region 対象外
+
+        #region usingディレクティブ
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, string data)
+            => Enumerable.Empty<Syntax>();
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingDeclaration(UsingDeclaration usingDeclaration, string data)
+            => Enumerable.Empty<Syntax>();
+
+        #endregion usingディレクティブ
+
+        #endregion 対象外
     }
 }
