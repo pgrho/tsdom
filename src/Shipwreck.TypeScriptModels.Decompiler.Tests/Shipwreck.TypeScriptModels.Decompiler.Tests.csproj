@@ -60,6 +60,8 @@
     <Compile Include="Transformations\Members\PropertydDeclarationTest.cs" />
     <Compile Include="Transformations\Members\MethodDeclarationTest.cs" />
     <Compile Include="Transformations\Members\FieldDeclarationTest.cs" />
+    <Compile Include="Transformations\Statements\ContinueStatementTest.cs" />
+    <Compile Include="Transformations\Statements\BreakStatementTest.cs" />
     <Compile Include="Transformations\Statements\ForStatementTest.cs" />
     <Compile Include="Transformations\Statements\ForOfStatementTest.cs" />
     <Compile Include="Transformations\Statements\WhileStatementTest.cs" />

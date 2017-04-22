@@ -91,11 +91,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return ((SimpleType)type).Identifier;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBreakStatement(BreakStatement breakStatement, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCaseLabel(CaseLabel caseLabel, string data)
         {
             throw new NotImplementedException();
@@ -142,11 +137,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstructorInitializer(ConstructorInitializer constructorInitializer, string data)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitContinueStatement(ContinueStatement continueStatement, string data)
         {
             throw new NotImplementedException();
         }
@@ -368,7 +358,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     }
                 }
             }
-            else if (statement != null)
+            else if (statement?.IsNull == false)
             {
                 foreach (var cr in statement.AcceptVisitor(this, data))
                 {

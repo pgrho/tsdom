@@ -158,6 +158,17 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 yield return new S.ReturnStatement();
             }
         }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBreakStatement(BreakStatement breakStatement, string data)
+        {
+            yield return new S.BreakStatement();
+        }
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitContinueStatement(ContinueStatement continueStatement, string data)
+        {
+            yield return new S.ContinueStatement();
+        }
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, string data)
         {
             var vd = new S.VariableDeclaration();
