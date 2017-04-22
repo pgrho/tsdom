@@ -620,10 +620,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, string data)
-        {
-            throw new NotImplementedException();
-        }
+
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, string data)
         {
@@ -649,7 +646,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             throw new NotImplementedException();
         }
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitVariableInitializer(VariableInitializer variableInitializer, string data)
         {

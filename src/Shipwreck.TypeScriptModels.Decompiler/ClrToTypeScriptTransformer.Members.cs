@@ -201,5 +201,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 yield return pd;
             }
         }
+
+        #region 対象外
+
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, string data)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion 対象外
     }
 }
