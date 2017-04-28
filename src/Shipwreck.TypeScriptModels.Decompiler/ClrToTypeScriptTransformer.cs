@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using D = Shipwreck.TypeScriptModels.Declarations;
 using E = Shipwreck.TypeScriptModels.Expressions;
-using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -286,11 +285,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, string data)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPatternPlaceholder(AstNode placeholder, Pattern pattern, string data)
         {
             throw new NotImplementedException();
@@ -300,7 +294,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             throw new NotImplementedException();
         }
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, string data)
         {
@@ -333,6 +326,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             throw new NotImplementedException();
         }
+
         private Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, string data)
         {
             Collection<Statement> sts = null;
@@ -359,6 +353,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             return sts;
         }
+
         private Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, string data)
         {
             Collection<Statement> sts = null;
@@ -620,8 +615,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             throw new NotImplementedException();
         }
-
-
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, string data)
         {

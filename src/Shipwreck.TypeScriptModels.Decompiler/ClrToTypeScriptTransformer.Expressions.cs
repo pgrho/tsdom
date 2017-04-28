@@ -164,6 +164,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #endregion キーワード
 
+        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, string data)
+            => parenthesizedExpression.Expression.AcceptVisitor(this, data);
+
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, string data)
         {
             var e = new E.UnaryExpression();
