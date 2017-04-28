@@ -70,6 +70,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClrToTypeScriptTransformationContext.cs" />
     <Compile Include="ClrToTypeScriptTransformer.Statements.cs" />
     <Compile Include="ClrToTypeScriptTransformer.Members.cs" />
     <Compile Include="ClrToTypeScriptTransformer.Types.cs" />

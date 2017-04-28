@@ -12,7 +12,7 @@ using E = Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
-    public partial class ClrToTypeScriptTransformer : IAstVisitor<string, IEnumerable<Syntax>>
+    public partial class ClrToTypeScriptTransformer : IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>
     {
         private List<D.IRootStatement> _Statements;
 
@@ -42,40 +42,40 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             b.AddType(ad.MainModule.GetType(clrType.FullName));
             b.RunTransformations();
 
-            return b.SyntaxTree.AcceptVisitor(this, "temp").ToArray();
+            return b.SyntaxTree.AcceptVisitor(this, new ClrToTypeScriptTransformationContext()).ToArray();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitArraySpecifier(ArraySpecifier arraySpecifier, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitArraySpecifier(ArraySpecifier arraySpecifier, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAsExpression(AsExpression asExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAsExpression(AsExpression asExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
@@ -90,212 +90,212 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return ((SimpleType)type).Identifier;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCaseLabel(CaseLabel caseLabel, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCaseLabel(CaseLabel caseLabel, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCastExpression(CastExpression castExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCastExpression(CastExpression castExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCatchClause(CatchClause catchClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCatchClause(CatchClause catchClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCheckedExpression(CheckedExpression checkedExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCheckedExpression(CheckedExpression checkedExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCheckedStatement(CheckedStatement checkedStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCheckedStatement(CheckedStatement checkedStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitComment(Comment comment, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitComment(Comment comment, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitComposedType(ComposedType composedType, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitComposedType(ComposedType composedType, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConditionalExpression(ConditionalExpression conditionalExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitConditionalExpression(ConditionalExpression conditionalExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstraint(Constraint constraint, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitConstraint(Constraint constraint, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstructorInitializer(ConstructorInitializer constructorInitializer, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitConstructorInitializer(ConstructorInitializer constructorInitializer, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDirectionExpression(DirectionExpression directionExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitDirectionExpression(DirectionExpression directionExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitDocumentationReference(DocumentationReference documentationReference, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitDocumentationReference(DocumentationReference documentationReference, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitErrorNode(AstNode errorNode, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitErrorNode(AstNode errorNode, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitEventDeclaration(EventDeclaration eventDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitEventDeclaration(EventDeclaration eventDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFixedStatement(FixedStatement fixedStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitFixedStatement(FixedStatement fixedStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitGotoStatement(GotoStatement gotoStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitGotoStatement(GotoStatement gotoStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIdentifier(Identifier identifier, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitIdentifier(Identifier identifier, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIsExpression(IsExpression isExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitIsExpression(IsExpression isExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLabelStatement(LabelStatement labelStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitLabelStatement(LabelStatement labelStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLambdaExpression(LambdaExpression lambdaExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitLambdaExpression(LambdaExpression lambdaExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberType(MemberType memberType, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitMemberType(MemberType memberType, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamedExpression(NamedExpression namedExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitNamedExpression(NamedExpression namedExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNewLine(NewLineNode newLineNode, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitNewLine(NewLineNode newLineNode, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNullNode(AstNode nullNode, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitNullNode(AstNode nullNode, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPatternPlaceholder(AstNode placeholder, Pattern pattern, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPatternPlaceholder(AstNode placeholder, Pattern pattern, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, ClrToTypeScriptTransformationContext data)
         {
             if (primitiveExpression.Value == null)
             {
@@ -322,12 +322,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPrimitiveType(PrimitiveType primitiveType, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPrimitiveType(PrimitiveType primitiveType, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        private Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, string data)
+        private Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, ClrToTypeScriptTransformationContext data)
         {
             Collection<Statement> sts = null;
 
@@ -354,7 +354,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return sts;
         }
 
-        private Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, string data)
+        private Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, ClrToTypeScriptTransformationContext data)
         {
             Collection<Statement> sts = null;
 
@@ -518,79 +518,79 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region クエリー
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryExpression(QueryExpression queryExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryExpression(QueryExpression queryExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryFromClause(QueryFromClause queryFromClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryFromClause(QueryFromClause queryFromClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryGroupClause(QueryGroupClause queryGroupClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryGroupClause(QueryGroupClause queryGroupClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryJoinClause(QueryJoinClause queryJoinClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryJoinClause(QueryJoinClause queryJoinClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryLetClause(QueryLetClause queryLetClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryLetClause(QueryLetClause queryLetClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryOrderClause(QueryOrderClause queryOrderClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryOrderClause(QueryOrderClause queryOrderClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryOrdering(QueryOrdering queryOrdering, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryOrdering(QueryOrdering queryOrdering, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQuerySelectClause(QuerySelectClause querySelectClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQuerySelectClause(QuerySelectClause querySelectClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitQueryWhereClause(QueryWhereClause queryWhereClause, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitQueryWhereClause(QueryWhereClause queryWhereClause, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
         #endregion クエリー
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSimpleType(SimpleType simpleType, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitSimpleType(SimpleType simpleType, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSizeOfExpression(SizeOfExpression sizeOfExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitSizeOfExpression(SizeOfExpression sizeOfExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitStackAllocExpression(StackAllocExpression stackAllocExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitStackAllocExpression(StackAllocExpression stackAllocExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSwitchSection(SwitchSection switchSection, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitSwitchSection(SwitchSection switchSection, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSyntaxTree(SyntaxTree syntaxTree, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitSyntaxTree(SyntaxTree syntaxTree, ClrToTypeScriptTransformationContext data)
         {
             foreach (var c in syntaxTree.Children)
             {
@@ -601,62 +601,62 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitText(TextNode textNode, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitText(TextNode textNode, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitThrowStatement(ThrowStatement throwStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitThrowStatement(ThrowStatement throwStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeOfExpression(TypeOfExpression typeOfExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitTypeOfExpression(TypeOfExpression typeOfExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUncheckedExpression(UncheckedExpression uncheckedExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUncheckedExpression(UncheckedExpression uncheckedExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUncheckedStatement(UncheckedStatement uncheckedStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUncheckedStatement(UncheckedStatement uncheckedStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnsafeStatement(UnsafeStatement unsafeStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUnsafeStatement(UnsafeStatement unsafeStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitVariableInitializer(VariableInitializer variableInitializer, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitVariableInitializer(VariableInitializer variableInitializer, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitWhitespace(WhitespaceNode whitespaceNode, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitWhitespace(WhitespaceNode whitespaceNode, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitYieldReturnStatement(YieldReturnStatement yieldReturnStatement, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitYieldReturnStatement(YieldReturnStatement yieldReturnStatement, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }

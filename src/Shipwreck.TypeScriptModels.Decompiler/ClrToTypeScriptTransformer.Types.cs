@@ -15,7 +15,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     partial class ClrToTypeScriptTransformer
     {
-        protected virtual D.IModuleDeclaration ResolveModule(string data, string fullName)
+        protected virtual D.IModuleDeclaration ResolveModule(ClrToTypeScriptTransformationContext data, string fullName)
         {
             var ms = Statements;
             var m = ms.OfType<D.IModuleDeclaration>().FirstOrDefault(e => e.Name == fullName);
@@ -33,7 +33,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region 名前空間レベル
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ClrToTypeScriptTransformationContext data)
         {
             var ns = ResolveModule(data, namespaceDeclaration.FullName);
             foreach (var c in namespaceDeclaration.Children)
@@ -65,7 +65,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region 型レベル
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, ClrToTypeScriptTransformationContext data)
         {
             D.ITypeDeclaration td;
             switch (typeDeclaration.ClassType)
@@ -148,7 +148,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return (Syntax)td;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, ClrToTypeScriptTransformationContext data)
         {
             foreach (var c in attributeSection.Children)
             {
@@ -159,7 +159,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, ClrToTypeScriptTransformationContext data)
         {
             var d = new D.Decorator();
             d.Name = GetTypeName(attribute.Type);
@@ -182,7 +182,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return d;
         }
 
-        private Collection<D.Decorator> GetDecorators(IEnumerable<AttributeSection> section, string data)
+        private Collection<D.Decorator> GetDecorators(IEnumerable<AttributeSection> section, ClrToTypeScriptTransformationContext data)
         {
             Collection<D.Decorator> c = null;
             foreach (var s in section)
@@ -252,13 +252,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region usingディレクティブ
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, ClrToTypeScriptTransformationContext data)
             => Enumerable.Empty<Syntax>();
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingDeclaration(UsingDeclaration usingDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUsingDeclaration(UsingDeclaration usingDeclaration, ClrToTypeScriptTransformationContext data)
             => Enumerable.Empty<Syntax>();
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective, ClrToTypeScriptTransformationContext data)
             => Enumerable.Empty<Syntax>();
 
         #endregion usingディレクティブ

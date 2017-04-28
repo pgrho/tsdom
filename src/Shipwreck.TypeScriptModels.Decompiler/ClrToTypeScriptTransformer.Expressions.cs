@@ -1,15 +1,8 @@
-﻿using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+﻿using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using D = Shipwreck.TypeScriptModels.Declarations;
 using E = Shipwreck.TypeScriptModels.Expressions;
-using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -139,22 +132,22 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region キーワード
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.ThisExpression();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.SuperExpression();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.NullExpression();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.IdentifierExpression()
             {
@@ -164,10 +157,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #endregion キーワード
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ClrToTypeScriptTransformationContext data)
             => parenthesizedExpression.Expression.AcceptVisitor(this, data);
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, ClrToTypeScriptTransformationContext data)
         {
             var e = new E.UnaryExpression();
             e.Operand = GetExpression(unaryOperatorExpression.Expression, data);
@@ -215,7 +208,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return e;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, ClrToTypeScriptTransformationContext data)
         {
             var inv = new E.CallExpression();
 
@@ -248,7 +241,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return inv;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.IndexerExpression()
             {
@@ -257,12 +250,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ClrToTypeScriptTransformationContext data)
         {
             throw new NotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.BinaryExpression()
             {
@@ -272,7 +265,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitAssignmentExpression(AssignmentExpression assignmentExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitAssignmentExpression(AssignmentExpression assignmentExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.AssignmentExpression()
             {
@@ -282,7 +275,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, ClrToTypeScriptTransformationContext data)
         {
             if (memberReferenceExpression.TypeArguments.Any())
             {
@@ -296,7 +289,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        private Expression GetExpression(ICSharpCode.NRefactory.CSharp.Expression expression, string data)
+        private Expression GetExpression(ICSharpCode.NRefactory.CSharp.Expression expression, ClrToTypeScriptTransformationContext data)
                => expression?.IsNull != false ? null : expression.AcceptVisitor(this, data).Cast<Expression>().Single();
     }
 }

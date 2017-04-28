@@ -15,7 +15,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     partial class ClrToTypeScriptTransformer
     {
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, ClrToTypeScriptTransformationContext data)
         {
             foreach (var v in fieldDeclaration.Variables)
             {
@@ -31,7 +31,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, ClrToTypeScriptTransformationContext data)
         {
             var cd = new D.ConstructorDeclaration();
 
@@ -50,7 +50,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return cd;
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, ClrToTypeScriptTransformationContext data)
         {
             // TODO: オーバーロード
 
@@ -82,7 +82,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return md;
         }
 
-        private IEnumerable<D.Parameter> GetParameters(string data, AstNodeCollection<ParameterDeclaration> parameters)
+        private IEnumerable<D.Parameter> GetParameters(ClrToTypeScriptTransformationContext data, AstNodeCollection<ParameterDeclaration> parameters)
         {
             foreach (var p in parameters)
             {
@@ -103,7 +103,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, ClrToTypeScriptTransformationContext data)
         {
             var acc = GetAccessibility(propertyDeclaration.Modifiers);
             var tr = GetTypeReference(propertyDeclaration.ReturnType);
@@ -204,7 +204,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region 対象外
 
-        IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, string data)
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, ClrToTypeScriptTransformationContext data)
         {
             throw new NotSupportedException();
         }
