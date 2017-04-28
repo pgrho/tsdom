@@ -108,7 +108,24 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitTryCatchStatement(TryCatchStatement tryCatchStatement, string data)
         {
-            throw new NotImplementedException();
+            if (tryCatchStatement.CatchClauses.Count > 1)
+            {
+                throw new ArgumentException("Too many Catch clauses");
+            }
+
+            var s = new S.TryStatement();
+
+            s.TryBlock = GetStatements(data, tryCatchStatement.TryBlock);
+            if (tryCatchStatement.CatchClauses.Count == 1)
+            {
+                var cc = tryCatchStatement.CatchClauses.First();
+
+                s.CatchParameter = new E.IdentifierExpression { Name = string.IsNullOrEmpty(cc.VariableName) ? "__ex" : cc.VariableName };
+                s.CatchBlock = GetStatements(data, cc.Body);
+            }
+            s.FinallyBlock = GetStatements(data, tryCatchStatement.FinallyBlock);
+
+            yield return s;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitUsingStatement(UsingStatement usingStatement, string data)

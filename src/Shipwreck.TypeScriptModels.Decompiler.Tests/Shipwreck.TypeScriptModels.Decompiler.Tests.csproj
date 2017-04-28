@@ -65,6 +65,7 @@
     <Compile Include="Transformations\Statements\UsingStatementTest.cs" />
     <Compile Include="Transformations\Statements\ForStatementTest.cs" />
     <Compile Include="Transformations\Statements\ForOfStatementTest.cs" />
+    <Compile Include="Transformations\Statements\TryStatementTest.cs" />
     <Compile Include="Transformations\Statements\WhileStatementTest.cs" />
     <Compile Include="Transformations\Statements\ExpressionStatementTest.cs" />
     <Compile Include="Transformations\Statements\DoStatementTest.cs" />

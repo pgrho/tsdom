@@ -275,7 +275,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 Target = GetExpression(assignmentExpression.Left, data),
                 Value = GetExpression(assignmentExpression.Right, data),
-                CompoundOperator = GetOperator(assignmentExpression.Operator)
+                CompoundOperator = assignmentExpression.Operator == AssignmentOperatorType.Assign ? E.BinaryOperator.Default : GetOperator(assignmentExpression.Operator)
             };
         }
 
