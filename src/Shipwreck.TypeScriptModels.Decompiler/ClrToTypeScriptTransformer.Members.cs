@@ -1,11 +1,6 @@
-﻿using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+﻿using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using D = Shipwreck.TypeScriptModels.Declarations;
 using E = Shipwreck.TypeScriptModels.Expressions;
@@ -76,7 +71,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             if (!methodDeclaration.Body.IsNull)
             {
-                md.Statements = GetStatements(methodDeclaration.Body, data);
+                var ctx = data.GetChildContext();
+
+                md.Statements = GetStatements(methodDeclaration.Body, ctx);
+
+                md.IsAsync = ctx.HasAwait;
             }
 
             yield return md;

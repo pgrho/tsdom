@@ -1112,6 +1112,14 @@ namespace Shipwreck.TypeScriptModels
             }
         }
 
+        private void WriteIsAsync(bool isStatic)
+        {
+            if (isStatic)
+            {
+                _Writer.Write("async ");
+            }
+        }
+
         private void WriteIsAbstract(bool isStatic)
         {
             if (isStatic)
@@ -1159,6 +1167,7 @@ namespace Shipwreck.TypeScriptModels
             WriteIsDeclare(member.IsDeclare);
             WriteIsExport(member.IsExport);
             WriteIsDefault(member.IsDefault);
+            WriteIsAsync(member.IsAsync);
             _Writer.Write("function ");
             if (member.FunctionName != null)
             {
@@ -1566,6 +1575,7 @@ namespace Shipwreck.TypeScriptModels
         {
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
+            WriteIsAsync(member.IsAsync);
             WriteIsAbstract(member.IsAbstract);
             _Writer.Write(member.MethodName);
             WriteCallSignature(signature ?? member);

@@ -25,6 +25,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
         public bool IsDefault { get; set; }
 
         /// <summary>
+        /// Gets or sets the value indicating whether the function has a <c>async</c> modifier.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsAsync { get; set; }
+
+        /// <summary>
         /// Gets or sets the binding identifier of this function.
         /// </summary>
         [DefaultValue(null)]

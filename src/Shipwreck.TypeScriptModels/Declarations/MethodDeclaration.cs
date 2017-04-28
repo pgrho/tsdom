@@ -19,6 +19,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
         public bool IsStatic { get; set; }
 
         /// <summary>
+        /// Gets or sets the value indicating whether the method has a <c>async</c> modifier.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsAsync { get; set; }
+
+        /// <summary>
         /// Gets or sets the value indicating whether the method has a <c>abstract</c> modifier.
         /// </summary>
         [DefaultValue(false)]
