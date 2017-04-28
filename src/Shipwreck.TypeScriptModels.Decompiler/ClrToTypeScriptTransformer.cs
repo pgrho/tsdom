@@ -333,8 +333,33 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             throw new NotImplementedException();
         }
+        private Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, string data)
+        {
+            Collection<Statement> sts = null;
 
-        private Collection<Statement> GetStatements(string data, ICSharpCode.NRefactory.CSharp.Statement statement)
+            foreach (var s in statements)
+            {
+                var l = GetStatements(s, data);
+
+                if (l?.Count > 0)
+                {
+                    if (sts == null)
+                    {
+                        sts = l;
+                    }
+                    else
+                    {
+                        foreach (var e in l)
+                        {
+                            sts.Add(e);
+                        }
+                    }
+                }
+            }
+
+            return sts;
+        }
+        private Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, string data)
         {
             Collection<Statement> sts = null;
 

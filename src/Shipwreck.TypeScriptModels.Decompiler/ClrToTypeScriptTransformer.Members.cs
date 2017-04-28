@@ -44,7 +44,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             if (!constructorDeclaration.Body.IsNull)
             {
-                cd.Statements = GetStatements(data, constructorDeclaration.Body);
+                cd.Statements = GetStatements(constructorDeclaration.Body, data);
             }
 
             yield return cd;
@@ -76,7 +76,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             if (!methodDeclaration.Body.IsNull)
             {
-                md.Statements = GetStatements(data, methodDeclaration.Body);
+                md.Statements = GetStatements(methodDeclaration.Body, data);
             }
 
             yield return md;
@@ -151,7 +151,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     }
                     else
                     {
-                        getter.Statements = GetStatements(data, propertyDeclaration.Getter.Body);
+                        getter.Statements = GetStatements(propertyDeclaration.Getter.Body, data);
                     }
 
                     yield return getter;
@@ -185,7 +185,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     }
                     else
                     {
-                        setter.Statements = GetStatements(data, propertyDeclaration.Setter.Body);
+                        setter.Statements = GetStatements(propertyDeclaration.Setter.Body, data);
                     }
 
                     yield return setter;

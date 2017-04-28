@@ -20,7 +20,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitBlockStatement(BlockStatement blockStatement, string data)
         {
             var bs = new S.BlockStatement();
-            bs.Statements = GetStatements(data, blockStatement);
+            bs.Statements = GetStatements(blockStatement, data);
 
             yield return bs;
         }
@@ -29,8 +29,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             var ib = new S.IfStatement();
             ib.Condition = GetExpression(ifElseStatement.Condition, data);
-            ib.TruePart = GetStatements(data, ifElseStatement.TrueStatement);
-            ib.FalsePart = GetStatements(data, ifElseStatement.FalseStatement);
+            ib.TruePart = GetStatements(ifElseStatement.TrueStatement, data);
+            ib.FalsePart = GetStatements(ifElseStatement.FalseStatement, data);
 
             yield return ib;
         }
@@ -72,7 +72,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 fs.Iterator = Concat(fs.Iterator, GetExpression(es.Expression, data));
             }
 
-            fs.Statements = GetStatements(data, forStatement.EmbeddedStatement);
+            fs.Statements = GetStatements(forStatement.EmbeddedStatement, data);
 
             yield return fs;
         }
@@ -83,7 +83,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             fs.Variable = new E.IdentifierExpression() { Name = foreachStatement.VariableName };
             fs.Value = GetExpression(foreachStatement.InExpression, data);
 
-            fs.Statements = GetStatements(data, foreachStatement.EmbeddedStatement);
+            fs.Statements = GetStatements(foreachStatement.EmbeddedStatement, data);
 
             yield return fs;
         }
@@ -92,7 +92,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             var bs = new S.DoStatement();
             bs.Condition = GetExpression(doWhileStatement.Condition, data);
-            bs.Statements = GetStatements(data, doWhileStatement.EmbeddedStatement);
+            bs.Statements = GetStatements(doWhileStatement.EmbeddedStatement, data);
 
             yield return bs;
         }
@@ -101,7 +101,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             var bs = new S.WhileStatement();
             bs.Condition = GetExpression(whileStatement.Condition, data);
-            bs.Statements = GetStatements(data, whileStatement.EmbeddedStatement);
+            bs.Statements = GetStatements(whileStatement.EmbeddedStatement, data);
 
             yield return bs;
         }
@@ -115,15 +115,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             var s = new S.TryStatement();
 
-            s.TryBlock = GetStatements(data, tryCatchStatement.TryBlock);
+            s.TryBlock = GetStatements(tryCatchStatement.TryBlock, data);
             if (tryCatchStatement.CatchClauses.Count == 1)
             {
                 var cc = tryCatchStatement.CatchClauses.First();
 
                 s.CatchParameter = new E.IdentifierExpression { Name = string.IsNullOrEmpty(cc.VariableName) ? "__ex" : cc.VariableName };
-                s.CatchBlock = GetStatements(data, cc.Body);
+                s.CatchBlock = GetStatements(cc.Body, data);
             }
-            s.FinallyBlock = GetStatements(data, tryCatchStatement.FinallyBlock);
+            s.FinallyBlock = GetStatements(tryCatchStatement.FinallyBlock, data);
 
             yield return s;
         }
@@ -159,7 +159,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             b.Statements.Add(vds);
             var tf = new S.TryStatement();
-            tf.TryBlock = GetStatements(data, usingStatement.EmbeddedStatement);
+            tf.TryBlock = GetStatements(usingStatement.EmbeddedStatement, data);
 
             foreach (var bd in vds.Bindings)
             {
@@ -188,13 +188,32 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitSwitchStatement(SwitchStatement switchStatement, string data)
         {
-            throw new NotImplementedException();
+            var s = new S.SwitchStatement();
+            s.Condition = GetExpression(switchStatement.Expression, data);
+
+            foreach (var c in switchStatement.SwitchSections)
+            {
+                if (c.CaseLabels.Count == 0)
+                {
+                    continue;
+                }
+                S.SwitchCase sc = null;
+                foreach (var l in c.CaseLabels)
+                {
+                    sc = new S.SwitchCase();
+                    sc.Label = GetExpression(l.Expression, data);
+                    s.Cases.Add(sc);
+                }
+                sc.Statements = GetStatements(c.Statements, data);
+            }
+
+            yield return s;
         }
 
         IEnumerable<Syntax> IAstVisitor<string, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, string data)
         {
             var bs = new S.BlockStatement();
-            bs.Statements = GetStatements(data, lockStatement.EmbeddedStatement);
+            bs.Statements = GetStatements(lockStatement.EmbeddedStatement, data);
             bs.Statements.Insert(0, new S.ExpressionStatement()
             {
                 Expression = GetExpression(lockStatement.Expression, data)
