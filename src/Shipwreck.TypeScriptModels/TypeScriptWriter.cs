@@ -649,6 +649,14 @@ namespace Shipwreck.TypeScriptModels
             return 0;
         }
 
+        int IExpressionVisitor<int>.VisitAwait(AwaitExpression expression)
+        {
+            _Writer.Write("await ");
+            WriteChildExpression(expression, expression.Operand);
+
+            return 0;
+        }
+
         private void WriteChildExpression(Expression parent, Expression child)
         {
             var pp = parent.Precedence;

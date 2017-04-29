@@ -77,5 +77,6 @@ namespace Shipwreck.TypeScriptModels
 
         // 4.22
         T VisitComma(CommaExpression expression);
+        T VisitAwait(AwaitExpression expression);
     }
 }

@@ -114,7 +114,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     break;
 
                 default:
-                    throw new NotImplementedException();
+                    throw GetNotImplementedException();
             }
             td.Name = typeDeclaration.Name;
             td.IsExport = typeDeclaration.HasModifier(Modifiers.Public);

@@ -85,7 +85,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     return E.BinaryOperator.LogicalOr;
 
                 default:
-                    throw new NotImplementedException();
+                    throw GetNotImplementedException();
             }
         }
 
@@ -126,7 +126,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     return E.BinaryOperator.BitwiseXor;
 
                 default:
-                    throw new NotImplementedException();
+                    throw GetNotImplementedException();
             }
         }
 
@@ -147,6 +147,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return new E.NullExpression();
         }
 
+        #endregion キーワード
+
+        #region 識別子
+
         IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, ClrToTypeScriptTransformationContext data)
         {
             yield return new E.IdentifierExpression()
@@ -155,13 +159,33 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        #endregion キーワード
+        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, ClrToTypeScriptTransformationContext data)
+        {
+            yield return new E.IdentifierExpression()
+            {
+                Name = GetTypeName(typeReferenceExpression.Type)
+            };
+        }
+
+        #endregion 識別子
 
         IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ClrToTypeScriptTransformationContext data)
             => parenthesizedExpression.Expression.AcceptVisitor(this, data);
 
         IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, ClrToTypeScriptTransformationContext data)
         {
+            if (unaryOperatorExpression.Operator == UnaryOperatorType.Await)
+            {
+                data.HasAwait = true;
+
+                return new[]
+                {
+                    new E.AwaitExpression()
+                    {
+                        Operand = GetExpression(unaryOperatorExpression.Expression, data)
+                    }
+                };
+            }
             var e = new E.UnaryExpression();
             e.Operand = GetExpression(unaryOperatorExpression.Expression, data);
             switch (unaryOperatorExpression.Operator)
@@ -198,14 +222,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     e.Operator = E.UnaryOperator.BitwiseNot;
                     break;
 
-                case UnaryOperatorType.Await:
-                //TODO: await
-
                 default:
-                    throw new NotImplementedException();
+                    throw GetNotImplementedException();
             }
 
-            yield return e;
+            return new[] { e };
         }
 
         IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, ClrToTypeScriptTransformationContext data)
@@ -252,7 +273,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ClrToTypeScriptTransformationContext data)
         {
-            throw new NotImplementedException();
+            throw GetNotImplementedException();
         }
 
         IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ClrToTypeScriptTransformationContext data)
@@ -279,7 +300,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             if (memberReferenceExpression.TypeArguments.Any())
             {
-                throw new NotImplementedException();
+                throw GetNotImplementedException();
             }
 
             yield return new E.PropertyExpression()
