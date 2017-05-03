@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="MethodNameConventionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transformations\Expressions\AssignmentExpressionTest.cs" />
     <Compile Include="Transformations\Expressions\SuperExpressionTest.cs" />

@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
 using System;
@@ -21,10 +22,33 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         public List<D.IRootStatement> Statements
             => _Statements ?? (_Statements = new List<D.IRootStatement>());
 
+        private static ILTranslationConvention[] _DefaultConventions;
+
+
         private List<ILTranslationConvention> _Conventions;
 
         public List<ILTranslationConvention> Conventions
-            => _Conventions ?? (_Conventions = new List<ILTranslationConvention>());
+            => _Conventions ?? (_Conventions = DefaultConventions.ToList());
+
+        private CSharpProjectContent _Project;
+
+        internal CSharpProjectContent Project
+            => _Project ?? (_Project = new CSharpProjectContent());
+
+        public static ILTranslationConvention[] DefaultConventions
+        {
+            get
+            {
+                if (_DefaultConventions == null)
+                {
+                    _DefaultConventions = new[]
+                    {
+                        new MethodNameConvention(typeof(object).GetMethod(nameof(ToString)), "toString")
+                    };
+                }
+                return _DefaultConventions;
+            }
+        }
 
         public IEnumerable<Syntax> Transform(Type clrType)
         {
@@ -54,16 +78,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                 b.AddType(ad.MainModule.GetType(clrType.FullName));
                 b.RunTransformations();
+                b.SyntaxTree.FileName = "temp.cs";
 
-                if (_Conventions?.Count > 0)
+                foreach (var c in Conventions)
                 {
-                    foreach (var c in _Conventions)
-                    {
-                        c.ApplyTo(this);
-                    }
+                    c.ApplyTo(this);
                 }
 
-                return b.SyntaxTree.AcceptVisitor(this, new ILTransformationContext()).ToArray();
+                return b.SyntaxTree.AcceptVisitor(this, new ILTransformationContext(this, b.SyntaxTree)).ToArray();
             }
         }
 
