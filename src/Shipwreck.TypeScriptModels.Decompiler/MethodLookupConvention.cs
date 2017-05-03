@@ -9,10 +9,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     public abstract class MethodLookupConvention : ILTranslationConvention
     {
+        protected MethodLookupConvention(Type targetType, string targetMethodName)
+        {
+            TargetType = targetType;
+            TargetMethodName = targetMethodName;
+        }
         protected MethodLookupConvention(MethodInfo targetMethod)
         {
             TargetMethod = targetMethod;
         }
+
+        protected Type TargetType { get; }
+        protected string TargetMethodName { get; }
 
         protected MethodInfo TargetMethod { get; }
 
@@ -34,7 +42,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             var mr = e.Node.Annotation<MethodDefinition>();
 
-            if (TargetMethod.IsEquivalentTo(mr))
+            if ((TargetMethod != null && TargetMethod.IsEquivalentTo(mr))
+                || (TargetType != null && TargetType.IsBaseTypeOf(mr.DeclaringType) && TargetMethodName == mr.Name))
             {
                 OnMethodDeclarationMatched((ILTranslator)sender, e);
             }
@@ -49,7 +58,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             var mr = e.Node.Annotation<MethodReference>();
 
-            if (TargetMethod.IsEquivalentTo(mr))
+            if (TargetMethod.IsEquivalentTo(mr)
+                || (TargetType != null && TargetType.IsBaseTypeOf(mr.DeclaringType) && TargetMethodName == mr.Name))
             {
                 OnInvocationExpressionMatched((ILTranslator)sender, e);
             }

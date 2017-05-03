@@ -4,4 +4,5 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     {
         public abstract void ApplyTo(ILTranslator translator);
     }
+
 }

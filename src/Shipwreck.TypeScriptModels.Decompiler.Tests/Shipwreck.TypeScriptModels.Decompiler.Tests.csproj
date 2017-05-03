@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="MathConventionSetTest.cs" />
     <Compile Include="MethodNameConventionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transformations\Expressions\AssignmentExpressionTest.cs" />

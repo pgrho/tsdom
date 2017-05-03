@@ -39,9 +39,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 if (_DefaultConventions == null)
                 {
-                    _DefaultConventions = new[]
+                    _DefaultConventions = new ILTranslationConvention[]
                     {
-                        new MethodNameConvention(typeof(object).GetMethod(nameof(ToString)), "toString")
+                        new MethodNameConvention(typeof(object).GetMethod(nameof(ToString)), "toString"),
+                        new MathConventionSet()
                     };
                 }
                 return _DefaultConventions;

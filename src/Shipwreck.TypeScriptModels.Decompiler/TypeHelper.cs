@@ -9,6 +9,23 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     {
         public static bool IsEquivalentTo(this Type clrType, TypeReference cecilType)
             => clrType == null ? cecilType == null : clrType.FullName == cecilType?.FullName; // TODO: generic test
+
+        public static bool IsBaseTypeOf(this Type clrType, TypeReference cecilType)
+        {
+            var bt = cecilType;
+
+            while (bt != null)
+            {
+                if (clrType.IsEquivalentTo(bt))
+                {
+                    return true;
+                }
+
+                bt = bt.Resolve().BaseType;
+            }
+
+            return false;
+        }
     }
 
     public static class MethodHelper
@@ -43,7 +60,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 //var dec = cecilMethod as MethodDefinition;
                 //if (dec != null)
                 //{
-                //    dec.Attributes 
+                //    dec.Attributes
                 //}
 
                 return false;

@@ -1,4 +1,5 @@
 using ICSharpCode.NRefactory.CSharp;
+using System;
 using System.Linq;
 using System.Reflection;
 using D = Shipwreck.TypeScriptModels.Declarations;
@@ -8,14 +9,21 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     public sealed class MethodNameConvention : MethodLookupConvention
     {
-        private readonly string _MethodName;
-        private readonly string _TypeName;
+        private readonly string _ResultMethodName;
+        private readonly string _ResultTypeName;
 
-        public MethodNameConvention(MethodInfo targetMethod, string methodName, string typeName = null)
+        public MethodNameConvention(MethodInfo targetMethod, string resultMethodName, string resultTypeName = null)
             : base(targetMethod)
         {
-            _MethodName = methodName;
-            _TypeName = typeName;
+            _ResultMethodName = resultMethodName;
+            _ResultTypeName = resultTypeName;
+        }
+
+        public MethodNameConvention(Type targetType, string targetMethodName, string resultMethodName, string resultTypeName = null)
+         : base(targetType, targetMethodName)
+        {
+            _ResultMethodName = resultMethodName;
+            _ResultTypeName = resultTypeName;
         }
 
         protected override void OnMethodDeclarationMatched(ILTranslator sender, VisitedEventArgs<MethodDeclaration> e)
@@ -25,7 +33,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 var method = e.Results.Single() as D.MethodDeclaration;
                 if (method != null)
                 {
-                    method.MethodName = _MethodName;
+                    method.MethodName = _ResultMethodName;
                     e.Handled = true;
                 }
             }
@@ -42,13 +50,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                     if (pe != null)
                     {
-                        pe.Property = _MethodName;
+                        pe.Property = _ResultMethodName;
 
-                        if (_TypeName != null)
+                        if (_ResultTypeName != null)
                         {
                             pe.Object = new E.IdentifierExpression()
                             {
-                                Name = _TypeName
+                                Name = _ResultTypeName
                             };
                         }
                         e.Handled = true;
