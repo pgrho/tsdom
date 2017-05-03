@@ -1,5 +1,8 @@
 using ICSharpCode.NRefactory.CSharp;
+using System.Linq;
 using System.Reflection;
+using D = Shipwreck.TypeScriptModels.Declarations;
+using E = Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -17,20 +20,41 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         protected override void OnMethodDeclarationMatched(ILTranslator sender, VisitedEventArgs<MethodDeclaration> e)
         {
-            if (e.Handled)
+            if (e.Results.Count() == 1)
             {
-                return;
+                var method = e.Results.Single() as D.MethodDeclaration;
+                if (method != null)
+                {
+                    method.MethodName = _MethodName;
+                    e.Handled = true;
+                }
             }
-            // TODO: ŽÀ‘•
         }
 
         protected override void OnInvocationExpressionMatched(ILTranslator sender, VisitedEventArgs<InvocationExpression> e)
         {
-            if (e.Handled)
+            if (e.Results.Count() == 1)
             {
-                return;
+                var call = e.Results.Single() as E.CallExpression;
+                if (call != null)
+                {
+                    var pe = call.Target as E.PropertyExpression;
+
+                    if (pe != null)
+                    {
+                        pe.Property = _MethodName;
+
+                        if (_TypeName != null)
+                        {
+                            pe.Object = new E.IdentifierExpression()
+                            {
+                                Name = _TypeName
+                            };
+                        }
+                        e.Handled = true;
+                    }
+                }
             }
-            // TODO: ŽÀ‘•
         }
     }
 }

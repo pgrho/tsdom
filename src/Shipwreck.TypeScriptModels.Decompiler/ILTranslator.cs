@@ -114,10 +114,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 var e = new VisitedEventArgs<T>(data, node, results);
                 handler(this, e);
-                if (e.Results != null)
-                {
-                    return e.Results;
-                }
+                return e.Results ?? results;
             }
 
             return results;
