@@ -35,13 +35,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainAssemblyResolver.cs" />
+    <Compile Include="Generated Codes\ILTranslatorEvents.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ILTranslatorEvents.tt</DependentUpon>
+    </Compile>
     <Compile Include="ILTransformationContext.cs" />
+    <Compile Include="ILTranslationConvention.cs" />
     <Compile Include="ILTranslator.Statements.cs" />
     <Compile Include="ILTranslator.Members.cs" />
     <Compile Include="ILTranslator.Types.cs" />
     <Compile Include="ILTranslator.Expressions.cs" />
     <Compile Include="ILTranslator.cs" />
+    <Compile Include="MethodLookupConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TranslationEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ILSpy\cecil\Mono.Cecil.csproj">
@@ -67,6 +75,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Generated Codes\ILTranslatorEvents.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ILTranslatorEvents.cs</LastGenOutput>
+      <LastOutputs>.\ILTranslatorEvents.cs</LastOutputs>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

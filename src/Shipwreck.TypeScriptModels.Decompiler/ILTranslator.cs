@@ -6,11 +6,11 @@ using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using D = Shipwreck.TypeScriptModels.Declarations;
 using E = Shipwreck.TypeScriptModels.Expressions;
-using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -20,6 +20,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public List<D.IRootStatement> Statements
             => _Statements ?? (_Statements = new List<D.IRootStatement>());
+
+        private List<ILTranslationConvention> _Conventions;
+
+        public List<ILTranslationConvention> Conventions
+            => _Conventions ?? (_Conventions = new List<ILTranslationConvention>());
 
         public IEnumerable<Syntax> Transform(Type clrType)
         {
@@ -50,12 +55,52 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 b.AddType(ad.MainModule.GetType(clrType.FullName));
                 b.RunTransformations();
 
-                var p = new PlainTextOutput();
-                b.GenerateCode(p);
-                Console.WriteLine(p);
+                if (_Conventions?.Count > 0)
+                {
+                    foreach (var c in _Conventions)
+                    {
+                        c.ApplyTo(this);
+                    }
+                }
 
                 return b.SyntaxTree.AcceptVisitor(this, new ILTransformationContext()).ToArray();
             }
+        }
+
+        private IEnumerable<Syntax> OnVisiting<T>(ILTransformationContext data, T node, EventHandler<TranslationEventArgs<T>> handler)
+            where T : AstNode
+        {
+            if (handler != null)
+            {
+                var e = TranslationEventArgs.Create(data, node);
+                handler(this, e);
+                if (e.Results != null)
+                {
+                    return e.Results;
+                }
+            }
+
+            return null;
+        }
+
+        private IEnumerable<Syntax> OnVisited<T>(ILTransformationContext data, T node, EventHandler<TranslationEventArgs<T>> handler, Syntax result)
+            where T : AstNode
+            => OnVisited(data, node, handler, new[] { result });
+
+        private IEnumerable<Syntax> OnVisited<T>(ILTransformationContext data, T node, EventHandler<TranslationEventArgs<T>> handler, IEnumerable<Syntax> results)
+            where T : AstNode
+        {
+            if (handler != null)
+            {
+                var e = TranslationEventArgs.Create(data, node, results);
+                handler(this, e);
+                if (e.Results != null)
+                {
+                    return e.Results;
+                }
+            }
+
+            return results;
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAccessor(Accessor accessor, ILTransformationContext data)

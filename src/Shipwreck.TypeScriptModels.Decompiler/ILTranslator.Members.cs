@@ -46,9 +46,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, ILTransformationContext data)
+            => OnVisiting(data, methodDeclaration, VisitingMethodDeclaration)
+            ?? OnVisited(data, methodDeclaration, VisitedMethodDeclaration, TranslateMethodDeclaration(methodDeclaration, data));
+
+        protected virtual D.MethodDeclaration TranslateMethodDeclaration(MethodDeclaration methodDeclaration, ILTransformationContext data)
         {
             // TODO: オーバーロード
-
             var md = new D.MethodDeclaration();
             md.Decorators = GetDecorators(methodDeclaration.Attributes, data);
             md.Accessibility = GetAccessibility(methodDeclaration.Modifiers);
@@ -78,7 +81,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 md.IsAsync = ctx.HasAwait;
             }
 
-            yield return md;
+            return md;
         }
 
         private IEnumerable<D.Parameter> GetParameters(ILTransformationContext data, AstNodeCollection<ParameterDeclaration> parameters)

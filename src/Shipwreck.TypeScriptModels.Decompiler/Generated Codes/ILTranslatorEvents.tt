@@ -1,0 +1,33 @@
+<#@ template language="C#" debug="True" #>
+<#@ output extension="cs" #>
+<#
+// <copyright file="ILTranslatorEvents.tt" company="">
+//  Copyright © . All Rights Reserved.
+// </copyright>
+
+var types = new []{
+	"MethodDeclaration",
+	"InvocationExpression",
+};
+
+#>
+using ICSharpCode.NRefactory.CSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Shipwreck.TypeScriptModels.Decompiler
+{
+    partial class ILTranslator
+    {
+<#
+foreach (var t in types)
+{
+#>
+		public event EventHandler<TranslationEventArgs<<#= t #>>> Visiting<#= t #>;
+		public event EventHandler<TranslationEventArgs<<#= t #>>> Visited<#= t #>;
+<#
+}
+#>
+	}
+}

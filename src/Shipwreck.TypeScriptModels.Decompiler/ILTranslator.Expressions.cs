@@ -1,5 +1,4 @@
 ﻿using ICSharpCode.NRefactory.CSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using E = Shipwreck.TypeScriptModels.Expressions;
@@ -229,7 +228,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new[] { e };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, ILTransformationContext data)
+        public virtual IEnumerable<Syntax> VisitInvocationExpression(InvocationExpression invocationExpression, ILTransformationContext data)
+            => OnVisiting(data, invocationExpression, VisitingInvocationExpression)
+            ?? OnVisited(data, invocationExpression, VisitedInvocationExpression, TranslateInvocationExpression(invocationExpression, data));
+
+        protected virtual E.CallExpression TranslateInvocationExpression(InvocationExpression invocationExpression, ILTransformationContext data)
         {
             var inv = new E.CallExpression();
 
@@ -259,7 +262,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 inv.Parameters.Add(GetExpression(p, data));
             }
 
-            yield return inv;
+            return inv;
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, ILTransformationContext data)
