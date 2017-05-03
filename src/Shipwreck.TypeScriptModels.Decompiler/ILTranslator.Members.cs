@@ -8,9 +8,9 @@ using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
-    partial class ClrToTypeScriptTransformer
+    partial class ILTranslator
     {
-        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, ClrToTypeScriptTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, ILTransformationContext data)
         {
             foreach (var v in fieldDeclaration.Variables)
             {
@@ -26,7 +26,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, ClrToTypeScriptTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, ILTransformationContext data)
         {
             var cd = new D.ConstructorDeclaration();
 
@@ -45,7 +45,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return cd;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, ClrToTypeScriptTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitMethodDeclaration(MethodDeclaration methodDeclaration, ILTransformationContext data)
         {
             // TODO: オーバーロード
 
@@ -81,7 +81,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return md;
         }
 
-        private IEnumerable<D.Parameter> GetParameters(ClrToTypeScriptTransformationContext data, AstNodeCollection<ParameterDeclaration> parameters)
+        private IEnumerable<D.Parameter> GetParameters(ILTransformationContext data, AstNodeCollection<ParameterDeclaration> parameters)
         {
             foreach (var p in parameters)
             {
@@ -102,7 +102,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, ClrToTypeScriptTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, ILTransformationContext data)
         {
             var acc = GetAccessibility(propertyDeclaration.Modifiers);
             var tr = GetTypeReference(propertyDeclaration.ReturnType);
@@ -203,7 +203,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region 対象外
 
-        IEnumerable<Syntax> IAstVisitor<ClrToTypeScriptTransformationContext, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, ClrToTypeScriptTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, ILTransformationContext data)
         {
             throw new NotSupportedException();
         }

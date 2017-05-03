@@ -19,7 +19,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
             {
                 if (_Result == null)
                 {
-                    var clr2ts = new ClrToTypeScriptTransformer();
+                    var clr2ts = new ILTranslator();
                     clr2ts.Transform(typeof(T));
 
                     foreach (var m in clr2ts.Statements)

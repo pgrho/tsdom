@@ -35,12 +35,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainAssemblyResolver.cs" />
-    <Compile Include="ClrToTypeScriptTransformationContext.cs" />
-    <Compile Include="ClrToTypeScriptTransformer.Statements.cs" />
-    <Compile Include="ClrToTypeScriptTransformer.Members.cs" />
-    <Compile Include="ClrToTypeScriptTransformer.Types.cs" />
-    <Compile Include="ClrToTypeScriptTransformer.Expressions.cs" />
-    <Compile Include="ClrToTypeScriptTransformer.cs" />
+    <Compile Include="ILTransformationContext.cs" />
+    <Compile Include="ILTranslator.Statements.cs" />
+    <Compile Include="ILTranslator.Members.cs" />
+    <Compile Include="ILTranslator.Types.cs" />
+    <Compile Include="ILTranslator.Expressions.cs" />
+    <Compile Include="ILTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
