@@ -24,8 +24,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 foreach (var t in types)
 {
 #>
-		public event EventHandler<TranslationEventArgs<<#= t #>>> Visiting<#= t #>;
-		public event EventHandler<TranslationEventArgs<<#= t #>>> Visited<#= t #>;
+		public event EventHandler<VisitingEventArgs<<#= t #>>> Visiting<#= t #>;
+		public event EventHandler<VisitedEventArgs<<#= t #>>> Visited<#= t #>;
 <#
 }
 #>

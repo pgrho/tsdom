@@ -1,7 +1,6 @@
 ﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
 using System;
@@ -23,7 +22,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             => _Statements ?? (_Statements = new List<D.IRootStatement>());
 
         private static ILTranslationConvention[] _DefaultConventions;
-
 
         private List<ILTranslationConvention> _Conventions;
 
@@ -89,12 +87,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        private IEnumerable<Syntax> OnVisiting<T>(ILTransformationContext data, T node, EventHandler<TranslationEventArgs<T>> handler)
+        private IEnumerable<Syntax> OnVisiting<T>(ILTransformationContext data, T node, EventHandler<VisitingEventArgs<T>> handler)
             where T : AstNode
         {
             if (handler != null)
             {
-                var e = TranslationEventArgs.Create(data, node);
+                var e = new VisitingEventArgs<T>(data, node);
                 handler(this, e);
                 if (e.Results != null)
                 {
@@ -105,16 +103,16 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return null;
         }
 
-        private IEnumerable<Syntax> OnVisited<T>(ILTransformationContext data, T node, EventHandler<TranslationEventArgs<T>> handler, Syntax result)
+        private IEnumerable<Syntax> OnVisited<T>(ILTransformationContext data, T node, EventHandler<VisitedEventArgs<T>> handler, Syntax result)
             where T : AstNode
             => OnVisited(data, node, handler, new[] { result });
 
-        private IEnumerable<Syntax> OnVisited<T>(ILTransformationContext data, T node, EventHandler<TranslationEventArgs<T>> handler, IEnumerable<Syntax> results)
+        private IEnumerable<Syntax> OnVisited<T>(ILTransformationContext data, T node, EventHandler<VisitedEventArgs<T>> handler, IEnumerable<Syntax> results)
             where T : AstNode
         {
             if (handler != null)
             {
-                var e = TranslationEventArgs.Create(data, node, results);
+                var e = new VisitedEventArgs<T>(data, node, results);
                 handler(this, e);
                 if (e.Results != null)
                 {

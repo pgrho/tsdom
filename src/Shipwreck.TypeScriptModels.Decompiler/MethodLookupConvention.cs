@@ -3,8 +3,6 @@ using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Linq;
 using System.Reflection;
-using D = Shipwreck.TypeScriptModels.Declarations;
-using E = Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -26,7 +24,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             translator.VisitedInvocationExpression += Translator_VisitedInvocationExpression;
         }
 
-        private void Translator_VisitedMethodDeclaration(object sender, TranslationEventArgs<MethodDeclaration> e)
+        private void Translator_VisitedMethodDeclaration(object sender, VisitedEventArgs<MethodDeclaration> e)
         {
             var md = e.Node;
 
@@ -39,7 +37,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        private void Translator_VisitedInvocationExpression(object sender, TranslationEventArgs<InvocationExpression> e)
+        private void Translator_VisitedInvocationExpression(object sender, VisitedEventArgs<InvocationExpression> e)
         {
             var mre = e.Node.Target as MemberReferenceExpression;
             if (mre != null)
@@ -55,8 +53,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        protected abstract void OnMethodDeclarationMatched(ILTranslator sender, TranslationEventArgs<MethodDeclaration> e);
+        protected abstract void OnMethodDeclarationMatched(ILTranslator sender, VisitedEventArgs<MethodDeclaration> e);
 
-        protected abstract void OnInvocationExpressionMatched(ILTranslator sender, TranslationEventArgs<InvocationExpression> e);
+        protected abstract void OnInvocationExpressionMatched(ILTranslator sender, VisitedEventArgs<InvocationExpression> e);
     }
 }

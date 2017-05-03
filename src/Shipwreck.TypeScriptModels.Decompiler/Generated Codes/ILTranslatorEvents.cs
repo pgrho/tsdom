@@ -7,9 +7,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     partial class ILTranslator
     {
-		public event EventHandler<TranslationEventArgs<MethodDeclaration>> VisitingMethodDeclaration;
-		public event EventHandler<TranslationEventArgs<MethodDeclaration>> VisitedMethodDeclaration;
-		public event EventHandler<TranslationEventArgs<InvocationExpression>> VisitingInvocationExpression;
-		public event EventHandler<TranslationEventArgs<InvocationExpression>> VisitedInvocationExpression;
+		public event EventHandler<VisitingEventArgs<MethodDeclaration>> VisitingMethodDeclaration;
+		public event EventHandler<VisitedEventArgs<MethodDeclaration>> VisitedMethodDeclaration;
+		public event EventHandler<VisitingEventArgs<InvocationExpression>> VisitingInvocationExpression;
+		public event EventHandler<VisitedEventArgs<InvocationExpression>> VisitedInvocationExpression;
 	}
 }
