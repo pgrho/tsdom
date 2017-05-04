@@ -16,7 +16,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
     public class FieldDeclarationTest : TransformationTestBase<FieldDeclarationTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void FieldDeclaration_TransformTest()
         {
             var f = GetField("_IntegerField");
 

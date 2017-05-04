@@ -24,7 +24,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
     public class MethodDeclarationTest : TransformationTestBase<MethodDeclarationTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void MethodDeclaration_TransformTest()
         {
             var f = GetMethod("Method1");
 

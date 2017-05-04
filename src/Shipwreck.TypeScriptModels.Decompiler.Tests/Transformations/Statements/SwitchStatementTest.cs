@@ -45,7 +45,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
     public class SwitchStatementTest : TransformationTestBase<SwitchStatementTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void SwitchStatement_TransformTest()
         {
             var m = GetMethod(nameof(SwitchStatementTestClass.SourceMethod));
 

@@ -26,7 +26,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
     public class BreakStatementTest : TransformationTestBase<BreakStatementTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void BreakStatement_TransformTest()
         {
             var m = GetMethod(nameof(BreakStatementTestClass.SourceMethod));
 

@@ -18,7 +18,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
     public class ConstructorDeclarationTest : TransformationTestBase<ConstructorDeclarationTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void ConstructorDeclaration_TransformTest()
         {
             var f = GetConstructor();
 

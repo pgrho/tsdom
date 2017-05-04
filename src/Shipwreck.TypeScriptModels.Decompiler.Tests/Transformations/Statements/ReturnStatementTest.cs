@@ -17,7 +17,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
     public class ReturnStatementTest : TransformationTestBase<ReturnStatementTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void ReturnStatement_TransformTest()
         {
             var m = GetMethod(nameof(ReturnStatementTestClass.SourceMethod));
 

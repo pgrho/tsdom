@@ -27,7 +27,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
     public class PropertydDeclarationTest : TransformationTestBase<PropertydDeclarationTestClass>
     {
         [TestMethod]
-        public void AutoInt32PropertyTest()
+        public void PropertydDeclaration_AutoInt32PropertyTest()
         {
             var f = GetField(nameof(PropertydDeclarationTestClass.AutoInt32Property));
 
@@ -36,7 +36,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         }
 
         [TestMethod]
-        public void ReadOnlyInt32PropertyTest()
+        public void PropertydDeclaration_ReadOnlyInt32PropertyTest()
         {
             var f = GetField("__ReadOnlyInt32Property");
 
@@ -52,7 +52,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         }
 
         [TestMethod]
-        public void WriteOnlyInt32PropertyTest()
+        public void PropertydDeclaration_WriteOnlyInt32PropertyTest()
         {
             var f = GetField("__WriteOnlyInt32Property");
 
@@ -69,7 +69,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         }
 
         [TestMethod]
-        public void AccessibilityInt32PropertyTest()
+        public void PropertydDeclaration_AccessibilityInt32PropertyTest()
         {
             var f = GetField("__" + nameof(PropertydDeclarationTestClass.AccessibilityInt32Property));
 

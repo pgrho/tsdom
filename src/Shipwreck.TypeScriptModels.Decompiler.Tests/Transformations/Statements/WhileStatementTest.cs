@@ -22,7 +22,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
     public class WhileStatementTest : TransformationTestBase<WhileStatementTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void WhileStatement_TransformTest()
         {
             var m = GetMethod(nameof(WhileStatementTestClass.SourceMethod));
 

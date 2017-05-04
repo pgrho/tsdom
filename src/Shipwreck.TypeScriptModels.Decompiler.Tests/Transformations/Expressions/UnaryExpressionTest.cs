@@ -34,7 +34,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Expressions
     public class UnaryExpressionTest : TransformationTestBase<UnaryExpressionTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void UnaryExpression_TransformTest()
         {
             var m = GetMethod(nameof(UnaryExpressionTestClass.UnaryPlus));
 

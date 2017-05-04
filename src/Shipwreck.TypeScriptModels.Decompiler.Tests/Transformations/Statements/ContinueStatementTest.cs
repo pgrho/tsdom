@@ -27,7 +27,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
     public class ContinueStatementTest : TransformationTestBase<ContinueStatementTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void ContinueStatement_TransformTest()
         {
             var m = GetMethod(nameof(ContinueStatementTestClass.SourceMethod));
 

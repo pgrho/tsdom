@@ -17,7 +17,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Expressions
     public class ThisExpressionTest : TransformationTestBase<ThisExpressionTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void ThisExpression_TransformTest()
         {
             var m = GetMethod(nameof(ThisExpressionTestClass.SourceMethod));
 

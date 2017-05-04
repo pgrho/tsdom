@@ -20,7 +20,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Expressions
     public class AssignmentExpressionTest : TransformationTestBase<AssignmentExpressionTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void AssignmentExpression_TransformTest()
         {
             var m = GetMethod(nameof(AssignmentExpressionTestClass.SourceMethod));
 

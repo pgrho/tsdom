@@ -22,7 +22,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
     public class VariableDeclarationStatementTest : TransformationTestBase<VariableDeclarationStatementTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void VariableDeclarationStatement_TransformTest()
         {
             var m = GetMethod(nameof(VariableDeclarationStatementTestClass.SourceMethod));
 

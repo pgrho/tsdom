@@ -17,7 +17,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Expressions
     public class SuperExpressionTest : TransformationTestBase<SuperExpressionTestClass>
     {
         [TestMethod]
-        public void TransformTest()
+        public void SuperExpression_TransformTest()
         {
             var m = GetMethod(nameof(SuperExpressionTestClass.SourceMethod));
 
