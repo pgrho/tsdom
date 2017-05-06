@@ -132,19 +132,25 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         #region キーワード
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, ILTransformationContext data)
-        {
-            yield return new E.ThisExpression();
-        }
+            => OnVisiting(data, thisReferenceExpression, VisitingThisReferenceExpression)
+                ?? OnVisited(data, thisReferenceExpression, VisitedThisReferenceExpression, TranslateThisReferenceExpresssion(thisReferenceExpression, data));
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, ILTransformationContext data)
-        {
-            yield return new E.SuperExpression();
-        }
+            => OnVisiting(data, baseReferenceExpression, VisitingBaseReferenceExpression)
+                ?? OnVisited(data, baseReferenceExpression, VisitedBaseReferenceExpression, TranslateBaseReferenceExpresssion(baseReferenceExpression, data));
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, ILTransformationContext data)
-        {
-            yield return new E.NullExpression();
-        }
+            => OnVisiting(data, nullReferenceExpression, VisitingNullReferenceExpression)
+                ?? OnVisited(data, nullReferenceExpression, VisitedNullReferenceExpression, TranslateNullReferenceExpresssion(nullReferenceExpression, data));
+
+        protected virtual Expression TranslateThisReferenceExpresssion(ThisReferenceExpression thisReferenceExpression, ILTransformationContext data)
+            => new E.ThisExpression();
+
+        protected virtual Expression TranslateBaseReferenceExpresssion(BaseReferenceExpression baseReferenceExpression, ILTransformationContext data)
+            => new E.SuperExpression();
+
+        protected virtual Expression TranslateNullReferenceExpresssion(NullReferenceExpression nullReferenceExpression, ILTransformationContext data)
+            => new E.NullExpression();
 
         #endregion キーワード
 
