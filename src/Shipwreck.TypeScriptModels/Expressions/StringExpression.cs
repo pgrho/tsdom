@@ -10,6 +10,15 @@ namespace Shipwreck.TypeScriptModels.Expressions
     // 4.4
     public sealed class StringExpression : Expression
     {
+        public StringExpression()
+        {
+        }
+
+        public StringExpression(string value)
+        {
+            Value = value;
+        }
+
         public override ExpressionPrecedence Precedence
             => ExpressionPrecedence.Grouping;
 
