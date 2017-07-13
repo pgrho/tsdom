@@ -638,6 +638,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 return GetTypeReference(t, out isOptional);
             }
 
+            var mt = type.Annotations?.OfType<TypeReference>().FirstOrDefault();
+            if (mt != null)
+            {
+                return GetTypeReference(mt, out isOptional);
+            }
+
             isOptional = true;
 
             var pt = type as PrimitiveType;
@@ -715,8 +721,32 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 };
             }
 
+            isOptional = !type.IsValueType;
+            if (type.IsGenericType)
+            {
+                if (!type.IsConstructedGenericType
+                    || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+                {
+                    var gt = new D.NamedTypeReference()
+                    {
+                        IsClass = type.IsClass,
+                        IsInterface = type.IsInterface,
+                        IsEnum = type.IsEnum,
+                        IsPrimitive = type.IsPrimitive,
+                        Name = type.FullName.Split('`')[0]
+                    };
+
+                    foreach (var t in type.GetGenericArguments())
+                    {
+                        gt.TypeArguments.Add(GetTypeReference(t));
+                    }
+
+                    return gt;
+                }
+            }
+
             var ut = type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) ? type.GetGenericArguments()[0] : type;
-            isOptional = !type.IsValueType || ut != type;
+            isOptional |= ut != type;
 
             if (ut == typeof(void))
             {
@@ -751,6 +781,98 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             if (ut == typeof(string))
             {
                 return D.PredefinedType.String;
+            }
+
+            return new D.NamedTypeReference()
+            {
+                IsClass = type.IsClass,
+                IsInterface = type.IsInterface,
+                IsEnum = type.IsEnum,
+                IsPrimitive = type.IsPrimitive,
+                Name = type.FullName
+            };
+        }
+
+        private ITypeReference GetTypeReference(Mono.Cecil.TypeReference type, out bool isOptional)
+        {
+            var clr = Type.GetType(type.FullName + "," + type.Module.Name, false, false)
+                        ?? Type.GetType(type.FullName, false, false);
+
+            if (clr != null)
+            {
+                return GetTypeReference(clr, out isOptional);
+            }
+
+            var at = type as ArrayType;
+            if (at != null)
+            {
+                if (at.Rank != 1)
+                {
+                    throw new NotSupportedException();
+                }
+
+                bool b;
+                isOptional = true;
+                return new D.ArrayType()
+                {
+                    ElementType = GetTypeReference(at.ElementType, out b)
+                };
+            }
+
+            var gt = type as GenericInstanceType;
+            var isNullable = gt?.Namespace == nameof(System) && type.Name == nameof(Nullable);
+            isOptional = !type.IsValueType;
+            if (gt != null)
+            {
+                if (gt.IsDefinition
+                    || !isNullable)
+                {
+                    var r = new D.NamedTypeReference();
+                    r.Name = type.FullName.Split('`')[0];
+
+                    foreach (var t in gt.GenericArguments)
+                    {
+                        bool b;
+                        r.TypeArguments.Add(GetTypeReference(t, out b));
+                    }
+
+                    return r;
+                }
+            }
+
+            var ut = isNullable ? gt.GenericArguments[0] : type;
+
+            isOptional |= ut != type;
+
+            if (ut.Namespace == nameof(System))
+            {
+                switch (ut.Name)
+                {
+                    case "Void":
+                        return D.PredefinedType.Void;
+
+                    case nameof(Object):
+                        return D.PredefinedType.Any;
+
+                    case nameof(Boolean):
+                        return D.PredefinedType.Boolean;
+
+                    case nameof(String):
+                        return D.PredefinedType.String;
+
+                    case nameof(Byte):
+                    case nameof(SByte):
+                    case nameof(Int16):
+                    case nameof(UInt16):
+                    case nameof(Int32):
+                    case nameof(UInt32):
+                    case nameof(Int64):
+                    case nameof(UInt64):
+                    case nameof(Single):
+                    case nameof(Double):
+                    case nameof(Decimal):
+                        return D.PredefinedType.Number;
+                }
             }
 
             return new D.NamedTypeReference() { Name = type.FullName };

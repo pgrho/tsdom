@@ -9,6 +9,10 @@ namespace Shipwreck.TypeScriptModels
 {
     public interface ITypeReference
     {
+        bool? IsClass { get; }
+        bool? IsInterface { get; }
+        bool? IsEnum { get; }
+
         void WriteTypeReference(TextWriter writer);
     }
 }

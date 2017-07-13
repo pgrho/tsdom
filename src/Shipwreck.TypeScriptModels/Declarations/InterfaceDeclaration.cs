@@ -11,6 +11,8 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class InterfaceDeclaration : TypeDeclaration<IInterfaceMember>
     {
+        public override bool? IsInterface => true;
+
         #region TypeParameters
 
         private Collection<TypeParameter> _TypeParameters;

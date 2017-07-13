@@ -11,6 +11,8 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class ClassDeclaration : TypeDeclaration<IClassMember>
     {
+        public override bool? IsClass => true;
+
         /// <summary>
         /// Gets or sets the value indicating whether the class has a <c>default</c> modifier.
         /// </summary>
@@ -31,15 +33,15 @@ namespace Shipwreck.TypeScriptModels.Declarations
         private Collection<ITypeReference> _Interfaces;
 
         /// <summary>
-        /// Gets a value indicating whether the value of <see cref="Interface" /> contains any element;
+        /// Gets a value indicating whether the value of <see cref="Interfaces" /> contains any element;
         /// </summary>
         public bool HasInterface
             => _Interfaces?.Count > 0;
 
         /// <summary>
-        /// Gets or sets the all implemented interfaces of the interface.
+        /// Gets or sets the all implemented interfaces of the class.
         /// </summary>
-        public Collection<ITypeReference> Interface
+        public Collection<ITypeReference> Interfaces
         {
             get
             {
@@ -52,14 +54,14 @@ namespace Shipwreck.TypeScriptModels.Declarations
         }
 
         /// <summary>
-        /// Determines a value indicating whether the value of <see cref="Interface" /> needs to be persisted.
+        /// Determines a value indicating whether the value of <see cref="Interfaces" /> needs to be persisted.
         /// </summary>
         /// <returns><c>true</c> if the property should be persisted; otherwise, <c>false</c>.</returns>
         public bool ShouldSerializeInterfaces()
             => HasInterface;
 
         /// <summary>
-        /// Resets the value for <see cref="Interface" /> of the interface to the default value.
+        /// Resets the value for <see cref="Interfaces" /> of the class to the default value.
         /// </summary>
         public void ResetInterfaces()
             => _Interfaces?.Clear();

@@ -1,4 +1,5 @@
 ﻿using ICSharpCode.NRefactory.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -120,29 +121,38 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             td.Name = typeDeclaration.Name;
             td.IsExport = typeDeclaration.HasModifier(Modifiers.Public);
 
-            foreach (var c in typeDeclaration.Children)
+            foreach (var bt in typeDeclaration.BaseTypes)
             {
-                if (c is CSharpModifierToken)
+                var dt = GetTypeReference(bt);
+
+                var cd = td as D.ClassDeclaration;
+                if (cd != null && cd.BaseType == null && dt.IsClass == true)
                 {
-                    continue;
+                    cd.BaseType = dt;
                 }
-                else if (c is Identifier)
+                else if (cd != null)
                 {
-                    continue;
-                }
-                else if (c is AttributeSection)
-                {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        td.Decorators.Add((D.Decorator)cr);
-                    }
+                    cd.Interfaces.Add(dt);
                 }
                 else
                 {
-                    foreach (var cr in c.AcceptVisitor(this, data))
-                    {
-                        td.Members.Add(cr);
-                    }
+                    ((D.InterfaceDeclaration)td).BaseTypes.Add(dt);
+                }
+            }
+
+            foreach (var c in typeDeclaration.Attributes)
+            {
+                foreach (var cr in c.AcceptVisitor(this, data))
+                {
+                    td.Decorators.Add((D.Decorator)cr);
+                }
+            }
+
+            foreach (var c in typeDeclaration.Members)
+            {
+                foreach (var cr in c.AcceptVisitor(this, data))
+                {
+                    td.Members.Add(cr);
                 }
             }
 

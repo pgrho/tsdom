@@ -11,6 +11,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class ObjectType : ITypeReference
     {
+        public bool? IsClass => false;
+
+        public bool? IsInterface => true ;
+
+        public bool? IsEnum => false;
+
         private Collection<Signature> _Members;
 
         public bool HasMember

@@ -8,12 +8,12 @@ using Shipwreck.TypeScriptModels.Declarations;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
 {
-    public abstract class TransformationTestBase<T>
+    public class TransformationTestBase<T>
         where T : class
     {
         private ClassDeclaration _Result;
 
-        protected ClassDeclaration Result
+        internal ClassDeclaration Result
         {
             get
             {
@@ -35,19 +35,19 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
             }
         }
 
-        protected FieldDeclaration GetField(string name)
+        internal FieldDeclaration GetField(string name)
             => Result.Members.OfType<FieldDeclaration>().SingleOrDefault(m => m.FieldName == name);
 
-        protected ConstructorDeclaration GetConstructor()
+        internal ConstructorDeclaration GetConstructor()
             => Result.Members.OfType<ConstructorDeclaration>().SingleOrDefault();
 
-        protected GetAccessorDeclaration GetGetAccessor(string name)
+        internal GetAccessorDeclaration GetGetAccessor(string name)
             => Result.Members.OfType<GetAccessorDeclaration>().SingleOrDefault(m => m.PropertyName == name);
 
-        protected SetAccessorDeclaration GetSetAccessor(string name)
+        internal SetAccessorDeclaration GetSetAccessor(string name)
             => Result.Members.OfType<SetAccessorDeclaration>().SingleOrDefault(m => m.PropertyName == name);
 
-        protected MethodDeclaration GetMethod(string name)
+        internal MethodDeclaration GetMethod(string name)
             => Result.Members.OfType<MethodDeclaration>().SingleOrDefault(m => m.MethodName == name);
     }
 }

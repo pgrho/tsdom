@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class TupleType : ITypeReference
     {
+        public bool? IsClass => true;
+
+        public bool? IsInterface => false;
+
+        public bool? IsEnum => false;
+
         private Collection<ITypeReference> _ElementTypes;
 
         public Collection<ITypeReference> ElementTypes
@@ -23,6 +24,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
                 CollectionHelper.Set(ref _ElementTypes, value);
             }
         }
+
         public void WriteTypeReference(TextWriter writer)
         {
             writer.Write('[');

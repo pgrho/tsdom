@@ -1304,10 +1304,10 @@ namespace Shipwreck.TypeScriptModels
 
             if (declaration.HasInterface)
             {
-                for (int i = 0; i < declaration.Interface.Count; i++)
+                for (int i = 0; i < declaration.Interfaces.Count; i++)
                 {
                     _Writer.Write(i == 0 ? " implements " : ", ");
-                    declaration.Interface[i].WriteTypeReference(_Writer);
+                    declaration.Interfaces[i].WriteTypeReference(_Writer);
                 }
             }
 

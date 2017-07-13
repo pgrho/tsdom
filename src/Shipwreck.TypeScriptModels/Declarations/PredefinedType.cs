@@ -22,6 +22,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
             IsPrimitive = primitive;
         }
 
+        public bool? IsClass => false;
+
+        public bool? IsInterface => false;
+
+        public bool? IsEnum => false;
+
         public string Name { get; }
 
         public bool IsPrimitive { get; }

@@ -12,6 +12,11 @@ namespace Shipwreck.TypeScriptModels.Declarations
     {
         public string Name { get; set; }
 
+        public bool? IsClass { get; set; }
+        public bool? IsInterface { get; set; }
+
+        public bool? IsEnum { get; set; }
+
         public bool? IsPrimitive { get; set; }
 
         private Collection<ITypeReference> _TypeArguments;

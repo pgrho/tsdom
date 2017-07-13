@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class TypeQuery : ITypeReference
     {
+        public bool? IsClass => null;
+
+        public bool? IsInterface => null;
+
+        public bool? IsEnum => null;
+
         public string Name { get; set; }
 
         public void WriteTypeReference(TextWriter writer)

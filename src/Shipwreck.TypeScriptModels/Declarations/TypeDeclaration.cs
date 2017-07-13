@@ -12,6 +12,12 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public abstract class TypeDeclaration<TMember> : Syntax, ITypeReference, ITypeDeclaration
     {
+        public virtual bool? IsClass => true;
+
+        public virtual bool? IsInterface => false;
+
+        public virtual bool? IsEnum => false;
+
         /// <summary>
         /// Gets or sets the value indicating whether the type has a <c>declare</c> modifier.
         /// </summary>

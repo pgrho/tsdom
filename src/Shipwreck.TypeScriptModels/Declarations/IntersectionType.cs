@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class IntersectionType : ITypeReference
     {
+        public bool? IsClass => false;
+
+        public bool? IsInterface => true;
+
+        public bool? IsEnum => false;
+
         private Collection<ITypeReference> _ElementTypes;
 
         public Collection<ITypeReference> ElementTypes

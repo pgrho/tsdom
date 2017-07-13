@@ -11,6 +11,8 @@ namespace Shipwreck.TypeScriptModels.Declarations
     // 9.1
     public sealed class EnumDeclaration : TypeDeclaration<FieldDeclaration>
     {
+        public override bool? IsEnum => true;
+
         /// <summary>
         /// Gets or sets the value indicating whether the enum has a <c>const</c> modifier.
         /// </summary>
