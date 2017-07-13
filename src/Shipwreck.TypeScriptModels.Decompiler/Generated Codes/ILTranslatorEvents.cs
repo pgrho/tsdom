@@ -85,10 +85,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 		public event EventHandler<VisitedEventArgs<NamespaceDeclaration>> VisitedNamespaceDeclaration;
 		public event EventHandler<VisitingEventArgs<TypeDeclaration>> VisitingTypeDeclaration;
 		public event EventHandler<VisitedEventArgs<TypeDeclaration>> VisitedTypeDeclaration;
-		public event EventHandler<VisitingEventArgs<UsingAliasDeclaration>> VisitingUsingAliasDeclaration;
-		public event EventHandler<VisitedEventArgs<UsingAliasDeclaration>> VisitedUsingAliasDeclaration;
-		public event EventHandler<VisitingEventArgs<UsingDeclaration>> VisitingUsingDeclaration;
-		public event EventHandler<VisitedEventArgs<UsingDeclaration>> VisitedUsingDeclaration;
 		public event EventHandler<VisitingEventArgs<ExternAliasDeclaration>> VisitingExternAliasDeclaration;
 		public event EventHandler<VisitedEventArgs<ExternAliasDeclaration>> VisitedExternAliasDeclaration;
 		public event EventHandler<VisitingEventArgs<BlockStatement>> VisitingBlockStatement;
@@ -101,8 +97,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 		public event EventHandler<VisitedEventArgs<ContinueStatement>> VisitedContinueStatement;
 		public event EventHandler<VisitingEventArgs<DoWhileStatement>> VisitingDoWhileStatement;
 		public event EventHandler<VisitedEventArgs<DoWhileStatement>> VisitedDoWhileStatement;
-		public event EventHandler<VisitingEventArgs<EmptyStatement>> VisitingEmptyStatement;
-		public event EventHandler<VisitedEventArgs<EmptyStatement>> VisitedEmptyStatement;
 		public event EventHandler<VisitingEventArgs<ExpressionStatement>> VisitingExpressionStatement;
 		public event EventHandler<VisitedEventArgs<ExpressionStatement>> VisitedExpressionStatement;
 		public event EventHandler<VisitingEventArgs<FixedStatement>> VisitingFixedStatement;
@@ -183,8 +177,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 		public event EventHandler<VisitedEventArgs<FixedFieldDeclaration>> VisitedFixedFieldDeclaration;
 		public event EventHandler<VisitingEventArgs<FixedVariableInitializer>> VisitingFixedVariableInitializer;
 		public event EventHandler<VisitedEventArgs<FixedVariableInitializer>> VisitedFixedVariableInitializer;
-		public event EventHandler<VisitingEventArgs<PreProcessorDirective>> VisitingPreProcessorDirective;
-		public event EventHandler<VisitedEventArgs<PreProcessorDirective>> VisitedPreProcessorDirective;
 		public event EventHandler<VisitingEventArgs<DocumentationReference>> VisitingDocumentationReference;
 		public event EventHandler<VisitedEventArgs<DocumentationReference>> VisitedDocumentationReference;
 		public event EventHandler<VisitingEventArgs<TypeParameterDeclaration>> VisitingTypeParameterDeclaration;

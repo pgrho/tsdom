@@ -11,6 +11,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     partial class ILTranslator
     {
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitFieldDeclaration(FieldDeclaration fieldDeclaration, ILTransformationContext data)
+            => OnVisiting(data, fieldDeclaration, VisitingFieldDeclaration)
+            ?? OnVisited(data, fieldDeclaration, VisitedFieldDeclaration, TranslateFieldDeclaration(fieldDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateFieldDeclaration(FieldDeclaration fieldDeclaration, ILTransformationContext data)
         {
             foreach (var v in fieldDeclaration.Variables)
             {
@@ -27,6 +31,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, ILTransformationContext data)
+            => OnVisiting(data, constructorDeclaration, VisitingConstructorDeclaration)
+            ?? OnVisited(data, constructorDeclaration, VisitedConstructorDeclaration, TranslateConstructorDeclaration(constructorDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateConstructorDeclaration(ConstructorDeclaration constructorDeclaration, ILTransformationContext data)
         {
             var cd = new D.ConstructorDeclaration();
 
@@ -106,6 +114,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, ILTransformationContext data)
+            => OnVisiting(data, propertyDeclaration, VisitingPropertyDeclaration)
+            ?? OnVisited(data, propertyDeclaration, VisitedPropertyDeclaration, TranslatePropertyDeclaration(propertyDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslatePropertyDeclaration(PropertyDeclaration propertyDeclaration, ILTransformationContext data)
         {
             var acc = GetAccessibility(propertyDeclaration.Modifiers);
             var tr = GetTypeReference(propertyDeclaration.ReturnType);
@@ -207,6 +219,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         #region 対象外
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, ILTransformationContext data)
+            => OnVisiting(data, typeParameterDeclaration, VisitingTypeParameterDeclaration)
+            ?? OnVisited(data, typeParameterDeclaration, VisitedTypeParameterDeclaration, TranslateTypeParameterDeclaration(typeParameterDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, ILTransformationContext data)
         {
             throw new NotSupportedException();
         }

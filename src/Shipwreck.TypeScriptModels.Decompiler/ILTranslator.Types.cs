@@ -1,15 +1,8 @@
-﻿using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
-using System;
+﻿using ICSharpCode.NRefactory.CSharp;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using D = Shipwreck.TypeScriptModels.Declarations;
-using E = Shipwreck.TypeScriptModels.Expressions;
-using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -34,6 +27,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         #region 名前空間レベル
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ILTransformationContext data)
+            => OnVisiting(data, namespaceDeclaration, VisitingNamespaceDeclaration)
+            ?? OnVisited(data, namespaceDeclaration, VisitedNamespaceDeclaration, TranslateNamespaceDeclaration(namespaceDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ILTransformationContext data)
         {
             var ns = ResolveModule(data, namespaceDeclaration.FullName);
             foreach (var c in namespaceDeclaration.Children)
@@ -66,6 +63,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         #region 型レベル
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, ILTransformationContext data)
+            => OnVisiting(data, typeDeclaration, VisitingTypeDeclaration)
+                ?? OnVisited(data, typeDeclaration, VisitedTypeDeclaration, TranslateTypeDeclaration(typeDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateTypeDeclaration(TypeDeclaration typeDeclaration, ILTransformationContext data)
         {
             D.ITypeDeclaration td;
             switch (typeDeclaration.ClassType)
@@ -149,6 +150,10 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, ILTransformationContext data)
+            => OnVisiting(data, attributeSection, VisitingAttributeSection)
+            ?? OnVisited(data, attributeSection, VisitedAttributeSection, TranslateAttributeSection(attributeSection, data));
+
+        protected virtual IEnumerable<Syntax> TranslateAttributeSection(AttributeSection attributeSection, ILTransformationContext data)
         {
             foreach (var c in attributeSection.Children)
             {
