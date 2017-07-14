@@ -661,7 +661,7 @@ namespace Shipwreck.TypeScriptModels
         {
             var pp = parent.Precedence;
             var cp = child.Precedence;
-            if (pp != ExpressionPrecedence.Unknown && cp != ExpressionPrecedence.Unknown && cp > pp)
+            if (pp != ExpressionPrecedence.Unknown && cp != ExpressionPrecedence.Unknown && cp < pp)
             {
                 child.Accept(this);
             }

@@ -26,11 +26,16 @@ namespace Shipwreck.TypeScriptModels
 
         public void WriteExpression(TextWriter writer)
         {
+            if (writer == null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
+
             TextWriter w = null;
-            TypeScriptWriter visitor;
+            TypeScriptWriter visitor = null;
             _CachedTextWriter?.TryGetTarget(out w);
 
-            if (w == null && _CachedTypeScriptWriter.TryGetTarget(out visitor))
+            if (w == writer && _CachedTypeScriptWriter?.TryGetTarget(out visitor) == true)
             {
                 Accept(visitor);
             }

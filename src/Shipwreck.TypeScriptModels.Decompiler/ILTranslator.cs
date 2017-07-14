@@ -42,6 +42,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     _DefaultConventions = new ILTranslationConvention[]
                     {
                         new MethodNameConvention(typeof(object).GetMethod(nameof(ToString)), "toString"),
+                        new EventConvention(),
                         new MathConventionSet()
                     };
                 }
@@ -349,15 +350,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw GetNotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
-            => OnVisiting(data, eventDeclaration, VisitingEventDeclaration)
-            ?? OnVisited(data, eventDeclaration, VisitedEventDeclaration, TranslateEventDeclaration(eventDeclaration, data));
-
-        protected virtual IEnumerable<Syntax> TranslateEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
-        {
-            throw ExceptionHelper.CannotTranslateAst(nameof(EventDeclaration));
-        }
-
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, ILTransformationContext data)
             => OnVisiting(data, externAliasDeclaration, VisitingExternAliasDeclaration)
             ?? OnVisited(data, externAliasDeclaration, VisitedExternAliasDeclaration, TranslateExternAliasDeclaration(externAliasDeclaration, data));
@@ -624,13 +616,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 : (modifiers & Modifiers.Protected) != Modifiers.None ? D.AccessibilityModifier.Protected
                 : D.AccessibilityModifier.Private;
 
-        private ITypeReference GetTypeReference(AstType type)
+        internal ITypeReference GetTypeReference(AstType type)
         {
             bool b;
             return GetTypeReference(type, out b);
         }
 
-        private ITypeReference GetTypeReference(AstType type, out bool isOptional)
+        internal ITypeReference GetTypeReference(AstType type, out bool isOptional)
         {
             var t = type.Annotations?.OfType<Type>().FirstOrDefault();
             if (t != null)
@@ -699,13 +691,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new D.NamedTypeReference() { Name = ((SimpleType)type).Identifier };
         }
 
-        private ITypeReference GetTypeReference(Type type)
+        internal ITypeReference GetTypeReference(Type type)
         {
             bool b;
             return GetTypeReference(type, out b);
         }
 
-        private ITypeReference GetTypeReference(Type type, out bool isOptional)
+        internal ITypeReference GetTypeReference(Type type, out bool isOptional)
         {
             if (type.IsArray)
             {
@@ -793,7 +785,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        private ITypeReference GetTypeReference(Mono.Cecil.TypeReference type, out bool isOptional)
+        internal ITypeReference GetTypeReference(TypeReference type)
+        {
+            bool b;
+            return GetTypeReference(type, out b);
+        }
+
+        internal ITypeReference GetTypeReference(TypeReference type, out bool isOptional)
         {
             var clr = Type.GetType(type.FullName + "," + type.Module.Name, false, false)
                         ?? Type.GetType(type.FullName, false, false);

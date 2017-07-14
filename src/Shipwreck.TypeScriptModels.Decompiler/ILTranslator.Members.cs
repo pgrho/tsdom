@@ -216,6 +216,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
+
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
+            => OnVisiting(data, eventDeclaration, VisitingEventDeclaration)
+            ?? OnVisited(data, eventDeclaration, VisitedEventDeclaration, TranslateEventDeclaration(eventDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
+        {
+     
+
+            throw ExceptionHelper.CannotTranslateAst(nameof(EventDeclaration));
+        }
+
         #region 対象外
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, ILTransformationContext data)

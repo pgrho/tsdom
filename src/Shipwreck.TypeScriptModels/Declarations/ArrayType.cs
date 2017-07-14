@@ -4,6 +4,15 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class ArrayType : ITypeReference
     {
+        public ArrayType()
+        {
+        }
+
+        public ArrayType(ITypeReference elementType)
+        {
+            ElementType = elementType;
+        }
+
         public string Name => "Array";
 
         public bool? IsClass => true;

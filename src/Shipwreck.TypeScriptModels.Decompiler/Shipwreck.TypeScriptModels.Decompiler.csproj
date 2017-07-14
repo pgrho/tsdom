@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDomainAssemblyResolver.cs" />
+    <Compile Include="EventConvention.cs" />
     <Compile Include="ExceptionHelper.cs" />
     <Compile Include="Generated Codes\ILTranslatorEvents.cs">
       <AutoGen>True</AutoGen>

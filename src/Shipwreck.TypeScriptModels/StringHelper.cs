@@ -51,7 +51,7 @@ namespace Shipwreck.TypeScriptModels
                 case BinaryOperator.StrictEqual:
                     return "===";
                 case BinaryOperator.StrictNotEqual:
-                    return "!===";
+                    return "!==";
 
                 case BinaryOperator.LessThan:
                     return "<";

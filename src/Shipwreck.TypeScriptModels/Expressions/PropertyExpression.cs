@@ -1,15 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace Shipwreck.TypeScriptModels.Expressions
 {
     // 4.13
     public sealed class PropertyExpression : Expression
     {
+        public PropertyExpression()
+        {
+        }
+
+        public PropertyExpression(Expression obj, string property)
+        {
+            Object = obj;
+            Property = property;
+        }
+
         public override ExpressionPrecedence Precedence
             => ExpressionPrecedence.MemberAccess;
 

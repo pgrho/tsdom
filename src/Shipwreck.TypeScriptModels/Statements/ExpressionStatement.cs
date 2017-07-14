@@ -4,6 +4,15 @@ namespace Shipwreck.TypeScriptModels.Statements
 {
     public sealed class ExpressionStatement : Statement
     {
+        public ExpressionStatement()
+        {
+        }
+
+        public ExpressionStatement(Expression expression)
+        {
+            Expression = expression;
+        }
+
         [DefaultValue(null)]
         public Expression Expression { get; set; }
 
