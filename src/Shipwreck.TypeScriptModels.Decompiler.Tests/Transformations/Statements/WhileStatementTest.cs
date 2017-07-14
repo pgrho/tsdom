@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
 {
-    public class WhileStatementTestClass
+    [TestClass]
+    public class WhileStatementTest
     {
-        public void SourceMethod(int a)
+        private class TestClass
         {
-            while (a-- > 0)
+            public void SourceMethod(int a)
             {
-                ToString();
+                while (a-- > 0)
+                {
+                    ToString();
+                }
             }
         }
-    }
 
-    [TestClass]
-    public class WhileStatementTest : TransformationTestBase<WhileStatementTestClass>
-    {
         [TestMethod]
         public void WhileStatement_TransformTest()
         {
-            var m = GetMethod(nameof(WhileStatementTestClass.SourceMethod));
+            var t = new TransformingContext<TestClass>();
+            var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);
         }

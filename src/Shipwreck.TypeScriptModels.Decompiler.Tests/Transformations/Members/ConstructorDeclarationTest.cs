@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
 {
-    public class ConstructorDeclarationTestClass
-    {
-        public ConstructorDeclarationTestClass(float n, object obj)
-        {
-        }
-    }
-
     [TestClass]
-    public class ConstructorDeclarationTest : TransformationTestBase<ConstructorDeclarationTestClass>
+    public class ConstructorDeclarationTest
     {
+        private class TestClass
+        {
+            public TestClass(float n, object obj)
+            {
+            }
+        }
+
         [TestMethod]
         public void ConstructorDeclaration_TransformTest()
         {
-            var f = GetConstructor();
+            var f = new TransformingContext<TestClass>().GetConstructor();
 
             Assert.IsNotNull(f);
         }

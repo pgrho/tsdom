@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
 {
-    public class FieldDeclarationTestClass
-    {
-        protected int _IntegerField;
-    }
-
     [TestClass]
-    public class FieldDeclarationTest : TransformationTestBase<FieldDeclarationTestClass>
+    public class FieldDeclarationTest
     {
+        private class TestClass
+        {
+            protected int _IntegerField;
+        }
+
         [TestMethod]
         public void FieldDeclaration_TransformTest()
         {
-            var f = GetField("_IntegerField");
+            var f = new TransformingContext<TestClass>().GetField("_IntegerField");
 
             Assert.IsNotNull(f);
         }

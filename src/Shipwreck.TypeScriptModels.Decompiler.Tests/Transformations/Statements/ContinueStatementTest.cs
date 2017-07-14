@@ -1,35 +1,30 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
 {
-    public class ContinueStatementTestClass
+    [TestClass]
+    public class ContinueStatementTest
     {
-        public void SourceMethod(int[] a)
+        private class TestClass
         {
-            foreach (var e in a)
+            public void SourceMethod(int[] a)
             {
-                if (e == 0)
+                foreach (var e in a)
                 {
-                    continue;
+                    if (e == 0)
+                    {
+                        continue;
+                    }
+                    e.ToString();
                 }
-                e.ToString();
             }
         }
-    }
 
-    [TestClass]
-    public class ContinueStatementTest : TransformationTestBase<ContinueStatementTestClass>
-    {
         [TestMethod]
         public void ContinueStatement_TransformTest()
         {
-            var m = GetMethod(nameof(ContinueStatementTestClass.SourceMethod));
+            var t = new TransformingContext<TestClass>();
+            var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);
         }

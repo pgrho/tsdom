@@ -1,31 +1,27 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
 {
-    public class ForOfStatementTestClass
+    [TestClass]
+    public class ForOfStatementTest
     {
-        public void SourceMethod(IEnumerable a)
+        private class TestClass
         {
-            foreach (var e in a)
+            public void SourceMethod(IEnumerable a)
             {
-                e.ToString();
+                foreach (var e in a)
+                {
+                    e.ToString();
+                }
             }
         }
-    }
 
-    [TestClass]
-    public class ForOfStatementTest : TransformationTestBase<ForOfStatementTestClass>
-    {
         [TestMethod]
         public void ForOfStatement_TransformTest()
         {
-            var m = GetMethod(nameof(ForOfStatementTestClass.SourceMethod));
+            var t = new TransformingContext<TestClass>();
+            var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);
         }

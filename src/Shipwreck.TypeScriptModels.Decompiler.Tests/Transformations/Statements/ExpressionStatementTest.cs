@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
 {
-    public class ExpressionStatementTestClass
-    {
-        public void SourceMethod()
-        {
-            ToString();
-        }
-    }
-
     [TestClass]
-    public class ExpressionStatementTest : TransformationTestBase<ExpressionStatementTestClass>
+    public class ExpressionStatementTest
     {
+        private class TestClass
+        {
+            public void SourceMethod()
+            {
+                ToString();
+            }
+        }
+
         [TestMethod]
         public void ExpressionStatement_TransformTest()
         {
-            var m = GetMethod(nameof(ExpressionStatementTestClass.SourceMethod));
+            var t = new TransformingContext<TestClass>();
+            var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);
         }

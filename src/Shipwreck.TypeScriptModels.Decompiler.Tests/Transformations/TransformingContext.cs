@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Shipwreck.TypeScriptModels.Declarations;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shipwreck.TypeScriptModels.Declarations;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
 {
-    public class TransformationTestBase<T>
+    public sealed class TransformingContext<T>
         where T : class
     {
         private ClassDeclaration _Result;
@@ -20,16 +16,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
                 if (_Result == null)
                 {
                     var clr2ts = new ILTranslator();
-                    clr2ts.Transform(typeof(T));
+                    var outs = clr2ts.Transform(typeof(T));
 
-                    foreach (var m in clr2ts.Statements)
+                    foreach (var m in outs)
                     {
                         Console.WriteLine(m);
                     }
 
-                    _Result = clr2ts.Statements.Cast<NamespaceDeclaration>().Single().Members.OfType<ClassDeclaration>().Single();
-
-                    Assert.AreEqual(typeof(T).Name, _Result.Name);
+                    _Result = outs.OfType<NamespaceDeclaration>().SingleOrDefault()?.Members.OfType<ClassDeclaration>().LastOrDefault(d => d.Name.EndsWith(typeof(T).Name))
+                            ?? outs.OfType<ClassDeclaration>().Single(d => d.Name.EndsWith(typeof(T).Name));
                 }
                 return _Result;
             }

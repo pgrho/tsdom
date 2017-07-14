@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Expressions
 {
-    public class SuperExpressionTestClass
-    {
-        public string SourceMethod(int a)
-            => base.ToString();
-    }
-
     [TestClass]
-    public class SuperExpressionTest : TransformationTestBase<SuperExpressionTestClass>
+    public class SuperExpressionTest
     {
+        private class TestClass
+        {
+            public string SourceMethod(int a)
+                => base.ToString();
+        }
+
         [TestMethod]
         public void SuperExpression_TransformTest()
         {
-            var m = GetMethod(nameof(SuperExpressionTestClass.SourceMethod));
+            var t = new TransformingContext<TestClass>();
+            var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);
         }
