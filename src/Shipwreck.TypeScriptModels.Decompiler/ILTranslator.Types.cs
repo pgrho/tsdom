@@ -1,5 +1,4 @@
 ﻿using ICSharpCode.NRefactory.CSharp;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -118,8 +117,17 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 default:
                     throw GetNotImplementedException();
             }
+
+            var decType = typeDeclaration.Parent as TypeDeclaration;
             td.Name = typeDeclaration.Name;
             td.IsExport = typeDeclaration.HasModifier(Modifiers.Public);
+
+            while (decType != null)
+            {
+                td.Name = decType.Name + "$" + td.Name;
+                td.IsExport &= decType.HasModifier(Modifiers.Public);
+                decType = decType.Parent as TypeDeclaration;
+            }
 
             foreach (var bt in typeDeclaration.BaseTypes)
             {
@@ -150,6 +158,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             foreach (var c in typeDeclaration.Members)
             {
+                var ctd = c as TypeDeclaration;
+                if (ctd != null)
+                {
+                    foreach (var cr in c.AcceptVisitor(this, data))
+                    {
+                        yield return cr;
+                    }
+                    continue;
+                }
                 foreach (var cr in c.AcceptVisitor(this, data))
                 {
                     td.Members.Add(cr);

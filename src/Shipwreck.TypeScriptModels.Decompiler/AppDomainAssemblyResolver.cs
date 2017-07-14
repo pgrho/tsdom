@@ -1,8 +1,8 @@
 ﻿using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
@@ -23,7 +23,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     }
                     catch
                     {
-
                     }
                 }
                 _Files = null;
@@ -52,7 +51,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
             return GetDefinition(a, parameters);
         }
-
 
         private AssemblyDefinition GetDefinition(Assembly a, ReaderParameters parameters)
         {

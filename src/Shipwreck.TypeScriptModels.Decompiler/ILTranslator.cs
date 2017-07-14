@@ -76,7 +76,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 });
                 b.DecompileMethodBodies = true;
 
-                b.AddType(ad.MainModule.GetType(clrType.FullName));
+                b.AddType(ad.MainModule.GetType(clrType.FullName.Replace('+', '/')));
                 b.RunTransformations();
                 b.SyntaxTree.FileName = "temp.cs";
 
@@ -616,6 +616,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 : (modifiers & Modifiers.Protected) != Modifiers.None ? D.AccessibilityModifier.Protected
                 : D.AccessibilityModifier.Private;
 
+        #region GetTypeReference
+
+        public event EventHandler<ResolvingTypeEventArgs<AstType>> ResolvingAstType;
+
+        public event EventHandler<ResolvingTypeEventArgs<Type>> ResolvingClrType;
+
+        public event EventHandler<ResolvingTypeEventArgs<Mono.Cecil.TypeReference>> ResolvingCecilType;
+
         internal ITypeReference GetTypeReference(AstType type)
         {
             bool b;
@@ -634,6 +642,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             if (mt != null)
             {
                 return GetTypeReference(mt, out isOptional);
+            }
+
+            var h = ResolvingAstType;
+            if (h != null)
+            {
+                var e = new ResolvingTypeEventArgs<AstType>(type);
+                h(this, e);
+                if (e.Result != null)
+                {
+                    isOptional = e.IsOptional != false;
+                    return e.Result;
+                }
             }
 
             isOptional = true;
@@ -699,6 +719,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         internal ITypeReference GetTypeReference(Type type, out bool isOptional)
         {
+            var h = ResolvingClrType;
+            if (h != null)
+            {
+                var e = new ResolvingTypeEventArgs<Type>(type);
+                h(this, e);
+                if (e.Result != null)
+                {
+                    isOptional = e.IsOptional != false;
+                    return e.Result;
+                }
+            }
+
             if (type.IsArray)
             {
                 if (type.GetArrayRank() != 1)
@@ -801,6 +833,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 return GetTypeReference(clr, out isOptional);
             }
 
+            var h = ResolvingCecilType;
+            if (h != null)
+            {
+                var e = new ResolvingTypeEventArgs<TypeReference>(type);
+                h(this, e);
+                if (e.Result != null)
+                {
+                    isOptional = e.IsOptional != false;
+                    return e.Result;
+                }
+            }
+
             var at = type as ArrayType;
             if (at != null)
             {
@@ -875,6 +919,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             return new D.NamedTypeReference() { Name = type.FullName };
         }
+
+        #endregion GetTypeReference
 
         #region クエリー
 

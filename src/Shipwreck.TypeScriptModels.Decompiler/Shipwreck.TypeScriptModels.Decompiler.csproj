@@ -54,6 +54,7 @@
     <Compile Include="MethodHelper.cs" />
     <Compile Include="MethodLookupConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResolvingTypeEventArgs.cs" />
     <Compile Include="VisitingEventArgs.cs" />
     <Compile Include="TypeHelper.cs" />
     <Compile Include="MethodNameConvention.cs" />

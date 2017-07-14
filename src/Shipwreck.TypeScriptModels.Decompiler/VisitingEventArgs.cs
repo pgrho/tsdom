@@ -20,4 +20,5 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         public bool Handled
             => Results != null;
     }
+
 }
