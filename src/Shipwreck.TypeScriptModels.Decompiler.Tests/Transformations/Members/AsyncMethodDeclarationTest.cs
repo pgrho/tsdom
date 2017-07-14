@@ -21,10 +21,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
     public class AsyncMethodDeclarationTest : TransformationTestBase<AsyncMethodDeclarationTestClass>
     {
         [TestMethod]
+#if DEBUG
+        [ExpectedException(typeof(NotSupportedException))]
+#endif
         public void AsyncMethodDeclaration_TransformTest()
         {
             var f = GetMethod("Method1");
-
             Assert.IsNotNull(f);
         }
     }
