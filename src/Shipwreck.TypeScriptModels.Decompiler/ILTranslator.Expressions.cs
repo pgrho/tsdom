@@ -265,7 +265,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                 foreach (var t in mre.TypeArguments)
                 {
-                    inv.TypeArguments.Add(GetTypeReference(t));
+                    inv.TypeArguments.Add(ResolveType(mre, t));
                 }
 
                 inv.Target = new E.PropertyExpression()
@@ -307,7 +307,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         protected virtual IEnumerable<Syntax> TranslateObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTransformationContext data)
         {
             var ne = new E.NewExpression();
-            ne.Type = GetTypeReference(objectCreateExpression.Type).ToExpression();
+            ne.Type = ResolveType(objectCreateExpression, objectCreateExpression.Type).ToExpression();
 
             foreach (var p in objectCreateExpression.Arguments)
             {

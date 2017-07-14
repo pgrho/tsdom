@@ -22,7 +22,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 fd.Accessibility = GetAccessibility(fieldDeclaration.Modifiers);
                 fd.IsStatic = fieldDeclaration.HasModifier(Modifiers.Static);
                 fd.FieldName = v.Name;
-                fd.FieldType = GetTypeReference(fieldDeclaration.ReturnType);
+                fd.FieldType = ResolveType(fieldDeclaration, fieldDeclaration.ReturnType);
 
                 // TODO: initializer
 
@@ -78,7 +78,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 md.Parameters.Add(p);
             }
 
-            md.ReturnType = GetTypeReference(methodDeclaration.ReturnType);
+            md.ReturnType = ResolveType(methodDeclaration, methodDeclaration.ReturnType);
 
             if (!methodDeclaration.Body.IsNull)
             {
@@ -100,7 +100,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 {
                     ParameterName = p.Name,
                 };
-                dp.ParameterType = GetTypeReference(p.Type);
+                dp.ParameterType = ResolveType(p, p.Type);
 
                 dp.Decorators = GetDecorators(p.Attributes, data);
 
@@ -120,7 +120,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         protected virtual IEnumerable<Syntax> TranslatePropertyDeclaration(PropertyDeclaration propertyDeclaration, ILTransformationContext data)
         {
             var acc = GetAccessibility(propertyDeclaration.Modifiers);
-            var tr = GetTypeReference(propertyDeclaration.ReturnType);
+            var tr = ResolveType(propertyDeclaration, propertyDeclaration.ReturnType);
 
             // TODO: デコレーター
 
@@ -223,7 +223,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         protected virtual IEnumerable<Syntax> TranslateEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
         {
-     
+
 
             throw ExceptionHelper.CannotTranslateAst(nameof(EventDeclaration));
         }

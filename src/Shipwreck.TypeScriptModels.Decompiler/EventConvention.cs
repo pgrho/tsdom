@@ -24,7 +24,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             var ilt = (ILTranslator)sender;
 
-            var tr = ilt.GetTypeReference(e.Node.ReturnType);
+            var tr = ilt.ResolveType(e.Node, e.Node.ReturnType);
             var at = new D.ArrayType(tr);
 
             var n = e.Node.Variables.Single().Name;

@@ -131,7 +131,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             foreach (var bt in typeDeclaration.BaseTypes)
             {
-                var dt = GetTypeReference(bt);
+                var dt = ResolveType(typeDeclaration, bt);
 
                 var cd = td as D.ClassDeclaration;
                 if (cd != null && cd.BaseType == null && dt.IsClass == true)
@@ -252,7 +252,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                                 continue;
                             }
 
-                            var nt = GetTypeReference(bt);
+                            var nt = ResolveType(c, bt);
 
                             if (ct == null)
                             {

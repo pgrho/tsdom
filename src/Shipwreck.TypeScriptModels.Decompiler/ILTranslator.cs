@@ -616,7 +616,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 : (modifiers & Modifiers.Protected) != Modifiers.None ? D.AccessibilityModifier.Protected
                 : D.AccessibilityModifier.Private;
 
-        #region GetTypeReference
+        #region ResolveType
 
         public event EventHandler<ResolvingTypeEventArgs<AstType>> ResolvingAstType;
 
@@ -624,30 +624,30 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public event EventHandler<ResolvingTypeEventArgs<Mono.Cecil.TypeReference>> ResolvingCecilType;
 
-        internal ITypeReference GetTypeReference(AstType type)
+        internal ITypeReference ResolveType(AstNode context, AstType type)
         {
             bool b;
-            return GetTypeReference(type, out b);
+            return ResolveType(context, type, out b);
         }
 
-        internal ITypeReference GetTypeReference(AstType type, out bool isOptional)
+        internal ITypeReference ResolveType(AstNode context, AstType type, out bool isOptional)
         {
             var t = type.Annotations?.OfType<Type>().FirstOrDefault();
             if (t != null)
             {
-                return GetTypeReference(t, out isOptional);
+                return ResolveType(context, t, out isOptional);
             }
 
             var mt = type.Annotations?.OfType<TypeReference>().FirstOrDefault();
             if (mt != null)
             {
-                return GetTypeReference(mt, out isOptional);
+                return ResolveType(context, mt, out isOptional);
             }
 
             var h = ResolvingAstType;
             if (h != null)
             {
-                var e = new ResolvingTypeEventArgs<AstType>(type);
+                var e = new ResolvingTypeEventArgs<AstType>(context, type);
                 h(this, e);
                 if (e.Result != null)
                 {
@@ -702,7 +702,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 return new D.ArrayType()
                 {
-                    ElementType = GetTypeReference(ct.BaseType)
+                    ElementType = ResolveType(context, ct.BaseType)
                 };
             }
 
@@ -711,18 +711,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new D.NamedTypeReference() { Name = ((SimpleType)type).Identifier };
         }
 
-        internal ITypeReference GetTypeReference(Type type)
+        internal ITypeReference ResolveType(AstNode context, Type type)
         {
             bool b;
-            return GetTypeReference(type, out b);
+            return ResolveType(context, type, out b);
         }
 
-        internal ITypeReference GetTypeReference(Type type, out bool isOptional)
+        internal ITypeReference ResolveType(AstNode context, Type type, out bool isOptional)
         {
             var h = ResolvingClrType;
             if (h != null)
             {
-                var e = new ResolvingTypeEventArgs<Type>(type);
+                var e = new ResolvingTypeEventArgs<Type>(context, type);
                 h(this, e);
                 if (e.Result != null)
                 {
@@ -741,7 +741,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 isOptional = true;
                 return new D.ArrayType()
                 {
-                    ElementType = GetTypeReference(type.GetElementType())
+                    ElementType = ResolveType(context, type.GetElementType())
                 };
             }
 
@@ -762,7 +762,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                     foreach (var t in type.GetGenericArguments())
                     {
-                        gt.TypeArguments.Add(GetTypeReference(t));
+                        gt.TypeArguments.Add(ResolveType(context, t));
                     }
 
                     return gt;
@@ -817,26 +817,26 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        internal ITypeReference GetTypeReference(TypeReference type)
+        internal ITypeReference ResolveType(AstNode context, TypeReference type)
         {
             bool b;
-            return GetTypeReference(type, out b);
+            return ResolveType(context, type, out b);
         }
 
-        internal ITypeReference GetTypeReference(TypeReference type, out bool isOptional)
+        internal ITypeReference ResolveType(AstNode context, TypeReference type, out bool isOptional)
         {
             var clr = Type.GetType(type.FullName + "," + type.Module.Name, false, false)
                         ?? Type.GetType(type.FullName, false, false);
 
             if (clr != null)
             {
-                return GetTypeReference(clr, out isOptional);
+                return ResolveType(context, clr, out isOptional);
             }
 
             var h = ResolvingCecilType;
             if (h != null)
             {
-                var e = new ResolvingTypeEventArgs<TypeReference>(type);
+                var e = new ResolvingTypeEventArgs<TypeReference>(context, type);
                 h(this, e);
                 if (e.Result != null)
                 {
@@ -857,7 +857,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 isOptional = true;
                 return new D.ArrayType()
                 {
-                    ElementType = GetTypeReference(at.ElementType, out b)
+                    ElementType = ResolveType(context, at.ElementType, out b)
                 };
             }
 
@@ -875,7 +875,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     foreach (var t in gt.GenericArguments)
                     {
                         bool b;
-                        r.TypeArguments.Add(GetTypeReference(t, out b));
+                        r.TypeArguments.Add(ResolveType(context, t, out b));
                     }
 
                     return r;

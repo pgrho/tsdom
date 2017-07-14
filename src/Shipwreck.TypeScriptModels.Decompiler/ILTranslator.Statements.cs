@@ -168,7 +168,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     vds.Bindings.Add(new S.VariableBinding()
                     {
                         Variable = new E.IdentifierExpression() { Name = v.Name },
-                        Type = GetTypeReference(rvd.Type),
+                        Type = ResolveType(v, rvd.Type),
                         Initializer = GetExpression(v.Initializer, data)
                     });
                 }
@@ -324,7 +324,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 vd.Bindings.Add(new S.VariableBinding()
                 {
                     Variable = new E.IdentifierExpression() { Name = v.Name },
-                    Type = GetTypeReference(variableDeclarationStatement.Type),
+                    Type = ResolveType(v, variableDeclarationStatement.Type),
                     Initializer = GetExpression(v.Initializer, data)
                 });
             }
