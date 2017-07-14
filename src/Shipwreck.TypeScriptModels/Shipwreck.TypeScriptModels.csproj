@@ -101,6 +101,7 @@
     <Compile Include="Expressions\SuperExpression.cs" />
     <Compile Include="Expressions\TypeAssertionExpression.cs" />
     <Compile Include="Expressions\AwaitExpression.cs" />
+    <Compile Include="Expressions\TypeReferenceExpression.cs" />
     <Compile Include="Expressions\UnaryExpression.cs" />
     <Compile Include="Expressions\UnaryOperator.cs" />
     <Compile Include="IStatementVisitor.cs" />

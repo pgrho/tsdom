@@ -1,7 +1,5 @@
 using Mono.Cecil;
 using System;
-using System.Linq;
-using System.Reflection;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -12,79 +10,41 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public static bool IsBaseTypeOf(this Type clrType, TypeReference cecilType)
         {
-            var bt = cecilType;
+            var cct = Type.GetType(cecilType.FullName + "," + cecilType.Module.Name) ?? Type.GetType(cecilType.FullName);
 
-            while (bt != null)
+            if (cct != null)
             {
-                if (clrType.IsEquivalentTo(bt))
+                while (cct != null)
                 {
-                    return true;
-                }
-
-                bt = bt.Resolve().BaseType;
-            }
-
-            return false;
-        }
-    }
-
-    public static class MethodHelper
-    {
-        public static bool IsEquivalentTo(this MethodInfo clrMethod, MethodReference cecilMethod)
-        {
-            if (clrMethod == null)
-            {
-                return cecilMethod == null;
-            }
-
-            if (clrMethod?.Name != cecilMethod?.Name
-                || (clrMethod.IsGenericMethod ? clrMethod.GetGenericArguments().Length : 0) != (cecilMethod.HasGenericParameters ? cecilMethod.GenericParameters.Count : 0))
-            {
-                return false;
-            }
-            if (!clrMethod.DeclaringType.IsEquivalentTo(cecilMethod.DeclaringType))
-            {
-                if (clrMethod.IsVirtual)
-                {
-                    var bt = cecilMethod.DeclaringType.Resolve().BaseType?.Resolve();
-                    while (bt != null)
+                    if (clrType == cct)
                     {
-                        if (clrMethod.DeclaringType.IsEquivalentTo(bt))
-                        {
-                            return bt.Methods.Any(m => m.Name == clrMethod.Name && HaveEquivalentParameters(clrMethod, m));
-                        }
-
-                        bt = bt.BaseType?.Resolve();
+                        return true;
                     }
+                    cct = cct.BaseType;
                 }
-                //var dec = cecilMethod as MethodDefinition;
-                //if (dec != null)
-                //{
-                //    dec.Attributes
-                //}
 
                 return false;
             }
-
-            return HaveEquivalentParameters(clrMethod, cecilMethod);
-        }
-
-        private static bool HaveEquivalentParameters(MethodInfo clrMethod, MethodReference cecilMethod)
-        {
-            var cp = clrMethod.GetParameters();
-            if (cp.Length != cecilMethod.Parameters.Count)
+            else
             {
-                return false;
-            }
-            for (var i = 0; i < cp.Length; i++)
-            {
-                if (!cp[i].ParameterType.IsEquivalentTo(cecilMethod.Parameters[i].ParameterType))
+                var bt = cecilType;
+
+                while (bt != null)
                 {
-                    return false;
+                    if (clrType.IsEquivalentTo(bt))
+                    {
+                        return true;
+                    }
+                    if (bt.Namespace == nameof(System)
+                        && bt.Name == nameof(Object))
+                    {
+                        return false;
+                    }
+                    bt = bt.Module.AssemblyResolver != null ? bt.Resolve().BaseType : null;
                 }
+
+                return false;
             }
-            // TODO: operator
-            return true;
         }
     }
 }

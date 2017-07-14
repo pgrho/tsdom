@@ -20,6 +20,15 @@ namespace Shipwreck.TypeScriptModels
         public static BinaryExpression SubtractedBy(this Expression left, Expression right)
             => left.MakeBinary(right, BinaryOperator.Subtract);
 
+        public static BinaryExpression MultipliedBy(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.Multiply);
+
+        public static BinaryExpression DividedBy(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.Divide);
+
+        public static BinaryExpression IntegerDividedBy(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.IntegerDivide);
+
         public static BinaryExpression IsEqualTo(this Expression left, Expression right)
             => left.MakeBinary(right, BinaryOperator.Equal);
 
@@ -76,6 +85,9 @@ namespace Shipwreck.TypeScriptModels
 
             return r;
         }
+
+        public static TypeReferenceExpression ToExpression(this ITypeReference type)
+            => new TypeReferenceExpression(type);
 
         public static Statements.ExpressionStatement ToStatement(this Expression expression)
             => new Statements.ExpressionStatement()

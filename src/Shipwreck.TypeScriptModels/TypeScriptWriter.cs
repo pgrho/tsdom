@@ -268,6 +268,11 @@ namespace Shipwreck.TypeScriptModels
             _Writer.Write(expression.Name);
             return 0;
         }
+        int IExpressionVisitor<int>.VisitTypeReference(TypeReferenceExpression expression)
+        {
+            expression.Type.WriteTypeReference(_Writer);
+            return 0;
+        }
 
         // 4.4
         int IExpressionVisitor<int>.VisitNull()
@@ -659,18 +664,18 @@ namespace Shipwreck.TypeScriptModels
 
         private void WriteChildExpression(Expression parent, Expression child)
         {
-            var pp = parent.Precedence;
-            var cp = child.Precedence;
-            if (pp != ExpressionPrecedence.Unknown && cp != ExpressionPrecedence.Unknown && cp < pp)
-            {
-                child.Accept(this);
-            }
-            else
-            {
-                _Writer.Write('(');
-                child.Accept(this);
-                _Writer.Write(')');
-            }
+            //var pp = parent.Precedence;
+            //var cp = child.Precedence;
+            //if (pp != ExpressionPrecedence.Unknown && cp != ExpressionPrecedence.Unknown && cp > pp)
+            //{
+            //    child.Accept(this);
+            //}
+            //else
+            //{
+            _Writer.Write('(');
+            child.Accept(this);
+            _Writer.Write(')');
+            //}
         }
 
         #endregion IExpressionVisitor<int>

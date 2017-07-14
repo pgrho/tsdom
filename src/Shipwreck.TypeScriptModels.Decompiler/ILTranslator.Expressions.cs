@@ -306,7 +306,17 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         protected virtual IEnumerable<Syntax> TranslateObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTransformationContext data)
         {
-            throw ExceptionHelper.CannotTranslateAst(nameof(ObjectCreateExpression));
+            var ne = new E.NewExpression();
+            ne.Type = GetTypeReference(objectCreateExpression.Type).ToExpression();
+
+            foreach (var p in objectCreateExpression.Arguments)
+            {
+                ne.Parameters.Add(p.AcceptVisitor(this, data).Cast<Expression>().Single());
+            }
+
+            // TODO: initializer
+
+            yield return ne;
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ILTransformationContext data)

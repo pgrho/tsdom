@@ -51,6 +51,7 @@
     <Compile Include="ILTranslator.Expressions.cs" />
     <Compile Include="ILTranslator.cs" />
     <Compile Include="MathConventionSet.cs" />
+    <Compile Include="MethodHelper.cs" />
     <Compile Include="MethodLookupConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisitingEventArgs.cs" />

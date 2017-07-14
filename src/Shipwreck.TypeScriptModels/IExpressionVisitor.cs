@@ -18,6 +18,7 @@ namespace Shipwreck.TypeScriptModels
 
         // 4.3
         T VisitIdentifier(IdentifierExpression expression);
+        T VisitTypeReference(TypeReferenceExpression expression);
 
         // 4.4
         T VisitNull();

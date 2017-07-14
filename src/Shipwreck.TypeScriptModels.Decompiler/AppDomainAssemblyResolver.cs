@@ -44,7 +44,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
         {
-            var a = AppDomain.CurrentDomain.GetAssemblies().First(e => e.FullName.Equals(name.FullName, StringComparison.InvariantCultureIgnoreCase));
+            var an = new AssemblyName(name.FullName);
+            var a = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(e => e.GetName().Name.Equals(an.Name, StringComparison.InvariantCultureIgnoreCase));
+            if (a == null)
+            {
+                return null;
+            }
             return GetDefinition(a, parameters);
         }
 
