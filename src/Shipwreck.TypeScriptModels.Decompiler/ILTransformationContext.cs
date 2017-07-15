@@ -1,7 +1,10 @@
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem;
+using Mono.Cecil;
+using System;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -80,5 +83,12 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public ILTransformationContext GetChildContext()
             => new ILTransformationContext(_Root ?? this);
+
+        public Type ResoleClrType(AstNode node)
+            => node.Annotation<TypeInformation>()?.InferredType?.ResolveClrType()
+                ?? node.Annotation<PropertyDefinition>()?.PropertyType?.ResolveClrType()
+                ?? node.Annotation<EventDefinition>()?.EventType?.ResolveClrType()
+                ?? node.Annotation<MethodDefinition>()?.ReturnType?.ResolveClrType()
+                ?? node.Annotation<FieldDefinition>()?.FieldType?.ResolveClrType();
     }
 }

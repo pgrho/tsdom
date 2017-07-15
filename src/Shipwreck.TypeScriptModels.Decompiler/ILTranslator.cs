@@ -830,9 +830,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public ITypeReference ResolveCecilType(AstNode context, TypeReference type, out bool isOptional)
         {
-            var clr = Type.GetType(type.FullName + "," + type.Module.Name, false, false)
-                        ?? Type.GetType(type.FullName, false, false);
-
+            var clr = type.ResolveClrType();
             if (clr != null)
             {
                 return ResolveClrType(context, clr, out isOptional);

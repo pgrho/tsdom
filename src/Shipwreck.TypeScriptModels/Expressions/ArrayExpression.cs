@@ -9,6 +9,14 @@ namespace Shipwreck.TypeScriptModels.Expressions
 {
     public sealed class ArrayExpression : Expression
     {
+        public ArrayExpression() { }
+        public ArrayExpression(IEnumerable<Expression> elements)
+        {
+            foreach (var e in elements)
+            {
+                Elements.Add(e);
+            }
+        }
 
         private Collection<Expression> _Elements;
 
