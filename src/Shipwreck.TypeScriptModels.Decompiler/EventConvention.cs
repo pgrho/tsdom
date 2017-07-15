@@ -5,6 +5,7 @@ using M = Shipwreck.TypeScriptModels;
 using D = Shipwreck.TypeScriptModels.Declarations;
 using S = Shipwreck.TypeScriptModels.Statements;
 using E = Shipwreck.TypeScriptModels.Expressions;
+using Mono.Cecil;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -14,6 +15,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             translator.VisitingEventDeclaration -= Translator_VisitingEventDeclaration;
             translator.VisitingEventDeclaration += Translator_VisitingEventDeclaration;
+
+            translator.VisitedAssignmentExpression -= Translator_VisitedAssignmentExpression;
+            translator.VisitedAssignmentExpression += Translator_VisitedAssignmentExpression;
         }
 
         private void Translator_VisitingEventDeclaration(object sender, VisitingEventArgs<EventDeclaration> e)
@@ -95,5 +99,45 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             e.Results = new Syntax[] { fd, ad, rd };
         }
+
+
+        private void Translator_VisitedAssignmentExpression(object sender, VisitedEventArgs<ICSharpCode.NRefactory.CSharp.AssignmentExpression> e)
+        {
+            if (e.Handled || e.Results.Count != 1)
+            {
+                return;
+            }
+
+            var ae = e.Results[0] as E.AssignmentExpression;
+
+            if (ae == null)
+            {
+                return;
+            }
+
+            if (e.Node.Operator == AssignmentOperatorType.Add
+                || e.Node.Operator == AssignmentOperatorType.Subtract)
+            {
+                var mre = e.Node.Left as MemberReferenceExpression;
+                if (mre != null)
+                {
+                    var ed = mre.Annotation<EventDefinition>();
+                    if (ed != null)
+                    {
+                        var t = mre.Target.AcceptVisitor((ILTranslator)sender, e.Context).ToArray();
+                        if (t.Length == 1)
+                        {
+                            var v = e.Node.Left.AcceptVisitor((ILTranslator)sender, e.Context).ToArray();
+                            if (v.Length == 1)
+                            {
+                                var te = (Expression)t[0];
+                                e.Results = new[] { te.Property((e.Node.Operator == AssignmentOperatorType.Add ? "add_" : "remove_") + ed.Name).Call((Expression)v[0]) };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
