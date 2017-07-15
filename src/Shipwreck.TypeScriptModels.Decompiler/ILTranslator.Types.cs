@@ -191,7 +191,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAttribute(Attribute attribute, ILTransformationContext data)
+            => OnVisiting(data, attribute, VisitingAttribute)
+            ?? OnVisited(data, attribute, VisitedAttribute, TranslateAttribute(attribute, data));
+
+        protected virtual IEnumerable<Syntax> TranslateAttribute(Attribute attribute, ILTransformationContext data)
         {
             var d = new D.Decorator();
             d.Name = GetTypeName(attribute.Type);

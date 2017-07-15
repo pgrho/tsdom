@@ -50,7 +50,7 @@ var types = new []{
 	"QueryOrdering",
 	"QuerySelectClause",*/
 	"QueryGroupClause",
-//	"Attribute",
+	"Attribute",
 	"AttributeSection",
 	"DelegateDeclaration",
 	"NamespaceDeclaration",
@@ -115,9 +115,6 @@ var types = new []{
 
 #>
 using ICSharpCode.NRefactory.CSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -127,8 +124,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 foreach (var t in types)
 {
 #>
-		public event EventHandler<VisitingEventArgs<<#= t #>>> Visiting<#= t #>;
-		public event EventHandler<VisitedEventArgs<<#= t #>>> Visited<#= t #>;
+		public event System.EventHandler<VisitingEventArgs<<#= t #>>> Visiting<#= t #>;
+		public event System.EventHandler<VisitedEventArgs<<#= t #>>> Visited<#= t #>;
 <#
 }
 #>

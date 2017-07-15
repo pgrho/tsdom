@@ -1,5 +1,6 @@
 using ICSharpCode.NRefactory.CSharp;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -12,15 +13,16 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             Context = context;
             Node = node;
-            Results = results;
-            _OriginalResults = results;
+            var c = (results as ICollection<Syntax>) ?? results.ToArray();
+            Results = (c as IList<Syntax>) ?? c.ToList();
+            _OriginalResults = Results;
         }
 
         public ILTransformationContext Context { get; }
 
         public T Node { get; }
 
-        public IEnumerable<Syntax> Results { get; set; }
+        public IList<Syntax> Results { get; set; }
 
         public bool Handled
         {
