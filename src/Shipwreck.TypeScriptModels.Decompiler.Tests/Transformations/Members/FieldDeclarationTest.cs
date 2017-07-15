@@ -7,7 +7,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
     {
         private class TestClass
         {
+#pragma warning disable CS0649
             protected int _IntegerField;
+#pragma warning restore CS0649
         }
 
         [TestMethod]
