@@ -624,24 +624,32 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         public event EventHandler<ResolvingTypeEventArgs<Mono.Cecil.TypeReference>> ResolvingCecilType;
 
-        internal ITypeReference ResolveType(AstNode context, AstType type)
+        #region ResolveType
+
+        public ITypeReference ResolveType(AstType type)
+            => ResolveType(null, type);
+
+        public ITypeReference ResolveType(AstType type, out bool isOptional)
+            => ResolveType(null, type, out isOptional);
+
+        public ITypeReference ResolveType(AstNode context, AstType type)
         {
             bool b;
             return ResolveType(context, type, out b);
         }
 
-        internal ITypeReference ResolveType(AstNode context, AstType type, out bool isOptional)
+        public ITypeReference ResolveType(AstNode context, AstType type, out bool isOptional)
         {
             var t = type.Annotations?.OfType<Type>().FirstOrDefault();
             if (t != null)
             {
-                return ResolveType(context, t, out isOptional);
+                return ResolveClrType(context, t, out isOptional);
             }
 
             var mt = type.Annotations?.OfType<TypeReference>().FirstOrDefault();
             if (mt != null)
             {
-                return ResolveType(context, mt, out isOptional);
+                return ResolveCecilType(context, mt, out isOptional);
             }
 
             var h = ResolvingAstType;
@@ -711,13 +719,23 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new D.NamedTypeReference() { Name = ((SimpleType)type).Identifier };
         }
 
-        internal ITypeReference ResolveType(AstNode context, Type type)
+        #endregion ResolveType
+
+        #region ResolveClrType
+
+        public ITypeReference ResolveClrType(Type type)
+            => ResolveClrType(null, type);
+
+        public ITypeReference ResolveClrType(Type type, out bool isOptional)
+            => ResolveClrType(null, type, out isOptional);
+
+        public ITypeReference ResolveClrType(AstNode context, Type type)
         {
             bool b;
-            return ResolveType(context, type, out b);
+            return ResolveClrType(context, type, out b);
         }
 
-        internal ITypeReference ResolveType(AstNode context, Type type, out bool isOptional)
+        public ITypeReference ResolveClrType(AstNode context, Type type, out bool isOptional)
         {
             var h = ResolvingClrType;
             if (h != null)
@@ -741,7 +759,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 isOptional = true;
                 return new D.ArrayType()
                 {
-                    ElementType = ResolveType(context, type.GetElementType())
+                    ElementType = ResolveClrType(context, type.GetElementType())
                 };
             }
 
@@ -762,7 +780,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
                     foreach (var t in type.GetGenericArguments())
                     {
-                        gt.TypeArguments.Add(ResolveType(context, t));
+                        gt.TypeArguments.Add(ResolveClrType(context, t));
                     }
 
                     return gt;
@@ -817,20 +835,30 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        internal ITypeReference ResolveType(AstNode context, TypeReference type)
+        #endregion ResolveClrType
+
+        #region ResolveCecilType
+
+        public ITypeReference ResolveCecilType(TypeReference type)
+            => ResolveCecilType(null, type);
+
+        public ITypeReference ResolveCecilType(TypeReference type, out bool isOptional)
+            => ResolveCecilType(null, type, out isOptional);
+
+        public ITypeReference ResolveCecilType(AstNode context, TypeReference type)
         {
             bool b;
-            return ResolveType(context, type, out b);
+            return ResolveCecilType(context, type, out b);
         }
 
-        internal ITypeReference ResolveType(AstNode context, TypeReference type, out bool isOptional)
+        public ITypeReference ResolveCecilType(AstNode context, TypeReference type, out bool isOptional)
         {
             var clr = Type.GetType(type.FullName + "," + type.Module.Name, false, false)
                         ?? Type.GetType(type.FullName, false, false);
 
             if (clr != null)
             {
-                return ResolveType(context, clr, out isOptional);
+                return ResolveClrType(context, clr, out isOptional);
             }
 
             var h = ResolvingCecilType;
@@ -857,7 +885,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 isOptional = true;
                 return new D.ArrayType()
                 {
-                    ElementType = ResolveType(context, at.ElementType, out b)
+                    ElementType = ResolveCecilType(context, at.ElementType, out b)
                 };
             }
 
@@ -875,7 +903,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     foreach (var t in gt.GenericArguments)
                     {
                         bool b;
-                        r.TypeArguments.Add(ResolveType(context, t, out b));
+                        r.TypeArguments.Add(ResolveCecilType(context, t, out b));
                     }
 
                     return r;
@@ -920,7 +948,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new D.NamedTypeReference() { Name = type.FullName };
         }
 
-        #endregion GetTypeReference
+        #endregion ResolveCecilType
+
+        #endregion ResolveType
 
         #region クエリー
 
