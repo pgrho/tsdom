@@ -12,6 +12,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     {
         public override void ApplyTo(ILTranslator translator)
         {
+            translator.VisitingEventDeclaration -= Translator_VisitingEventDeclaration;
             translator.VisitingEventDeclaration += Translator_VisitingEventDeclaration;
         }
 
