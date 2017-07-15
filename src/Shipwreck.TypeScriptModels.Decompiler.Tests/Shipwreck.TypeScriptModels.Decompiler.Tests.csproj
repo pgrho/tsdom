@@ -60,7 +60,7 @@
     <Compile Include="Transformations\Expressions\UnaryExpressionTest.cs" />
     <Compile Include="Transformations\Members\ConstructorDeclarationTest.cs" />
     <Compile Include="Transformations\Members\AsyncMethodDeclarationTest.cs" />
-    <Compile Include="Transformations\Members\EventDeclarationTest.cs" />
+    <Compile Include="EventConventionTest.cs" />
     <Compile Include="Transformations\Members\PropertydDeclarationTest.cs" />
     <Compile Include="Transformations\Members\MethodDeclarationTest.cs" />
     <Compile Include="Transformations\Members\FieldDeclarationTest.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="Transformations\Statements\DoStatementTest.cs" />
     <Compile Include="Transformations\Statements\VariableDeclarationStatementTest.cs" />
     <Compile Include="Transformations\Statements\ReturnStatementTest.cs" />
-    <Compile Include="Transformations\TransformingContext.cs" />
+    <Compile Include="Transformations\TransformationContext.cs" />
     <Compile Include="Transformations\Types\TypeDeclarationTest.cs" />
   </ItemGroup>
   <ItemGroup>

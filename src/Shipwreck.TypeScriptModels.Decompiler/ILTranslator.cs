@@ -290,15 +290,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw ExceptionHelper.CannotTranslateAst(nameof(CSharpTokenNode));
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, ILTransformationContext data)
-            => OnVisiting(data, customEventDeclaration, VisitingCustomEventDeclaration)
-            ?? OnVisited(data, customEventDeclaration, VisitedCustomEventDeclaration, TranslateCustomEventDeclaration(customEventDeclaration, data));
-
-        protected virtual IEnumerable<Syntax> TranslateCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, ILTransformationContext data)
-        {
-            throw ExceptionHelper.CannotTranslateAst(nameof(CustomEventDeclaration));
-        }
-
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, ILTransformationContext data)
             => OnVisiting(data, defaultValueExpression, VisitingDefaultValueExpression)
             ?? OnVisited(data, defaultValueExpression, VisitedDefaultValueExpression, TranslateDefaultValueExpression(defaultValueExpression, data));
@@ -536,7 +527,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw ExceptionHelper.CannotTranslateAst(nameof(PrimitiveType));
         }
 
-        private Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, ILTransformationContext data)
+        public Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, ILTransformationContext data)
         {
             Collection<Statement> sts = null;
 
@@ -563,7 +554,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return sts;
         }
 
-        private Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, ILTransformationContext data)
+        public Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, ILTransformationContext data)
         {
             Collection<Statement> sts = null;
 

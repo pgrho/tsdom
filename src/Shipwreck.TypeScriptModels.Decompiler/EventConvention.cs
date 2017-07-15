@@ -1,20 +1,29 @@
 using ICSharpCode.NRefactory.CSharp;
+using Mono.Cecil;
 using System.Collections.ObjectModel;
 using System.Linq;
-using M = Shipwreck.TypeScriptModels;
 using D = Shipwreck.TypeScriptModels.Declarations;
-using S = Shipwreck.TypeScriptModels.Statements;
 using E = Shipwreck.TypeScriptModels.Expressions;
-using Mono.Cecil;
+using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
     public sealed class EventConvention : ILTranslationConvention
     {
+        internal const string FIELD_PREFIX = "$ev_";
+        internal const string ADD_PREFIX = "$addev_";
+        internal const string REMOVE_PREFIX = "$remev_";
+
         public override void ApplyTo(ILTranslator translator)
         {
             translator.VisitingEventDeclaration -= Translator_VisitingEventDeclaration;
             translator.VisitingEventDeclaration += Translator_VisitingEventDeclaration;
+
+            translator.VisitingCustomEventDeclaration -= Translator_VisitingCustomEventDeclaration;
+            translator.VisitingCustomEventDeclaration += Translator_VisitingCustomEventDeclaration;
+
+            translator.VisitingMemberReferenceExpression -= Translator_VisitingMemberReferenceExpression;
+            translator.VisitingMemberReferenceExpression += Translator_VisitingMemberReferenceExpression;
 
             translator.VisitedAssignmentExpression -= Translator_VisitedAssignmentExpression;
             translator.VisitedAssignmentExpression += Translator_VisitedAssignmentExpression;
@@ -33,7 +42,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             var at = new D.ArrayType(tr);
 
             var n = e.Node.Variables.Single().Name;
-            var fn = "__" + n;
+            var fn = FIELD_PREFIX + n;
 
             var fd = new D.FieldDeclaration()
             {
@@ -43,7 +52,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             var ad = new D.MethodDeclaration()
             {
-                MethodName = "add_" + n,
+                MethodName = ADD_PREFIX + n,
                 Parameters = new Collection<D.Parameter>()
                 {
                     new D.Parameter()
@@ -63,7 +72,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             var rd = new D.MethodDeclaration()
             {
-                MethodName = "remove_" + n,
+                MethodName = REMOVE_PREFIX + n,
                 Parameters = new Collection<D.Parameter>()
                 {
                     new D.Parameter()
@@ -100,6 +109,69 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             e.Results = new Syntax[] { fd, ad, rd };
         }
 
+        private void Translator_VisitingCustomEventDeclaration(object sender, VisitingEventArgs<CustomEventDeclaration> e)
+        {
+            if (e.Handled)
+            {
+                return;
+            }
+
+            var ilt = (ILTranslator)sender;
+
+            var tr = ilt.ResolveType(e.Node, e.Node.ReturnType);
+            var at = new D.ArrayType(tr);
+
+            var n = e.Node.Name;
+
+            var ad = new D.MethodDeclaration()
+            {
+                MethodName = ADD_PREFIX + n,
+                Parameters = new Collection<D.Parameter>()
+                {
+                    new D.Parameter()
+                    {
+                        ParameterName = "value",
+                        ParameterType = tr
+                    }
+                }
+            };
+
+            ad.Statements = ilt.GetStatements(e.Node.AddAccessor.Body, e.Context);
+
+            var rd = new D.MethodDeclaration()
+            {
+                MethodName = REMOVE_PREFIX + n,
+                Parameters = new Collection<D.Parameter>()
+                {
+                    new D.Parameter()
+                    {
+                        ParameterName = "value",
+                        ParameterType = tr
+                    }
+                }
+            };
+
+            rd.Statements = ilt.GetStatements(e.Node.RemoveAccessor.Body, e.Context);
+
+            e.Results = new Syntax[] { ad, rd };
+        }
+
+        private void Translator_VisitingMemberReferenceExpression(object sender, VisitingEventArgs<MemberReferenceExpression> e)
+        {
+            if (e.Handled)
+            {
+                return;
+            }
+            var ed = e.Node.Annotation<EventDefinition>();
+            if (ed != null)
+            {
+                var tar = e.Node.Target.AcceptVisitor((ILTranslator)sender, e.Context).ToArray();
+                if (tar.Length == 1)
+                {
+                    e.Results = new[] { ((Expression)tar[0]).Property(FIELD_PREFIX + ed.Name) };
+                }
+            }
+        }
 
         private void Translator_VisitedAssignmentExpression(object sender, VisitedEventArgs<ICSharpCode.NRefactory.CSharp.AssignmentExpression> e)
         {
@@ -115,29 +187,41 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 return;
             }
 
-            if (e.Node.Operator == AssignmentOperatorType.Add
-                || e.Node.Operator == AssignmentOperatorType.Subtract)
+            var op = e.Node.Operator;
+            var isAdd = op == AssignmentOperatorType.Add;
+            if (!isAdd
+                && op != AssignmentOperatorType.Subtract)
             {
-                var mre = e.Node.Left as MemberReferenceExpression;
-                if (mre != null)
-                {
-                    var ed = mre.Annotation<EventDefinition>();
-                    if (ed != null)
-                    {
-                        var t = mre.Target.AcceptVisitor((ILTranslator)sender, e.Context).ToArray();
-                        if (t.Length == 1)
-                        {
-                            var v = e.Node.Left.AcceptVisitor((ILTranslator)sender, e.Context).ToArray();
-                            if (v.Length == 1)
-                            {
-                                var te = (Expression)t[0];
-                                e.Results = new[] { te.Property((e.Node.Operator == AssignmentOperatorType.Add ? "add_" : "remove_") + ed.Name).Call((Expression)v[0]) };
-                            }
-                        }
-                    }
-                }
+                return;
             }
-        }
 
+            var mre = e.Node.Left as MemberReferenceExpression;
+            if (mre == null)
+            {
+                return;
+            }
+
+            var ed = mre.Annotation<EventDefinition>();
+            if (ed == null)
+            {
+                return;
+            }
+            var pe = ae.Target as E.PropertyExpression;
+            Expression tar;
+            if (pe != null)
+            {
+                tar = pe.Object;
+            }
+            else
+            {
+                var t = mre.Target.AcceptVisitor((ILTranslator)sender, e.Context).ToArray();
+                if (t.Length != 1)
+                {
+                    return;
+                }
+                tar = (Expression)t[0];
+            }
+            e.Results = new[] { tar.Property((isAdd ? ADD_PREFIX : REMOVE_PREFIX) + ed.Name).Call(ae.Value) };
+        }
     }
 }

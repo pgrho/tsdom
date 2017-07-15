@@ -216,6 +216,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
+        #region イベント
+
+        // see EventConvention
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
             => OnVisiting(data, eventDeclaration, VisitingEventDeclaration)
@@ -223,10 +226,19 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         protected virtual IEnumerable<Syntax> TranslateEventDeclaration(EventDeclaration eventDeclaration, ILTransformationContext data)
         {
-
-
             throw ExceptionHelper.CannotTranslateAst(nameof(EventDeclaration));
         }
+
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, ILTransformationContext data)
+            => OnVisiting(data, customEventDeclaration, VisitingCustomEventDeclaration)
+            ?? OnVisited(data, customEventDeclaration, VisitedCustomEventDeclaration, TranslateCustomEventDeclaration(customEventDeclaration, data));
+
+        protected virtual IEnumerable<Syntax> TranslateCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, ILTransformationContext data)
+        {
+            throw ExceptionHelper.CannotTranslateAst(nameof(CustomEventDeclaration));
+        }
+
+        #endregion イベント
 
         #region 対象外
 
