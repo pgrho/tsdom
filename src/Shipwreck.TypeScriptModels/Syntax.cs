@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels
 {
@@ -12,7 +9,38 @@ namespace Shipwreck.TypeScriptModels
     /// </summary>
     public abstract class Syntax
     {
-        internal Syntax() { }
+        internal Syntax()
+        {
+        }
+
+        private Dictionary<object, object> _Annotations;
+
+        public object GetAnnotation(object key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            object r = null;
+            _Annotations?.TryGetValue(key, out r);
+            return r;
+        }
+
+        public void SetAnnotation(object key, object value)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            if (value == null)
+            {
+                _Annotations?.Remove(key);
+            }
+            else
+            {
+                (_Annotations ?? (_Annotations = new Dictionary<object, object>()))[key] = value;
+            }
+        }
 
         public override string ToString()
         {

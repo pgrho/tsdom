@@ -1,6 +1,8 @@
 ﻿using ICSharpCode.NRefactory.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using E = Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
@@ -181,6 +183,54 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         #endregion 識別子
+
+        #region リテラル
+
+        private static PropertyInfo _PrimitiveExpressionValueProperty;
+
+        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, ILTransformationContext data)
+            => OnVisiting(data, primitiveExpression, VisitingPrimitiveExpression)
+            ?? OnVisited(data, primitiveExpression, VisitedPrimitiveExpression, TranslatePrimitiveExpression(primitiveExpression, data));
+
+        protected virtual IEnumerable<Syntax> TranslatePrimitiveExpression(PrimitiveExpression primitiveExpression, ILTransformationContext data)
+        {
+            Expression ex;
+            if (primitiveExpression.Value == null)
+            {
+                ex = new E.NullExpression();
+            }
+            else
+            {
+                var sv = primitiveExpression.Value as string;
+                if (sv != null)
+                {
+                    ex = new E.StringExpression() { Value = sv };
+                }
+                else if (primitiveExpression.Value is bool)
+                {
+                    ex = new E.BooleanExpression() { Value = (bool)primitiveExpression.Value };
+                }
+                else
+                {
+                    ex = new E.NumberExpression()
+                    {
+                        Value = Convert.ToDouble(primitiveExpression.Value)
+                    };
+                }
+            }
+
+            if (primitiveExpression.Value != null)
+            {
+                ex.SetAnnotation(
+                    _PrimitiveExpressionValueProperty ?? (_PrimitiveExpressionValueProperty = typeof(PrimitiveExpression).GetProperty("Value")),
+                    primitiveExpression.Value);
+                ex.SetAnnotation(typeof(Type), primitiveExpression.Value.GetType());
+            }
+
+            yield return ex;
+        }
+
+        #endregion リテラル
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ILTransformationContext data)
             => OnVisiting(data, parenthesizedExpression, VisitingParenthesizedExpression)

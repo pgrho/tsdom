@@ -2,6 +2,7 @@
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using Mono.Cecil;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using D = Shipwreck.TypeScriptModels.Declarations;
-using E = Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -74,6 +74,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                         YieldReturn = true
                     }
                 });
+                foreach (var a in clrType.Assembly.GetReferencedAssemblies())
+                {
+                    if (!Project.AssemblyReferences.OfType<DefaultAssemblyReference>().Any(e => a.Name.Equals(e.ToString())))
+                    {
+                        Project.AddAssemblyReferences(new DefaultAssemblyReference(a.FullName));
+                    }
+                }
+
                 b.DecompileMethodBodies = true;
 
                 b.AddType(ad.MainModule.GetType(clrType.FullName.Replace('+', '/')));
@@ -521,37 +529,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         protected virtual IEnumerable<Syntax> TranslatePointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, ILTransformationContext data)
         {
             throw ExceptionHelper.CannotTranslateAst(nameof(PointerReferenceExpression));
-        }
-
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, ILTransformationContext data)
-            => OnVisiting(data, primitiveExpression, VisitingPrimitiveExpression)
-            ?? OnVisited(data, primitiveExpression, VisitedPrimitiveExpression, TranslatePrimitiveExpression(primitiveExpression, data));
-
-        protected virtual IEnumerable<Syntax> TranslatePrimitiveExpression(PrimitiveExpression primitiveExpression, ILTransformationContext data)
-        {
-            if (primitiveExpression.Value == null)
-            {
-                yield return new E.NullExpression();
-            }
-            else
-            {
-                var sv = primitiveExpression.Value as string;
-                if (sv != null)
-                {
-                    yield return new E.StringExpression() { Value = sv };
-                }
-                else if (primitiveExpression.Value is bool)
-                {
-                    yield return new E.BooleanExpression() { Value = (bool)primitiveExpression.Value };
-                }
-                else
-                {
-                    yield return new E.NumberExpression()
-                    {
-                        Value = Convert.ToDouble(primitiveExpression.Value)
-                    };
-                }
-            }
         }
 
         IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPrimitiveType(PrimitiveType primitiveType, ILTransformationContext data)
