@@ -356,8 +356,36 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         protected virtual IEnumerable<Syntax> TranslateObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTransformationContext data)
         {
-            var ne = new E.NewExpression();
-            ne.Type = ResolveType(objectCreateExpression, objectCreateExpression.Type).ToExpression();
+            E.NewExpression ne;
+
+            var clrType = objectCreateExpression.Type.ResolveClrType();
+            if (clrType != null)
+            {
+                if (typeof(MulticastDelegate).IsAssignableFrom(clrType))
+                {
+                    var p = objectCreateExpression.Arguments.OfType<MemberReferenceExpression>().FirstOrDefault();
+
+                    if (p != null)
+                    {
+                        var t = p.Target.AcceptVisitor(this, data).ToArray();
+                        if (t.Length == 1)
+                        {
+                            var te = (Expression)t[0];
+                            yield return te.Property(p.MemberName).Property("bind").Call(te);
+
+                            yield break;
+                        }
+                    }
+                }
+
+                ne = new E.NewExpression();
+                ne.Type = ResolveClrType(objectCreateExpression, clrType).ToExpression();
+            }
+            else
+            {
+                ne = new E.NewExpression();
+                ne.Type = ResolveType(objectCreateExpression, objectCreateExpression.Type).ToExpression();
+            }
 
             foreach (var p in objectCreateExpression.Arguments)
             {
