@@ -1,10 +1,14 @@
 ﻿using Shipwreck.TypeScriptModels.Expressions;
+using Shipwreck.TypeScriptModels.Statements;
 using System.Collections.Generic;
 
 namespace Shipwreck.TypeScriptModels
 {
     public static class ExpressionBuilder
     {
+        public static IdentifierExpression Undefined()
+            => new IdentifierExpression("undefined");
+
         #region BinaryExpression
 
         public static BinaryExpression MakeBinary(this Expression left, Expression right, BinaryOperator @operator)
@@ -41,6 +45,18 @@ namespace Shipwreck.TypeScriptModels
 
         public static BinaryExpression IsStrictNotEqualTo(this Expression left, Expression right)
             => left.MakeBinary(right, BinaryOperator.StrictNotEqual);
+
+        public static BinaryExpression IsLessThan(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.LessThan);
+
+        public static BinaryExpression IsLessThanOrEqualTo(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.LessThanOrEqual);
+
+        public static BinaryExpression IsGreaterThan(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.GreaterThan);
+
+        public static BinaryExpression IsGreaterThanOrEqualTo(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.GreaterThanOrEqual);
 
         public static BinaryExpression LogicalAndWith(this Expression left, Expression right)
             => left.MakeBinary(right, BinaryOperator.LogicalAnd);
@@ -89,6 +105,7 @@ namespace Shipwreck.TypeScriptModels
 
             return r;
         }
+
         public static CallExpression Call(this Expression target, IEnumerable<Expression> args)
         {
             var r = new CallExpression() { Target = target };
@@ -103,14 +120,21 @@ namespace Shipwreck.TypeScriptModels
         public static TypeReferenceExpression ToExpression(this ITypeReference type)
             => new TypeReferenceExpression(type);
 
-        public static Statements.ExpressionStatement ToStatement(this Expression expression)
-            => new Statements.ExpressionStatement()
+        #region Complex
+
+        public static CallExpression IsArray(this Expression target)
+            => new IdentifierExpression("Array").Property("isArray").Call(target);
+
+        #endregion Complex
+
+        public static ExpressionStatement ToStatement(this Expression expression)
+            => new ExpressionStatement()
             {
                 Expression = expression
             };
 
-        public static Statements.ReturnStatement ToReturn(this Expression value)
-            => new Statements.ReturnStatement()
+        public static ReturnStatement ToReturn(this Expression value)
+            => new ReturnStatement()
             {
                 Value = value
             };

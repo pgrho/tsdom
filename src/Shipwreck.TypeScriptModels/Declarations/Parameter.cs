@@ -10,6 +10,13 @@ namespace Shipwreck.TypeScriptModels.Declarations
 {
     public sealed class Parameter : Syntax
     {
+        public Parameter() { }
+        public Parameter(string parameterName, ITypeReference parameterType = null)
+        {
+            ParameterName = parameterName;
+            ParameterType = parameterType;
+        }
+
         public AccessibilityModifier Accessibility { get; set; }
         public string ParameterName { get; set; }
         public ITypeReference ParameterType { get; set; }

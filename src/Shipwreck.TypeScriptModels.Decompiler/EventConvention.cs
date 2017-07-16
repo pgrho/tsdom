@@ -45,7 +45,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
 
             var delType = translator.ResolveType(e.Node, e.Node.ReturnType);
-            var arrayType = (delType as D.ArrayType) ?? delType.MakeArrayType();
+            var arrayType = delType as D.ArrayType;
+            if (arrayType == null)
+            {
+                arrayType = (delType as D.UnionType)?.ElementTypes.OfType<D.ArrayType>().FirstOrDefault();
+                if (arrayType == null)
+                {
+                    arrayType = delType.MakeArrayType();
+                }
+            }
 
             var n = e.Node.Variables.Single().Name;
             var fn = FIELD_PREFIX + n;

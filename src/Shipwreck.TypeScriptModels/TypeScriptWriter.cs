@@ -268,6 +268,7 @@ namespace Shipwreck.TypeScriptModels
             _Writer.Write(expression.Name);
             return 0;
         }
+
         int IExpressionVisitor<int>.VisitTypeReference(TypeReferenceExpression expression)
         {
             expression.Type.WriteTypeReference(_Writer);
@@ -337,10 +338,9 @@ namespace Shipwreck.TypeScriptModels
         // 4.6
         int IExpressionVisitor<int>.VisitArray(ArrayExpression expression)
         {
-            _Writer.WriteLine('[');
-
             if (expression.HasElement)
             {
+                _Writer.WriteLine('[');
                 _Writer.Indent++;
                 for (var i = 0; i < expression.Elements.Count; i++)
                 {
@@ -351,8 +351,12 @@ namespace Shipwreck.TypeScriptModels
                     }
                 }
                 _Writer.Indent--;
+                _Writer.Write(']');
             }
-            _Writer.Write(']');
+            else
+            {
+                _Writer.Write("[]");
+            }
             return 0;
         }
 
@@ -446,7 +450,7 @@ namespace Shipwreck.TypeScriptModels
         // 4.13
         int IExpressionVisitor<int>.VisitProperty(PropertyExpression expression)
         {
-            expression.Object.Accept(this);
+            WriteChildExpression(expression, expression.Object);
             if (expression.IsValidIdentifier)
             {
                 _Writer.Write('.');
@@ -757,7 +761,7 @@ namespace Shipwreck.TypeScriptModels
 
             if (statement.HasFalsePart)
             {
-                if (statement.FalsePart.Count == 0 && statement.FalsePart[0] is IfStatement)
+                if (statement.FalsePart.Count == 1 && statement.FalsePart[0] is IfStatement)
                 {
                     _Writer.Write("} else ");
 
@@ -768,18 +772,19 @@ namespace Shipwreck.TypeScriptModels
                     _Writer.WriteLine("} else {");
                     _Writer.Indent++;
 
-                    if (statement.HasTruePart)
+                    foreach (var s in statement.FalsePart)
                     {
-                        foreach (var s in statement.TruePart)
-                        {
-                            s.Accept(this);
-                        }
+                        s.Accept(this);
                     }
 
                     _Writer.Indent--;
+                    _Writer.WriteLine('}');
                 }
             }
-            _Writer.WriteLine('}');
+            else
+            {
+                _Writer.WriteLine('}');
+            }
 
             return 0;
         }

@@ -41,7 +41,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 }
                 ft.ReturnType = ilt.ResolveClrType(m.ReturnType) ?? D.PredefinedType.Void;
 
-                e.Result = ft;
+                e.Result = ft.MakeArrayType().UnionWith(ft);
             }
         }
 
@@ -76,28 +76,47 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         {
             if (expression.CompoundOperator == E.BinaryOperator.Add)
             {
-                return expression.Target.LogicalOrWith(expression.AssignedBy(new E.ArrayExpression())).Property("push").Call(expression.Value);
-            }
+                var array = expression.Target.LogicalOrWith(expression.Target.AssignedBy(new E.ArrayExpression()));
 
-            return new E.ConditionalExpression()
-            {
-                Condition = expression.Target.LogicalAndWith(expression.Value),
-                TruePart = expression.Target.Property("filter").Call(new E.ArrowFunctionExpression()
+                return new E.ConditionalExpression()
                 {
-                    Parameters = new Collection<D.Parameter>()
-                    {
-                        new D.Parameter()
-                        {
-                            ParameterName = "e"
-                        }
-                    },
+                    Condition = expression.Value,
+                    TruePart = expression.Target.AssignedBy(array.Property("concat").Call(expression.Target)),
+                    FalsePart = ExpressionBuilder.Undefined()
+                };
+            }
+            else
+            {
+                var f = new E.FunctionExpression();
+                var ifb = new S.IfStatement();
+                ifb.Condition = expression.Target.LogicalAndWith(expression.Value);
+
+                var inner = new S.IfStatement();
+                inner.Condition = expression.Value.IsArray();
+
+                inner.TruePart.Add(expression.Target.AssignedBy(expression.Target.Property("filter").Call(new E.ArrowFunctionExpression()
+                {
+                    Parameters = new Collection<D.Parameter>() { new D.Parameter("e") },
+                    Statements = new Collection<Statement> {
+                        expression.Value.Property("indexOf").Call(new E.IdentifierExpression("e")).IsLessThan(new E.NumberExpression(0)).ToReturn()
+                    }
+                })).ToStatement());
+
+                inner.FalsePart.Add(expression.Target.Property("filter").Call(new E.ArrowFunctionExpression()
+                {
+                    Parameters = new Collection<D.Parameter>() { new D.Parameter("e") },
                     Statements = new Collection<Statement>()
                     {
                         new E.IdentifierExpression("e").IsStrictNotEqualTo(expression.Value).ToReturn()
                     }
-                }),
-                FalsePart = new E.IdentifierExpression("undefined") // TODO: create static field
-            };
+                }).ToStatement());
+
+                ifb.TruePart.Add(inner);
+
+                f.Statements.Add(ifb);
+
+                return f.Call();
+            }
         }
 
         private void Translator_VisitedInvocationExpression(object sender, VisitedEventArgs<ICSharpCode.NRefactory.CSharp.InvocationExpression> e)
@@ -133,20 +152,28 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
             f.Statements.Add(l);
 
-            var fc = callExpression.Target.Property("forEach").Call(new E.ArrowFunctionExpression()
+            var ifb = new S.IfStatement();
+            ifb.Condition = callExpression.Target;
+
+            var inner = new S.IfStatement();
+            inner.Condition = callExpression.Target.IsArray();
+
+            inner.TruePart.Add(callExpression.Target.Property("forEach").Call(new E.ArrowFunctionExpression()
             {
                 Parameters = new Collection<Declarations.Parameter>() {
                     new D.Parameter() { ParameterName="e" }
                 },
                 Statements = new Collection<Statement>()
                 {
-                    new E.IdentifierExpression("e").Call(callExpression.Parameters).ToStatement()
+                    new E.IdentifierExpression("h").AssignedBy(new E.IdentifierExpression("e").Call(callExpression.Parameters)).ToStatement()
                 }
-            });
+            }).ToStatement());
+            inner.TruePart.Add(new E.IdentifierExpression("h").ToReturn());
 
-            f.Statements.Add(fc.ToStatement());
+            inner.FalsePart.Add(callExpression.ToReturn());
 
-            f.Statements.Add(new E.IdentifierExpression("h").ToReturn());
+            ifb.TruePart.Add(inner);
+            f.Statements.Add(ifb);
 
             return f.Call();
         }
