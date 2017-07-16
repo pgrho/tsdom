@@ -1,10 +1,10 @@
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 using System.Collections.ObjectModel;
 using System.Linq;
 using D = Shipwreck.TypeScriptModels.Declarations;
 using E = Shipwreck.TypeScriptModels.Expressions;
-using S = Shipwreck.TypeScriptModels.Statements;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
@@ -36,20 +36,37 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 return;
             }
 
-            var ilt = (ILTranslator)sender;
+            var translator = (ILTranslator)sender;
 
-            var tr = ilt.ResolveType(e.Node, e.Node.ReturnType);
-            var at = new D.ArrayType(tr);
+            var ed = e.Node.Annotation<EventDefinition>();
+            if (ed == null)
+            {
+                return;
+            }
+
+            var delType = translator.ResolveType(e.Node, e.Node.ReturnType);
+            var arrayType = (delType as D.ArrayType) ?? delType.MakeArrayType();
 
             var n = e.Node.Variables.Single().Name;
             var fn = FIELD_PREFIX + n;
-
             var fd = new D.FieldDeclaration()
             {
                 FieldName = fn,
-                FieldType = at
+                FieldType = arrayType
             };
 
+            var ad = CreateAddAccessor(translator, e, arrayType, ed);
+            var rd = CreateRemoveAccessor(translator, e, arrayType, ed);
+
+            e.Results = new Syntax[] { fd, ad, rd };
+        }
+
+        private D.MethodDeclaration CreateAddAccessor(ILTranslator translator, VisitingEventArgs<EventDeclaration> e, D.ArrayType arrayType, EventDefinition ed)
+        {
+            var n = e.Node.Variables.Single().Name;
+            var fn = FIELD_PREFIX + n;
+
+            var union = arrayType.UnionWith(arrayType.ElementType);
             var ad = new D.MethodDeclaration()
             {
                 MethodName = ADD_PREFIX + n,
@@ -58,18 +75,38 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     new D.Parameter()
                     {
                         ParameterName = "value",
-                        ParameterType = tr
+                        ParameterType = union
                     }
                 }
             };
 
-            var fr = new E.ThisExpression().Property(fn);
-            ad.Statements.Add(
-                    fr.LogicalOrWith(fr.AssignedBy(new E.ArrayExpression()))
-                        .Property("push")
-                        .Call(new E.IdentifierExpression("value"))
-                        .ToStatement());
+            var mre = new MemberReferenceExpression()
+            {
+                Target = new ThisReferenceExpression(),
+                MemberName = fn
+            };
+            var ve = new IdentifierExpression("value");
+            mre.AddAnnotation(new TypeInformation(ed.EventType, ed.EventType));
 
+            ad.Statements = translator.GetStatements(new ExpressionStatement()
+            {
+                Expression = new AssignmentExpression()
+                {
+                    Operator = AssignmentOperatorType.Add,
+                    Left = mre,
+                    Right = ve
+                }
+            }, e.Context);
+
+            return ad;
+        }
+
+        private D.MethodDeclaration CreateRemoveAccessor(ILTranslator translator, VisitingEventArgs<EventDeclaration> e, D.ArrayType arrayType, EventDefinition ed)
+        {
+            var n = e.Node.Variables.Single().Name;
+            var fn = FIELD_PREFIX + n;
+
+            var union = arrayType.UnionWith(arrayType.ElementType);
             var rd = new D.MethodDeclaration()
             {
                 MethodName = REMOVE_PREFIX + n,
@@ -78,35 +115,29 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     new D.Parameter()
                     {
                         ParameterName = "value",
-                        ParameterType = tr
+                        ParameterType = union
                     }
                 }
             };
-
-            rd.Statements.Add(new S.IfStatement()
+            var mre = new MemberReferenceExpression()
             {
-                Condition = fr,
-                TruePart = new Collection<Statement>()
-                {
-                    fr.AssignedBy(fr.Property("map").Call(new E.ArrowFunctionExpression()
-                    {
-                        Parameters =new Collection<D.Parameter> ()
-                        {
-                            new D.Parameter()
-                            {
-                                ParameterName = "e",
-                               // ParameterType = tr
-                            }
-                        },
-                        Statements = new Collection<Statement> ()
-                        {
-                            new E.IdentifierExpression("e").IsStrictNotEqualTo(new  E.IdentifierExpression("value")).ToReturn()
-                        }
-                    })  ).ToStatement()
-                }
-            });
+                Target = new ThisReferenceExpression(),
+                MemberName = fn
+            };
+            var ve = new IdentifierExpression("value");
+            mre.AddAnnotation(new TypeInformation(ed.EventType, ed.EventType));
 
-            e.Results = new Syntax[] { fd, ad, rd };
+            rd.Statements = translator.GetStatements(new ExpressionStatement()
+            {
+                Expression = new AssignmentExpression()
+                {
+                    Operator = AssignmentOperatorType.Subtract,
+                    Left = mre,
+                    Right = ve
+                }
+            }, e.Context);
+
+            return rd;
         }
 
         private void Translator_VisitingCustomEventDeclaration(object sender, VisitingEventArgs<CustomEventDeclaration> e)

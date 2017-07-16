@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shipwreck.TypeScriptModels.Decompiler.Transformations;
 using System;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
@@ -26,7 +27,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         [TestMethod]
         public void EventDeclaration_TransformTest_Auto()
         {
-            var t = new TranslatingContext<Auto>();
+            var t = new TransformingContext<Auto>();
             Assert.IsNotNull(t.GetField("$ev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$addev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$remev_TestEvent"));
@@ -35,7 +36,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         [TestMethod]
         public void EventDeclaration_TransformTest_Custom()
         {
-            var t = new TranslatingContext<Custom>();
+            var t = new TransformingContext<Custom>();
             Assert.IsNull(t.GetField("$ev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$addev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$remev_TestEvent"));

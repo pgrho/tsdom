@@ -1,4 +1,5 @@
 ﻿using Shipwreck.TypeScriptModels.Expressions;
+using System.Collections.Generic;
 
 namespace Shipwreck.TypeScriptModels
 {
@@ -41,6 +42,9 @@ namespace Shipwreck.TypeScriptModels
         public static BinaryExpression IsStrictNotEqualTo(this Expression left, Expression right)
             => left.MakeBinary(right, BinaryOperator.StrictNotEqual);
 
+        public static BinaryExpression LogicalAndWith(this Expression left, Expression right)
+            => left.MakeBinary(right, BinaryOperator.LogicalAnd);
+
         public static BinaryExpression LogicalOrWith(this Expression left, Expression right)
             => left.MakeBinary(right, BinaryOperator.LogicalOr);
 
@@ -76,6 +80,16 @@ namespace Shipwreck.TypeScriptModels
         }
 
         public static CallExpression Call(this Expression target, params Expression[] args)
+        {
+            var r = new CallExpression() { Target = target };
+            foreach (var a in args)
+            {
+                r.Parameters.Add(a);
+            }
+
+            return r;
+        }
+        public static CallExpression Call(this Expression target, IEnumerable<Expression> args)
         {
             var r = new CallExpression() { Target = target };
             foreach (var a in args)

@@ -76,7 +76,7 @@
     <Compile Include="Transformations\Statements\DoStatementTest.cs" />
     <Compile Include="Transformations\Statements\VariableDeclarationStatementTest.cs" />
     <Compile Include="Transformations\Statements\ReturnStatementTest.cs" />
-    <Compile Include="Transformations\TransformationContext.cs" />
+    <Compile Include="Transformations\TransformingContext.cs" />
     <Compile Include="Transformations\Types\TypeDeclarationTest.cs" />
   </ItemGroup>
   <ItemGroup>

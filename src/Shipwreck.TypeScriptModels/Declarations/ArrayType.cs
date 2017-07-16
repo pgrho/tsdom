@@ -29,7 +29,13 @@ namespace Shipwreck.TypeScriptModels.Declarations
         {
             if (ElementType != null)
             {
+                writer.Write('(');
                 ElementType.WriteTypeReference(writer);
+                writer.Write(')');
+            }
+            else
+            {
+                writer.Write("any");
             }
             writer.Write("[]");
         }

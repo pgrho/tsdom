@@ -127,6 +127,7 @@
     <Compile Include="Statements\WithStatement.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="Syntax.cs" />
+    <Compile Include="TypeBuilder.cs" />
     <Compile Include="TypeScriptWriter.cs" />
     <Compile Include="Declarations\IInterfaceMember.cs" />
     <Compile Include="Expressions\NullExpression.cs" />

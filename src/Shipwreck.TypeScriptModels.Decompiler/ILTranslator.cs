@@ -43,6 +43,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                     {
                         new MethodNameConvention(typeof(object).GetMethod(nameof(ToString)), "toString"),
                         new EventConvention(),
+                        new DelegateConvention(),
                         new MathConventionSet()
                     };
                 }
