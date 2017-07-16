@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
 {
-    public sealed class TransformingContext<T>
+    public sealed class TypeTranslationContext<T>
         where T : class
     {
         private ClassDeclaration _Result;
@@ -16,7 +16,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations
                 if (_Result == null)
                 {
                     var clr2ts = new ILTranslator();
-                    var outs = clr2ts.Transform(typeof(T));
+                    var outs = clr2ts.Translate(typeof(T));
 
                     foreach (var m in outs)
                     {

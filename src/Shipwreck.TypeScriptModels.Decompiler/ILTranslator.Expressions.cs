@@ -133,36 +133,36 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region キーワード
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, ILTranslationContext data)
             => OnVisiting(data, thisReferenceExpression, VisitingThisReferenceExpression)
                 ?? OnVisited(data, thisReferenceExpression, VisitedThisReferenceExpression, TranslateThisReferenceExpresssion(thisReferenceExpression, data));
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, ILTranslationContext data)
             => OnVisiting(data, baseReferenceExpression, VisitingBaseReferenceExpression)
                 ?? OnVisited(data, baseReferenceExpression, VisitedBaseReferenceExpression, TranslateBaseReferenceExpresssion(baseReferenceExpression, data));
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, ILTranslationContext data)
             => OnVisiting(data, nullReferenceExpression, VisitingNullReferenceExpression)
                 ?? OnVisited(data, nullReferenceExpression, VisitedNullReferenceExpression, TranslateNullReferenceExpresssion(nullReferenceExpression, data));
 
-        protected virtual Expression TranslateThisReferenceExpresssion(ThisReferenceExpression thisReferenceExpression, ILTransformationContext data)
+        protected virtual Expression TranslateThisReferenceExpresssion(ThisReferenceExpression thisReferenceExpression, ILTranslationContext data)
             => new E.ThisExpression();
 
-        protected virtual Expression TranslateBaseReferenceExpresssion(BaseReferenceExpression baseReferenceExpression, ILTransformationContext data)
+        protected virtual Expression TranslateBaseReferenceExpresssion(BaseReferenceExpression baseReferenceExpression, ILTranslationContext data)
             => new E.SuperExpression();
 
-        protected virtual Expression TranslateNullReferenceExpresssion(NullReferenceExpression nullReferenceExpression, ILTransformationContext data)
+        protected virtual Expression TranslateNullReferenceExpresssion(NullReferenceExpression nullReferenceExpression, ILTranslationContext data)
             => new E.NullExpression();
 
         #endregion キーワード
 
         #region 識別子
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitIdentifierExpression(IdentifierExpression identifierExpression, ILTranslationContext data)
             => OnVisiting(data, identifierExpression, VisitingIdentifierExpression)
             ?? OnVisited(data, identifierExpression, VisitedIdentifierExpression, TranslateIdentifierExpression(identifierExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateIdentifierExpression(IdentifierExpression identifierExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateIdentifierExpression(IdentifierExpression identifierExpression, ILTranslationContext data)
         {
             yield return new E.IdentifierExpression()
             {
@@ -170,11 +170,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, ILTranslationContext data)
             => OnVisiting(data, typeReferenceExpression, VisitingTypeReferenceExpression)
             ?? OnVisited(data, typeReferenceExpression, VisitedTypeReferenceExpression, TranslateTypeReferenceExpression(typeReferenceExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, ILTranslationContext data)
         {
             yield return new E.IdentifierExpression()
             {
@@ -188,11 +188,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         private static PropertyInfo _PrimitiveExpressionValueProperty;
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, ILTranslationContext data)
             => OnVisiting(data, primitiveExpression, VisitingPrimitiveExpression)
             ?? OnVisited(data, primitiveExpression, VisitedPrimitiveExpression, TranslatePrimitiveExpression(primitiveExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslatePrimitiveExpression(PrimitiveExpression primitiveExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslatePrimitiveExpression(PrimitiveExpression primitiveExpression, ILTranslationContext data)
         {
             Expression ex;
             if (primitiveExpression.Value == null)
@@ -232,18 +232,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #endregion リテラル
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ILTranslationContext data)
             => OnVisiting(data, parenthesizedExpression, VisitingParenthesizedExpression)
             ?? OnVisited(data, parenthesizedExpression, VisitedParenthesizedExpression, TranslateParenthesizedExpression(parenthesizedExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, ILTranslationContext data)
                     => parenthesizedExpression.Expression.AcceptVisitor(this, data);
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, ILTranslationContext data)
             => OnVisiting(data, unaryOperatorExpression, VisitingUnaryOperatorExpression)
             ?? OnVisited(data, unaryOperatorExpression, VisitedUnaryOperatorExpression, TranslateUnaryOperatorExpression(unaryOperatorExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, ILTranslationContext data)
         {
             if (unaryOperatorExpression.Operator == UnaryOperatorType.Await)
             {
@@ -300,11 +300,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return new[] { e };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitInvocationExpression(InvocationExpression invocationExpression, ILTranslationContext data)
             => OnVisiting(data, invocationExpression, VisitingInvocationExpression)
             ?? OnVisited(data, invocationExpression, VisitedInvocationExpression, TranslateInvocationExpression(invocationExpression, data));
 
-        protected virtual E.CallExpression TranslateInvocationExpression(InvocationExpression invocationExpression, ILTransformationContext data)
+        protected virtual E.CallExpression TranslateInvocationExpression(InvocationExpression invocationExpression, ILTranslationContext data)
         {
             var inv = new E.CallExpression();
 
@@ -337,11 +337,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return inv;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitIndexerExpression(IndexerExpression indexerExpression, ILTranslationContext data)
             => OnVisiting(data, indexerExpression, VisitingIndexerExpression)
             ?? OnVisited(data, indexerExpression, VisitedIndexerExpression, TranslateIndexerExpression(indexerExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateIndexerExpression(IndexerExpression indexerExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateIndexerExpression(IndexerExpression indexerExpression, ILTranslationContext data)
         {
             yield return new E.IndexerExpression()
             {
@@ -350,11 +350,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTranslationContext data)
             => OnVisiting(data, objectCreateExpression, VisitingObjectCreateExpression)
             ?? OnVisited(data, objectCreateExpression, VisitedObjectCreateExpression, TranslateObjectCreateExpression(objectCreateExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateObjectCreateExpression(ObjectCreateExpression objectCreateExpression, ILTranslationContext data)
         {
             E.NewExpression ne;
 
@@ -397,11 +397,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return ne;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ILTranslationContext data)
             => OnVisiting(data, binaryOperatorExpression, VisitingBinaryOperatorExpression)
             ?? OnVisited(data, binaryOperatorExpression, VisitedBinaryOperatorExpression, TranslateBinaryOperatorExpression(binaryOperatorExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, ILTranslationContext data)
         {
             yield return new E.BinaryExpression()
             {
@@ -411,11 +411,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAssignmentExpression(AssignmentExpression assignmentExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitAssignmentExpression(AssignmentExpression assignmentExpression, ILTranslationContext data)
             => OnVisiting(data, assignmentExpression, VisitingAssignmentExpression)
             ?? OnVisited(data, assignmentExpression, VisitedAssignmentExpression, TranslateAssignmentExpression(assignmentExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateAssignmentExpression(AssignmentExpression assignmentExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateAssignmentExpression(AssignmentExpression assignmentExpression, ILTranslationContext data)
         {
             yield return new E.AssignmentExpression()
             {
@@ -425,11 +425,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, ILTranslationContext data)
             => OnVisiting(data, memberReferenceExpression, VisitingMemberReferenceExpression)
             ?? OnVisited(data, memberReferenceExpression, VisitedMemberReferenceExpression, TranslateMemberReferenceExpression(memberReferenceExpression, data));
 
-        protected virtual IEnumerable<Syntax> TranslateMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, ILTranslationContext data)
         {
             if (memberReferenceExpression.TypeArguments.Any())
             {
@@ -443,7 +443,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        private Expression GetExpression(ICSharpCode.NRefactory.CSharp.Expression expression, ILTransformationContext data)
+        private Expression GetExpression(ICSharpCode.NRefactory.CSharp.Expression expression, ILTranslationContext data)
                => expression?.IsNull != false ? null : expression.AcceptVisitor(this, data).Cast<Expression>().Single();
     }
 }

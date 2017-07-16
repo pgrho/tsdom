@@ -8,7 +8,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     partial class ILTranslator
     {
-        protected virtual D.IModuleDeclaration ResolveModule(ILTransformationContext data, string fullName)
+        protected virtual D.IModuleDeclaration ResolveModule(ILTranslationContext data, string fullName)
         {
             var ms = Statements;
             var m = ms.OfType<D.IModuleDeclaration>().FirstOrDefault(e => e.Name == fullName);
@@ -26,11 +26,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region 名前空間レベル
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ILTranslationContext data)
             => OnVisiting(data, namespaceDeclaration, VisitingNamespaceDeclaration)
             ?? OnVisited(data, namespaceDeclaration, VisitedNamespaceDeclaration, TranslateNamespaceDeclaration(namespaceDeclaration, data));
 
-        protected virtual IEnumerable<Syntax> TranslateNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, ILTranslationContext data)
         {
             var ns = ResolveModule(data, namespaceDeclaration.FullName);
             foreach (var c in namespaceDeclaration.Children)
@@ -62,11 +62,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region 型レベル
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitTypeDeclaration(TypeDeclaration typeDeclaration, ILTranslationContext data)
             => OnVisiting(data, typeDeclaration, VisitingTypeDeclaration)
                 ?? OnVisited(data, typeDeclaration, VisitedTypeDeclaration, TranslateTypeDeclaration(typeDeclaration, data));
 
-        protected virtual IEnumerable<Syntax> TranslateTypeDeclaration(TypeDeclaration typeDeclaration, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateTypeDeclaration(TypeDeclaration typeDeclaration, ILTranslationContext data)
         {
             D.ITypeDeclaration td;
             switch (typeDeclaration.ClassType)
@@ -176,11 +176,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return (Syntax)td;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitAttributeSection(AttributeSection attributeSection, ILTranslationContext data)
             => OnVisiting(data, attributeSection, VisitingAttributeSection)
             ?? OnVisited(data, attributeSection, VisitedAttributeSection, TranslateAttributeSection(attributeSection, data));
 
-        protected virtual IEnumerable<Syntax> TranslateAttributeSection(AttributeSection attributeSection, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateAttributeSection(AttributeSection attributeSection, ILTranslationContext data)
         {
             foreach (var c in attributeSection.Children)
             {
@@ -191,11 +191,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitAttribute(Attribute attribute, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitAttribute(Attribute attribute, ILTranslationContext data)
             => OnVisiting(data, attribute, VisitingAttribute)
             ?? OnVisited(data, attribute, VisitedAttribute, TranslateAttribute(attribute, data));
 
-        protected virtual IEnumerable<Syntax> TranslateAttribute(Attribute attribute, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateAttribute(Attribute attribute, ILTranslationContext data)
         {
             var d = new D.Decorator();
             d.Name = GetTypeName(attribute.Type);
@@ -218,7 +218,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return d;
         }
 
-        private Collection<D.Decorator> GetDecorators(IEnumerable<AttributeSection> section, ILTransformationContext data)
+        private Collection<D.Decorator> GetDecorators(IEnumerable<AttributeSection> section, ILTranslationContext data)
         {
             Collection<D.Decorator> c = null;
             foreach (var s in section)
@@ -288,13 +288,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #region usingディレクティブ
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, ILTranslationContext data)
             => Enumerable.Empty<Syntax>();
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitUsingDeclaration(UsingDeclaration usingDeclaration, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitUsingDeclaration(UsingDeclaration usingDeclaration, ILTranslationContext data)
             => Enumerable.Empty<Syntax>();
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective, ILTranslationContext data)
             => Enumerable.Empty<Syntax>();
 
         #endregion usingディレクティブ

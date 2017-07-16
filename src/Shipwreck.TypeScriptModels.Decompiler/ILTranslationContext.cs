@@ -8,23 +8,23 @@ using System;
 
 namespace Shipwreck.TypeScriptModels.Decompiler
 {
-    public sealed class ILTransformationContext
+    public sealed class ILTranslationContext
     {
         private readonly ILTranslator _Translator;
         private readonly SyntaxTree _SyntaxTree;
 
-        private readonly ILTransformationContext _Root;
+        private readonly ILTranslationContext _Root;
         private CSharpUnresolvedFile _UnresolvedFile;
         private ICompilation _Compilation;
         private CSharpAstResolver _AstResolver;
 
-        internal ILTransformationContext(ILTranslator translator, SyntaxTree syntaxTree)
+        internal ILTranslationContext(ILTranslator translator, SyntaxTree syntaxTree)
         {
             _Translator = translator;
             _SyntaxTree = syntaxTree;
         }
 
-        internal ILTransformationContext(ILTransformationContext root)
+        internal ILTranslationContext(ILTranslationContext root)
         {
             _Root = root;
         }
@@ -81,8 +81,8 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         public bool HasYield { get; set; }
         public bool HasAwait { get; set; }
 
-        public ILTransformationContext GetChildContext()
-            => new ILTransformationContext(_Root ?? this);
+        public ILTranslationContext GetChildContext()
+            => new ILTranslationContext(_Root ?? this);
 
         public Type ResoleClrType(AstNode node)
             => node.Annotation<TypeInformation>()?.InferredType?.ResolveClrType()

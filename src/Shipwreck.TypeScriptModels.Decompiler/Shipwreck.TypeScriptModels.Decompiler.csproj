@@ -43,7 +43,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ILTranslatorEvents.tt</DependentUpon>
     </Compile>
-    <Compile Include="ILTransformationContext.cs" />
+    <Compile Include="ILTranslationContext.cs" />
     <Compile Include="ILTranslationConvention.cs" />
     <Compile Include="ILTranslationConventionSet.cs" />
     <Compile Include="ILTranslator.Statements.cs" />

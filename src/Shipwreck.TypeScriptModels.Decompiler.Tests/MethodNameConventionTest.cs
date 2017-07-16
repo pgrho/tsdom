@@ -25,7 +25,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         public void MethodNameConvention_DeclarationTest()
         {
             var t = new ILTranslator();
-            var r = t.Transform(typeof(MethodNameConventionTestClass)).Single();
+            var r = t.Translate(typeof(MethodNameConventionTestClass)).Single();
             Console.WriteLine(r);
         }
 
@@ -33,7 +33,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         public void MethodNameConvention_InvocationTest()
         {
             var t = new ILTranslator();
-            var r = t.Transform(typeof(MethodNameConventionTestClass)).Single();
+            var r = t.Translate(typeof(MethodNameConventionTestClass)).Single();
             Console.WriteLine(r);
         }
     }

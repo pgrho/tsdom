@@ -26,23 +26,23 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Types
         }
 
         [TestMethod]
-        public void InheritedTypeDeclaration_TransformTest()
+        public void TypeDeclarationTest_Inherited()
         {
-            var c = new TransformingContext<InheritedTestClass>().Result;
+            var c = new TypeTranslationContext<InheritedTestClass>().Result;
             Assert.IsNotNull(c);
         }
 
         [TestMethod]
-        public void ImplementedTypeDeclaration_TransformTest()
+        public void TypeDeclarationTest_Implemented()
         {
-            var c = new TransformingContext<ImplementedTestClass>().Result;
+            var c = new TypeTranslationContext<ImplementedTestClass>().Result;
             Assert.IsNotNull(c);
         }
 
         [TestMethod]
-        public void InheritedAndImplementedTypeDeclaration_TransformTest()
+        public void TypeDeclarationTest_InheritedAndImplemented()
         {
-            var c = new TransformingContext<InheritedAndImplementedTestClass>().Result;
+            var c = new TypeTranslationContext<InheritedAndImplementedTestClass>().Result;
             Assert.IsNotNull(c);
         }
     }

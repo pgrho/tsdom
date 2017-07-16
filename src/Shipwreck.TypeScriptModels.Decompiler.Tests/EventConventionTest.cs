@@ -25,18 +25,18 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         }
 
         [TestMethod]
-        public void EventDeclaration_TransformTest_Auto()
+        public void EventDeclarationTest_Auto()
         {
-            var t = new TransformingContext<Auto>();
+            var t = new TypeTranslationContext<Auto>();
             Assert.IsNotNull(t.GetField("$ev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$addev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$remev_TestEvent"));
         }
 
         [TestMethod]
-        public void EventDeclaration_TransformTest_Custom()
+        public void EventDeclarationTest_Custom()
         {
-            var t = new TransformingContext<Custom>();
+            var t = new TypeTranslationContext<Custom>();
             Assert.IsNull(t.GetField("$ev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$addev_TestEvent"));
             Assert.IsNotNull(t.GetMethod("$remev_TestEvent"));

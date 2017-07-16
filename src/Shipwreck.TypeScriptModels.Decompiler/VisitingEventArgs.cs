@@ -5,13 +5,13 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 {
     public class VisitingEventArgs<T> where T : AstNode
     {
-        public VisitingEventArgs(ILTransformationContext context, T node)
+        public VisitingEventArgs(ILTranslationContext context, T node)
         {
             Context = context;
             Node = node;
         }
 
-        public ILTransformationContext Context { get; }
+        public ILTranslationContext Context { get; }
 
         public T Node { get; }
 

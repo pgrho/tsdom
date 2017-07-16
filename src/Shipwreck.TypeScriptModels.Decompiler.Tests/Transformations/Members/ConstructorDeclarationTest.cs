@@ -13,9 +13,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         }
 
         [TestMethod]
-        public void ConstructorDeclaration_TransformTest()
+        public void ConstructorDeclaration_Test()
         {
-            var f = new TransformingContext<TestClass>().GetConstructor();
+            var f = new TypeTranslationContext<TestClass>().GetConstructor();
 
             Assert.IsNotNull(f);
         }

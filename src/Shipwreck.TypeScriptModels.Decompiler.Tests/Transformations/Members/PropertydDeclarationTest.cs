@@ -23,7 +23,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         [TestMethod]
         public void PropertydDeclaration_AutoInt32PropertyTest()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var f = t.GetField(nameof(TestClass.AutoInt32Property));
 
             Assert.AreEqual(AccessibilityModifier.Public, f.Accessibility);
@@ -33,7 +33,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         [TestMethod]
         public void PropertydDeclaration_ReadOnlyInt32PropertyTest()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var f = t.GetField("__ReadOnlyInt32Property");
 
             Assert.AreEqual(AccessibilityModifier.Private, f.Accessibility);
@@ -50,7 +50,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         [TestMethod]
         public void PropertydDeclaration_WriteOnlyInt32PropertyTest()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var f = t.GetField("__WriteOnlyInt32Property");
 
             Assert.AreEqual(AccessibilityModifier.Private, f.Accessibility);
@@ -68,7 +68,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         [TestMethod]
         public void PropertydDeclaration_AccessibilityInt32PropertyTest()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var f = t.GetField("__" + nameof(TestClass.AccessibilityInt32Property));
 
             Assert.AreEqual(AccessibilityModifier.Private, f.Accessibility);

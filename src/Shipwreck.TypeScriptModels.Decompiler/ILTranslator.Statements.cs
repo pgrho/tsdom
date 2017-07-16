@@ -11,11 +11,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
     {
         #region ブロック
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitBlockStatement(BlockStatement blockStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitBlockStatement(BlockStatement blockStatement, ILTranslationContext data)
             => OnVisiting(data, blockStatement, VisitingBlockStatement)
             ?? OnVisited(data, blockStatement, VisitedBlockStatement, TranslateBlockStatement(blockStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateBlockStatement(BlockStatement blockStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateBlockStatement(BlockStatement blockStatement, ILTranslationContext data)
         {
             var bs = new S.BlockStatement();
             bs.Statements = GetStatements(blockStatement, data);
@@ -23,11 +23,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return bs;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitIfElseStatement(IfElseStatement ifElseStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitIfElseStatement(IfElseStatement ifElseStatement, ILTranslationContext data)
             => OnVisiting(data, ifElseStatement, VisitingIfElseStatement)
             ?? OnVisited(data, ifElseStatement, VisitedIfElseStatement, TranslateIfElseStatement(ifElseStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateIfElseStatement(IfElseStatement ifElseStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateIfElseStatement(IfElseStatement ifElseStatement, ILTranslationContext data)
         {
             var ib = new S.IfStatement();
             ib.Condition = GetExpression(ifElseStatement.Condition, data);
@@ -37,11 +37,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return ib;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitForStatement(ForStatement forStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitForStatement(ForStatement forStatement, ILTranslationContext data)
             => OnVisiting(data, forStatement, VisitingForStatement)
             ?? OnVisited(data, forStatement, VisitedForStatement, TranslateForStatement(forStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateForStatement(ForStatement forStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateForStatement(ForStatement forStatement, ILTranslationContext data)
         {
             var fs = new S.ForStatement();
 
@@ -83,11 +83,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return fs;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitForeachStatement(ForeachStatement foreachStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitForeachStatement(ForeachStatement foreachStatement, ILTranslationContext data)
             => OnVisiting(data, foreachStatement, VisitingForeachStatement)
             ?? OnVisited(data, foreachStatement, VisitedForeachStatement, TranslateForeachStatement(foreachStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateForeachStatement(ForeachStatement foreachStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateForeachStatement(ForeachStatement foreachStatement, ILTranslationContext data)
         {
             var fs = new S.ForOfStatement();
             fs.Variable = new E.IdentifierExpression() { Name = foreachStatement.VariableName };
@@ -98,11 +98,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return fs;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitDoWhileStatement(DoWhileStatement doWhileStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitDoWhileStatement(DoWhileStatement doWhileStatement, ILTranslationContext data)
             => OnVisiting(data, doWhileStatement, VisitingDoWhileStatement)
             ?? OnVisited(data, doWhileStatement, VisitedDoWhileStatement, TranslateDoWhileStatement(doWhileStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateDoWhileStatement(DoWhileStatement doWhileStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateDoWhileStatement(DoWhileStatement doWhileStatement, ILTranslationContext data)
         {
             var bs = new S.DoStatement();
             bs.Condition = GetExpression(doWhileStatement.Condition, data);
@@ -111,11 +111,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return bs;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitWhileStatement(WhileStatement whileStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitWhileStatement(WhileStatement whileStatement, ILTranslationContext data)
             => OnVisiting(data, whileStatement, VisitingWhileStatement)
             ?? OnVisited(data, whileStatement, VisitedWhileStatement, TranslateWhileStatement(whileStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateWhileStatement(WhileStatement whileStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateWhileStatement(WhileStatement whileStatement, ILTranslationContext data)
         {
             var bs = new S.WhileStatement();
             bs.Condition = GetExpression(whileStatement.Condition, data);
@@ -124,11 +124,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return bs;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitTryCatchStatement(TryCatchStatement tryCatchStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitTryCatchStatement(TryCatchStatement tryCatchStatement, ILTranslationContext data)
             => OnVisiting(data, tryCatchStatement, VisitingTryCatchStatement)
             ?? OnVisited(data, tryCatchStatement, VisitedTryCatchStatement, TranslateTryCatchStatement(tryCatchStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateTryCatchStatement(TryCatchStatement tryCatchStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateTryCatchStatement(TryCatchStatement tryCatchStatement, ILTranslationContext data)
         {
             if (tryCatchStatement.CatchClauses.Count > 1)
             {
@@ -150,11 +150,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return s;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitUsingStatement(UsingStatement usingStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitUsingStatement(UsingStatement usingStatement, ILTranslationContext data)
             => OnVisiting(data, usingStatement, VisitingUsingStatement)
             ?? OnVisited(data, usingStatement, VisitedUsingStatement, TranslateUsingStatement(usingStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateUsingStatement(UsingStatement usingStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateUsingStatement(UsingStatement usingStatement, ILTranslationContext data)
         {
             var b = new S.BlockStatement();
 
@@ -212,11 +212,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return b;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitSwitchStatement(SwitchStatement switchStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitSwitchStatement(SwitchStatement switchStatement, ILTranslationContext data)
             => OnVisiting(data, switchStatement, VisitingSwitchStatement)
             ?? OnVisited(data, switchStatement, VisitedSwitchStatement, TranslateSwitchStatement(switchStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateSwitchStatement(SwitchStatement switchStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateSwitchStatement(SwitchStatement switchStatement, ILTranslationContext data)
         {
             var s = new S.SwitchStatement();
             s.Condition = GetExpression(switchStatement.Expression, data);
@@ -240,11 +240,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             yield return s;
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitLockStatement(LockStatement lockStatement, ILTranslationContext data)
             => OnVisiting(data, lockStatement, VisitingLockStatement)
             ?? OnVisited(data, lockStatement, VisitedLockStatement, TranslateLockStatement(lockStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateLockStatement(LockStatement lockStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateLockStatement(LockStatement lockStatement, ILTranslationContext data)
         {
             var bs = new S.BlockStatement();
             bs.Statements = GetStatements(lockStatement.EmbeddedStatement, data);
@@ -258,14 +258,14 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         #endregion ブロック
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitEmptyStatement(EmptyStatement emptyStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitEmptyStatement(EmptyStatement emptyStatement, ILTranslationContext data)
             => Enumerable.Empty<Syntax>();
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitExpressionStatement(ExpressionStatement expressionStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitExpressionStatement(ExpressionStatement expressionStatement, ILTranslationContext data)
             => OnVisiting(data, expressionStatement, VisitingExpressionStatement)
             ?? OnVisited(data, expressionStatement, VisitedExpressionStatement, TranslateExpressionStatement(expressionStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateExpressionStatement(ExpressionStatement expressionStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateExpressionStatement(ExpressionStatement expressionStatement, ILTranslationContext data)
         {
             yield return new S.ExpressionStatement()
             {
@@ -273,11 +273,11 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             };
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitReturnStatement(ReturnStatement returnStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitReturnStatement(ReturnStatement returnStatement, ILTranslationContext data)
             => OnVisiting(data, returnStatement, VisitingReturnStatement)
             ?? OnVisited(data, returnStatement, VisitedReturnStatement, TranslateReturnStatement(returnStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateReturnStatement(ReturnStatement returnStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateReturnStatement(ReturnStatement returnStatement, ILTranslationContext data)
         {
             if (returnStatement.Expression?.IsNull == false)
             {
@@ -292,29 +292,29 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitBreakStatement(BreakStatement breakStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitBreakStatement(BreakStatement breakStatement, ILTranslationContext data)
             => OnVisiting(data, breakStatement, VisitingBreakStatement)
             ?? OnVisited(data, breakStatement, VisitedBreakStatement, TranslateBreakStatement(breakStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateBreakStatement(BreakStatement breakStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateBreakStatement(BreakStatement breakStatement, ILTranslationContext data)
         {
             yield return new S.BreakStatement();
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitContinueStatement(ContinueStatement continueStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitContinueStatement(ContinueStatement continueStatement, ILTranslationContext data)
             => OnVisiting(data, continueStatement, VisitingContinueStatement)
             ?? OnVisited(data, continueStatement, VisitedContinueStatement, TranslateContinueStatement(continueStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateContinueStatement(ContinueStatement continueStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateContinueStatement(ContinueStatement continueStatement, ILTranslationContext data)
         {
             yield return new S.ContinueStatement();
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTransformationContext, IEnumerable<Syntax>>.VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, ILTransformationContext data)
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, ILTranslationContext data)
             => OnVisiting(data, variableDeclarationStatement, VisitingVariableDeclarationStatement)
             ?? OnVisited(data, variableDeclarationStatement, VisitedVariableDeclarationStatement, TranslateVariableDeclarationStatement(variableDeclarationStatement, data));
 
-        protected virtual IEnumerable<Syntax> TranslateVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, ILTransformationContext data)
+        protected virtual IEnumerable<Syntax> TranslateVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, ILTranslationContext data)
         {
             var vd = new S.VariableDeclaration();
             vd.Type = (variableDeclarationStatement.Modifiers & Modifiers.Const) == Modifiers.Const ? S.VariableDeclarationType.Const : S.VariableDeclarationType.Let;

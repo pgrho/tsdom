@@ -12,9 +12,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Expressions
         }
 
         [TestMethod]
-        public void SuperExpression_TransformTest()
+        public void SuperExpression_Test()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);

@@ -13,9 +13,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         }
 
         [TestMethod]
-        public void FieldDeclaration_TransformTest()
+        public void FieldDeclaration_Test()
         {
-            var f = new TransformingContext<TestClass>().GetField("_IntegerField");
+            var f = new TypeTranslationContext<TestClass>().GetField("_IntegerField");
 
             Assert.IsNotNull(f);
         }

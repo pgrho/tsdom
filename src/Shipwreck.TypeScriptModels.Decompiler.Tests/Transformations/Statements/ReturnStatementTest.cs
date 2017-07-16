@@ -12,9 +12,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Statements
         }
 
         [TestMethod]
-        public void ReturnStatement_TransformTest()
+        public void ReturnStatement_Test()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var m = t.GetMethod(nameof(TestClass.SourceMethod));
 
             Assert.IsNotNull(m);

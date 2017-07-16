@@ -20,9 +20,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
         }
 
         [TestMethod]
-        public void MethodDeclaration_TransformTest()
+        public void MethodDeclaration_Test()
         {
-            var t = new TransformingContext<TestClass>();
+            var t = new TypeTranslationContext<TestClass>();
             var f = t.GetMethod("Method1");
 
             Assert.IsNotNull(f);

@@ -24,9 +24,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler.Transformations.Members
 #if DEBUG
         [ExpectedException(typeof(NotSupportedException))]
 #endif
-        public void AsyncMethodDeclaration_TransformTest()
+        public void AsyncMethodDeclaration_Test()
         {
-            var f = new TransformingContext<TestClass>().GetMethod("Method1");
+            var f = new TypeTranslationContext<TestClass>().GetMethod("Method1");
             Assert.IsNotNull(f);
         }
     }

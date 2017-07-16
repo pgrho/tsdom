@@ -9,7 +9,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         private readonly IEnumerable<Syntax> _OriginalResults;
         public bool? _Handled;
 
-        public VisitedEventArgs(ILTransformationContext context, T node, IEnumerable<Syntax> results)
+        public VisitedEventArgs(ILTranslationContext context, T node, IEnumerable<Syntax> results)
         {
             Context = context;
             Node = node;
@@ -18,7 +18,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             _OriginalResults = Results;
         }
 
-        public ILTransformationContext Context { get; }
+        public ILTranslationContext Context { get; }
 
         public T Node { get; }
 

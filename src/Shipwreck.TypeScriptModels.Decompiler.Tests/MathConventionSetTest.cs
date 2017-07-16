@@ -19,7 +19,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
         public void MathConventionSet_Test()
         {
             var t = new ILTranslator();
-            var r = t.Transform(typeof(MathConventionSetTestClass)).Single();
+            var r = t.Translate(typeof(MathConventionSetTestClass)).Single();
             Console.WriteLine(r);
         }
     }
