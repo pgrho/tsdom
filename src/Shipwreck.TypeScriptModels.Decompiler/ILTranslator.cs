@@ -305,15 +305,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw ExceptionHelper.CannotTranslateAst(nameof(CSharpTokenNode));
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, ILTranslationContext data)
-            => OnVisiting(data, defaultValueExpression, VisitingDefaultValueExpression)
-            ?? OnVisited(data, defaultValueExpression, VisitedDefaultValueExpression, TranslateDefaultValueExpression(defaultValueExpression, data));
-
-        protected virtual IEnumerable<Syntax> TranslateDefaultValueExpression(DefaultValueExpression defaultValueExpression, ILTranslationContext data)
-        {
-            throw ExceptionHelper.CannotTranslateAst(nameof(DefaultValueExpression));
-        }
-
         IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, ILTranslationContext data)
             => OnVisiting(data, delegateDeclaration, VisitingDelegateDeclaration)
             ?? OnVisited(data, delegateDeclaration, VisitedDelegateDeclaration, TranslateDelegateDeclaration(delegateDeclaration, data));

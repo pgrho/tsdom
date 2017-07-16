@@ -1,4 +1,5 @@
-﻿using ICSharpCode.NRefactory.CSharp;
+﻿using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -228,6 +229,61 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
 
             yield return ex;
+        }
+
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, ILTranslationContext data)
+            => OnVisiting(data, defaultValueExpression, VisitingDefaultValueExpression)
+            ?? OnVisited(data, defaultValueExpression, VisitedDefaultValueExpression, TranslateDefaultValueExpression(defaultValueExpression, data));
+
+        protected virtual IEnumerable<Syntax> TranslateDefaultValueExpression(DefaultValueExpression defaultValueExpression, ILTranslationContext data)
+        {
+            var ti = defaultValueExpression.Annotation<TypeInformation>()?.InferredType;
+
+            if (ti?.Namespace == nameof(System))
+            {
+                switch (ti.Name)
+                {
+                    case nameof(Boolean):
+                        yield return new E.BooleanExpression(false);
+                        yield break;
+
+                    case nameof(Byte):
+                    case nameof(SByte):
+                    case nameof(Int16):
+                    case nameof(UInt16):
+                    case nameof(Int32):
+                    case nameof(UInt32):
+                    case nameof(Int64):
+                    case nameof(UInt64):
+                    case nameof(Single):
+                    case nameof(Double):
+                    case nameof(Decimal):
+                        yield return new E.NumberExpression(0);
+                        yield break;
+                }
+            }
+
+            if (ti?.IsValueType == true)
+            {
+                var ct = ti.ResolveClrType();
+
+                if (ct?.IsEnum == true)
+                {
+                    var n = Enum.GetName(ct, ((IConvertible)0).ToType(Enum.GetUnderlyingType(ct), null));
+                    if (n == null)
+                    {
+                        yield return new E.NumberExpression(0);
+                    }
+                    else
+                    {
+                        yield return new E.IdentifierExpression(ct.FullName).Property(n);
+                    }
+                    yield break;
+                }
+            }
+
+            yield return new E.NullExpression();
+            yield break;
         }
 
         #endregion リテラル
