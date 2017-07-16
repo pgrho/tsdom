@@ -98,9 +98,23 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             }
         }
 
+        public event EventHandler<VisitingEventArgs<AstNode>> VisitingNode;
+
         private IEnumerable<Syntax> OnVisiting<T>(ILTranslationContext data, T node, EventHandler<VisitingEventArgs<T>> handler)
             where T : AstNode
         {
+            var nodeHandler = VisitingNode;
+
+            if (nodeHandler != null)
+            {
+                var e = new VisitingEventArgs<AstNode>(data, node);
+                nodeHandler(this, e);
+                if (e.Results != null)
+                {
+                    return e.Results;
+                }
+            }
+
             if (handler != null)
             {
                 var e = new VisitingEventArgs<T>(data, node);
