@@ -1,4 +1,5 @@
-﻿using ICSharpCode.NRefactory.CSharp;
+﻿using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -332,6 +333,39 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 yield return vd;
             }
+        }
+
+        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitThrowStatement(ThrowStatement throwStatement, ILTranslationContext data)
+            => OnVisiting(data, throwStatement, VisitingThrowStatement)
+            ?? OnVisited(data, throwStatement, VisitedThrowStatement, TranslateThrowStatement(throwStatement, data));
+
+        protected virtual IEnumerable<Syntax> TranslateThrowStatement(ThrowStatement throwStatement, ILTranslationContext data)
+        {
+            Expression value = null;
+            var oce = throwStatement.Expression as ObjectCreateExpression;
+            if (oce != null)
+            {
+                var sp = oce.Arguments.FirstOrDefault();
+                if (sp?.Annotation<TypeInformation>()?.InferredType?.FullName
+                    == nameof(System) + "." + nameof(String))
+                {
+                    var spe = sp.AcceptVisitor(this, data).ToArray();
+                    if (spe.Length == 1)
+                    {
+                        value = (Expression)spe[0];
+                    }
+                }
+            }
+            if (value != null)
+            {
+                var fn = throwStatement.Expression.Annotation<TypeInformation>()?.InferredType?.FullName;
+                value = new E.StringExpression(fn ?? "unknown exception");
+            }
+
+            yield return new S.ThrowStatement()
+            {
+                Value = value
+            };
         }
     }
 }

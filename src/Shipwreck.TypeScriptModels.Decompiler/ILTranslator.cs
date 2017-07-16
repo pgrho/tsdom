@@ -1030,15 +1030,6 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw GetNotImplementedException();
         }
 
-        IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitThrowStatement(ThrowStatement throwStatement, ILTranslationContext data)
-            => OnVisiting(data, throwStatement, VisitingThrowStatement)
-            ?? OnVisited(data, throwStatement, VisitedThrowStatement, TranslateThrowStatement(throwStatement, data));
-
-        protected virtual IEnumerable<Syntax> TranslateThrowStatement(ThrowStatement throwStatement, ILTranslationContext data)
-        {
-            throw ExceptionHelper.CannotTranslateAst(nameof(ThrowStatement));
-        }
-
         IEnumerable<Syntax> IAstVisitor<ILTranslationContext, IEnumerable<Syntax>>.VisitTypeOfExpression(TypeOfExpression typeOfExpression, ILTranslationContext data)
             => OnVisiting(data, typeOfExpression, VisitingTypeOfExpression)
             ?? OnVisited(data, typeOfExpression, VisitedTypeOfExpression, TranslateTypeOfExpression(typeOfExpression, data));
