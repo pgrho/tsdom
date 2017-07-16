@@ -1475,6 +1475,7 @@ namespace Shipwreck.TypeScriptModels
             else if (member.HasStatement)
             {
                 WriteMethodBody(member.Statements);
+                _Writer.WriteLine();
             }
             else
             {

@@ -33,7 +33,9 @@ namespace Shipwreck.TypeScriptModels.Declarations
                 {
                     writer.Write(" & ");
                 }
+                writer.Write('(');
                 ElementTypes[i].WriteTypeReference(writer);
+                writer.Write(')');
             }
         }
     }
