@@ -10,7 +10,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// <summary>
         /// Gets the list that the statement belongs to.
         /// </summary>
-        public IList Parent { get; private set; }
+        public IOwnedCollection Parent { get; private set; }
 
         public virtual bool? IsClass => true;
 
@@ -118,7 +118,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         #endregion Decorators
 
-        void IHasParentInternal.SetParent(IList value)
+        void IHasParentInternal.SetParent(IOwnedCollection value)
         {
             Parent = value;
         }

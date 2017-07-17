@@ -7,6 +7,6 @@ namespace Shipwreck.TypeScriptModels
         /// <summary>
         /// Gets the list that the statement belongs to.
         /// </summary>
-        IList Parent { get; }
+        IOwnedCollection Parent { get; }
     }
 }

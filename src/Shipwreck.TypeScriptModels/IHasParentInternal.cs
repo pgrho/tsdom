@@ -4,6 +4,6 @@ namespace Shipwreck.TypeScriptModels
 {
     internal interface IHasParentInternal : IHasParent
     {
-        void SetParent(IList value);
+        void SetParent(IOwnedCollection value);
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public class OwnedCollection<TItem, TOwner> : Collection<TItem>
+    public class OwnedCollection<TItem, TOwner> : Collection<TItem>, IOwnedCollection
         where TItem : class, IHasParent
         where TOwner : class
     {
@@ -26,6 +26,9 @@ namespace Shipwreck.TypeScriptModels
                 return r;
             }
         }
+
+        object IOwnedCollection.Owner
+            => Owner;
 
         protected override void ClearItems()
         {
