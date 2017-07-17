@@ -1,5 +1,6 @@
 ﻿using Shipwreck.TypeScriptModels.Expressions;
 using Shipwreck.TypeScriptModels.Statements;
+using System;
 using System.Collections.Generic;
 
 namespace Shipwreck.TypeScriptModels
@@ -8,6 +9,30 @@ namespace Shipwreck.TypeScriptModels
     {
         public static IdentifierExpression Undefined()
             => new IdentifierExpression("undefined");
+
+        public static Expression Literal(object value)
+        {
+            if (value == null)
+            {
+                return new NullExpression();
+            }
+            else
+            {
+                var sv = value as string;
+                if (sv != null)
+                {
+                    return new StringExpression(sv);
+                }
+                else if (value is bool)
+                {
+                    return new BooleanExpression((bool)value);
+                }
+                else
+                {
+                    return new NumberExpression(Convert.ToDouble(value));
+                }
+            }
+        }
 
         #region BinaryExpression
 

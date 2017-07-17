@@ -195,30 +195,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
 
         protected virtual IEnumerable<Syntax> TranslatePrimitiveExpression(PrimitiveExpression primitiveExpression, ILTranslationContext data)
         {
-            Expression ex;
-            if (primitiveExpression.Value == null)
-            {
-                ex = new E.NullExpression();
-            }
-            else
-            {
-                var sv = primitiveExpression.Value as string;
-                if (sv != null)
-                {
-                    ex = new E.StringExpression() { Value = sv };
-                }
-                else if (primitiveExpression.Value is bool)
-                {
-                    ex = new E.BooleanExpression() { Value = (bool)primitiveExpression.Value };
-                }
-                else
-                {
-                    ex = new E.NumberExpression()
-                    {
-                        Value = Convert.ToDouble(primitiveExpression.Value)
-                    };
-                }
-            }
+            var ex = ExpressionBuilder.Literal(primitiveExpression.Value);
 
             if (primitiveExpression.Value != null)
             {
