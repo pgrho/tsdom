@@ -1,15 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace Shipwreck.TypeScriptModels.Expressions
 {
     // 4.14
     public sealed class NewExpression : Expression
     {
+        public NewExpression()
+        {
+        }
+
+        public NewExpression(Expression type)
+        {
+            Type = type;
+        }
+
+        public NewExpression(Expression type, params Expression[] parameters)
+        {
+            Type = type;
+            if (parameters != null)
+            {
+                foreach (var p in parameters)
+                {
+                    Parameters.Add(p);
+                }
+            }
+        }
+
         public override ExpressionPrecedence Precedence
             => ExpressionPrecedence.NewWithArguments;
 
