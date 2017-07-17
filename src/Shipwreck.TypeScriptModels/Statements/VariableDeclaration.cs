@@ -1,12 +1,36 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Shipwreck.TypeScriptModels.Statements
 {
-    // 5.2
-    // 5.3
+    // 5.2 5.3
     public sealed class VariableDeclaration : Statement
     {
+        public VariableDeclaration()
+        {
+        }
+
+        public VariableDeclaration(VariableBinding binding)
+        {
+            Bindings.Add(binding);
+        }
+
+        public VariableDeclaration(params VariableBinding[] bindings)
+            : this((IEnumerable<VariableBinding>)bindings)
+        { }
+
+        public VariableDeclaration(IEnumerable<VariableBinding> bindings)
+        {
+            if (bindings == null)
+            {
+                foreach (var b in bindings)
+                {
+                    Bindings.Add(b);
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets the value indicating whether the declaration has a <c>declare</c> modifier.
         /// </summary>
