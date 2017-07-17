@@ -6,7 +6,6 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using Mono.Cecil;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -533,9 +532,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             throw ExceptionHelper.CannotTranslateAst(nameof(PrimitiveType));
         }
 
-        public Collection<Statement> GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, ILTranslationContext data)
+        public StatementCollection GetStatements(AstNodeCollection<ICSharpCode.NRefactory.CSharp.Statement> statements, ILTranslationContext data)
         {
-            Collection<Statement> sts = null;
+            StatementCollection sts = null;
 
             foreach (var s in statements)
             {
@@ -560,9 +559,9 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             return sts;
         }
 
-        public Collection<Statement> GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, ILTranslationContext data)
+        public StatementCollection GetStatements(ICSharpCode.NRefactory.CSharp.Statement statement, ILTranslationContext data)
         {
-            Collection<Statement> sts = null;
+            StatementCollection sts = null;
 
             var block = statement as BlockStatement;
             if (block != null)
@@ -571,7 +570,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 {
                     foreach (var cr in s.AcceptVisitor(this, data))
                     {
-                        (sts ?? (sts = new Collection<Statement>())).Add((Statement)cr);
+                        (sts ?? (sts = new StatementCollection())).Add((Statement)cr);
                     }
                 }
             }
@@ -579,7 +578,7 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             {
                 foreach (var cr in statement.AcceptVisitor(this, data))
                 {
-                    (sts ?? (sts = new Collection<Statement>())).Add((Statement)cr);
+                    (sts ?? (sts = new StatementCollection())).Add((Statement)cr);
                 }
             }
             return sts;

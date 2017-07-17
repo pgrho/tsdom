@@ -52,6 +52,7 @@
     <Compile Include="Declarations\ICallSignature.cs" />
     <Compile Include="Declarations\IClassMember.cs" />
     <Compile Include="Declarations\IClassMemberVisitor.cs" />
+    <Compile Include="IHasParent.cs" />
     <Compile Include="Declarations\IModuleDeclaration.cs" />
     <Compile Include="Declarations\IModuleMember.cs" />
     <Compile Include="Declarations\IModuleMemberVisitor.cs" />
@@ -104,8 +105,12 @@
     <Compile Include="Expressions\TypeReferenceExpression.cs" />
     <Compile Include="Expressions\UnaryExpression.cs" />
     <Compile Include="Expressions\UnaryOperator.cs" />
+    <Compile Include="IHasParentInternal.cs" />
+    <Compile Include="IStatementOwner.cs" />
     <Compile Include="IStatementVisitor.cs" />
+    <Compile Include="OwnedCollection.cs" />
     <Compile Include="Statement.cs" />
+    <Compile Include="StatementCollection.cs" />
     <Compile Include="Statements\BlockStatement.cs" />
     <Compile Include="Statements\BreakStatement.cs" />
     <Compile Include="Statements\ContinueStatement.cs" />

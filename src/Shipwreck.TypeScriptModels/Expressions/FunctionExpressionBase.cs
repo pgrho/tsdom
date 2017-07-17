@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Shipwreck.TypeScriptModels.Declarations;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shipwreck.TypeScriptModels.Declarations;
 
 namespace Shipwreck.TypeScriptModels.Expressions
 {
-    public abstract class FunctionExpressionBase : Expression, ICallSignature
+    public abstract class FunctionExpressionBase : Expression, ICallSignature, IStatementOwner
     {
         private Collection<TypeParameter> _TypeParameters;
 
@@ -46,24 +41,21 @@ namespace Shipwreck.TypeScriptModels.Expressions
 
         public ITypeReference ReturnType { get; set; }
 
-
-        private Collection<Statement> _Statements;
+        private StatementCollection _Statements;
 
         public bool HasStatement
             => _Statements?.Count > 0;
 
-        public Collection<Statement> Statements
+        public StatementCollection Statements
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _Statements);
+                return CollectionHelper.GetOrCreate(ref _Statements, this);
             }
             set
             {
-                CollectionHelper.Set(ref _Statements, value);
+                CollectionHelper.Set(ref _Statements, value, this);
             }
         }
-
     }
-
 }

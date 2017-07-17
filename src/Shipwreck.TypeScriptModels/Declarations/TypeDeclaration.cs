@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class TypeDeclaration<TMember> : Syntax, ITypeReference, ITypeDeclaration
+    public abstract class TypeDeclaration<TMember> : Syntax, ITypeReference, ITypeDeclaration, IHasParentInternal
     {
+        /// <summary>
+        /// Gets the list that the statement belongs to.
+        /// </summary>
+        public IList Parent { get; private set; }
+
         public virtual bool? IsClass => true;
 
         public virtual bool? IsInterface => false;
@@ -117,6 +117,11 @@ namespace Shipwreck.TypeScriptModels.Declarations
             => _Decorators?.Clear();
 
         #endregion Decorators
+
+        void IHasParentInternal.SetParent(IList value)
+        {
+            Parent = value;
+        }
 
         public virtual void WriteTypeReference(TextWriter writer)
             => writer.Write(Name);

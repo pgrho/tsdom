@@ -1,11 +1,9 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Shipwreck.TypeScriptModels.Statements
+﻿namespace Shipwreck.TypeScriptModels.Statements
 {
     // 5.6
-    public sealed class ForInStatement : Statement
+    public sealed class ForInStatement : Statement, IStatementOwner
     {
-        private Collection<Statement> _Statements;
+        private StatementCollection _Statements;
 
         public Expression Variable { get; set; }
         public Expression Value { get; set; }
@@ -13,15 +11,15 @@ namespace Shipwreck.TypeScriptModels.Statements
         public bool HasStatement
             => _Statements?.Count > 0;
 
-        public Collection<Statement> Statements
+        public StatementCollection Statements
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _Statements);
+                return CollectionHelper.GetOrCreate(ref _Statements, this);
             }
             set
             {
-                CollectionHelper.Set(ref _Statements, value);
+                CollectionHelper.Set(ref _Statements, value, this);
             }
         }
 

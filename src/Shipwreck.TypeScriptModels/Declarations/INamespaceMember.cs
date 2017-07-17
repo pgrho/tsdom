@@ -1,6 +1,6 @@
 ﻿namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public interface INamespaceMember
+    public interface INamespaceMember : IHasParent
     {
         /// <summary>
         /// Dispatches to the specific visit method for this node type.

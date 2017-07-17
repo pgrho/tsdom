@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
     public abstract class ModuleDeclarationBase<TMember> : Syntax, IModuleDeclaration
+        where TMember : class, IHasParent
     {
         internal ModuleDeclarationBase()
         {
@@ -31,7 +31,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         #region Members
 
-        private Collection<TMember> _Members;
+        private OwnedCollection<TMember, IModuleDeclaration> _Members;
 
         /// <summary>
         /// Gets a value indicating whether the value of <see cref="Members" /> contains any element;
@@ -42,15 +42,15 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// <summary>
         /// Gets or sets the all members of the module or namespace.
         /// </summary>
-        public Collection<TMember> Members
+        public OwnedCollection<TMember, IModuleDeclaration> Members
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _Members);
+                return CollectionHelper.GetOrCreate(ref _Members, this);
             }
             set
             {
-                CollectionHelper.Set(ref _Members, value);
+                CollectionHelper.Set(ref _Members, value, this);
             }
         }
 

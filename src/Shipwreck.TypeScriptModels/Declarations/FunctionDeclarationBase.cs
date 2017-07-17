@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class FunctionDeclarationBase : Syntax, ICallSignature
+    public abstract class FunctionDeclarationBase : Syntax, ICallSignature, IStatementOwner
     {
         #region Overloads
 
@@ -127,7 +127,7 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         #region Statements
 
-        private Collection<Statement> _Statements;
+        private StatementCollection _Statements;
 
         /// <summary>
         /// Gets a value indicating whether the value of <see cref="Statements" /> contains any element;
@@ -138,15 +138,15 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// <summary>
         /// Gets or sets the all statements of the function.
         /// </summary>
-        public Collection<Statement> Statements
+        public StatementCollection Statements
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _Statements);
+                return CollectionHelper.GetOrCreate(ref _Statements, this);
             }
             set
             {
-                CollectionHelper.Set(ref _Statements, value);
+                CollectionHelper.Set(ref _Statements, value, this);
             }
         }
 

@@ -9,7 +9,7 @@ using Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public abstract class AccessorDeclaration : Syntax, IClassMember, IInterfaceMember
+    public abstract class AccessorDeclaration : Syntax, IClassMember, IInterfaceMember, IStatementOwner
     {
         /// <summary>
         /// Gets or sets the value representing the accessibility modifier of the property.
@@ -31,20 +31,20 @@ namespace Shipwreck.TypeScriptModels.Declarations
 
         internal abstract bool GetIsSet();
 
-        private Collection<Statement> _Statements;
+        private StatementCollection _Statements;
 
         public bool HasStatement
             => _Statements?.Count > 0;
 
-        public Collection<Statement> Statements
+        public StatementCollection Statements
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _Statements);
+                return CollectionHelper.GetOrCreate(ref _Statements, this);
             }
             set
             {
-                CollectionHelper.Set(ref _Statements, value);
+                CollectionHelper.Set(ref _Statements, value, this);
             }
         }
 

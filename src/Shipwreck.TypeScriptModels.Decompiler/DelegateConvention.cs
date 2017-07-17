@@ -1,6 +1,5 @@
 using ICSharpCode.NRefactory.CSharp;
 using System;
-using System.Collections.ObjectModel;
 using D = Shipwreck.TypeScriptModels.Declarations;
 using E = Shipwreck.TypeScriptModels.Expressions;
 using S = Shipwreck.TypeScriptModels.Statements;
@@ -94,22 +93,23 @@ namespace Shipwreck.TypeScriptModels.Decompiler
                 var inner = new S.IfStatement();
                 inner.Condition = expression.Value.IsArray();
 
-                inner.TruePart.Add(expression.Target.AssignedBy(expression.Target.Property("filter").Call(new E.ArrowFunctionExpression()
-                {
-                    Parameters = new Collection<D.Parameter>() { new D.Parameter("e") },
-                    Statements = new Collection<Statement> {
-                        expression.Value.Property("indexOf").Call(new E.IdentifierExpression("e")).IsLessThan(new E.NumberExpression(0)).ToReturn()
-                    }
-                })).ToStatement());
+                inner.TruePart.Add(
+                    expression.Target.AssignedBy(expression.Target.Property("filter").Call(
+                        new E.ArrowFunctionExpression(
+                            new D.Parameter("e"),
+                            expression.Value.Property("indexOf").Call(new E.IdentifierExpression("e")).IsLessThan(new E.NumberExpression(0)))
+                        )
+                    )
+                );
 
-                inner.FalsePart.Add(expression.Target.Property("filter").Call(new E.ArrowFunctionExpression()
-                {
-                    Parameters = new Collection<D.Parameter>() { new D.Parameter("e") },
-                    Statements = new Collection<Statement>()
-                    {
-                        new E.IdentifierExpression("e").IsStrictNotEqualTo(expression.Value).ToReturn()
-                    }
-                }).ToStatement());
+                inner.FalsePart.Add(
+                    expression.Target.Property("filter").Call(
+                        new E.ArrowFunctionExpression(
+                            new D.Parameter("e"),
+                            new E.IdentifierExpression("e").IsStrictNotEqualTo(expression.Value)
+                        )
+                    )
+                );
 
                 ifb.TruePart.Add(inner);
 
@@ -158,16 +158,15 @@ namespace Shipwreck.TypeScriptModels.Decompiler
             var inner = new S.IfStatement();
             inner.Condition = callExpression.Target.IsArray();
 
-            inner.TruePart.Add(callExpression.Target.Property("forEach").Call(new E.ArrowFunctionExpression()
-            {
-                Parameters = new Collection<Declarations.Parameter>() {
-                    new D.Parameter() { ParameterName="e" }
-                },
-                Statements = new Collection<Statement>()
-                {
-                    new E.IdentifierExpression("h").AssignedBy(new E.IdentifierExpression("e").Call(callExpression.Parameters)).ToStatement()
-                }
-            }).ToStatement());
+            inner.TruePart.Add(
+                callExpression.Target.Property("forEach").Call(
+                    new E.ArrowFunctionExpression(
+                        new D.Parameter("e"),
+                        new E.IdentifierExpression("h").AssignedBy(new E.IdentifierExpression("e").Call(callExpression.Parameters))
+                    )
+                )
+            );
+
             inner.TruePart.Add(new E.IdentifierExpression("h").ToReturn());
 
             inner.FalsePart.Add(callExpression.ToReturn());

@@ -180,6 +180,13 @@ namespace Shipwreck.TypeScriptModels
                 return;
             }
 
+            var sc = syntax as SwitchCase;
+            if (sc != null)
+            {
+                WriteSwitchCase(sc);
+                return;
+            }
+
             var s = syntax as Statement;
             if (s != null)
             {
@@ -971,25 +978,7 @@ namespace Shipwreck.TypeScriptModels
                 _Writer.Indent++;
                 foreach (var c in statement.Cases)
                 {
-                    if (c.Label == null)
-                    {
-                        _Writer.Write("default");
-                    }
-                    else
-                    {
-                        _Writer.Write("case ");
-                        c.Label.Accept(this);
-                    }
-                    _Writer.WriteLine(':');
-                    if (c.HasStatement)
-                    {
-                        _Writer.Indent++;
-                        foreach (var s in c.Statements)
-                        {
-                            s.Accept(this);
-                        }
-                        _Writer.Indent--;
-                    }
+                    WriteSwitchCase(c);
                 }
                 _Writer.Indent--;
             }
@@ -997,6 +986,29 @@ namespace Shipwreck.TypeScriptModels
             _Writer.WriteLine('}');
 
             return 0;
+        }
+
+        private void WriteSwitchCase(SwitchCase c)
+        {
+            if (c.Label == null)
+            {
+                _Writer.Write("default");
+            }
+            else
+            {
+                _Writer.Write("case ");
+                c.Label.Accept(this);
+            }
+            _Writer.WriteLine(':');
+            if (c.HasStatement)
+            {
+                _Writer.Indent++;
+                foreach (var s in c.Statements)
+                {
+                    s.Accept(this);
+                }
+                _Writer.Indent--;
+            }
         }
 
         // 5.13

@@ -1,13 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace Shipwreck.TypeScriptModels
 {
-    public abstract class Statement : Syntax
+    public abstract class Statement : Syntax, IHasParent, IHasParentInternal
     {
+        /// <summary>
+        /// Gets the list that the statement belongs to.
+        /// </summary>
+        public IList Parent { get; private set; }
+
+        void IHasParentInternal.SetParent(IList value)
+        {
+            Parent = value;
+        }
+
         public abstract T Accept<T>(IStatementVisitor<T> visitor);
     }
 }

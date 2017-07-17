@@ -1,65 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shipwreck.TypeScriptModels.Statements
+﻿namespace Shipwreck.TypeScriptModels.Statements
 {
     // 5.14
-    public sealed class TryStatement : Statement
+    public sealed class TryStatement : Statement, IStatementOwner
     {
         public Expression CatchParameter { get; set; }
 
-        private Collection<Statement> _TryBlock;
+        private StatementCollection _TryBlock;
 
         public bool HasTryBlock
             => _TryBlock?.Count > 0;
 
-        public Collection<Statement> TryBlock
+        public StatementCollection TryBlock
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _TryBlock);
+                return CollectionHelper.GetOrCreate(ref _TryBlock, this);
             }
             set
             {
-                CollectionHelper.Set(ref _TryBlock, value);
+                CollectionHelper.Set(ref _TryBlock, value, this);
             }
         }
 
-        private Collection<Statement> _CatchBlock;
+        private StatementCollection _CatchBlock;
 
         public bool HasCatchBlock
             => _CatchBlock?.Count > 0;
 
-        public Collection<Statement> CatchBlock
+        public StatementCollection CatchBlock
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _CatchBlock);
+                return CollectionHelper.GetOrCreate(ref _CatchBlock, this);
             }
             set
             {
-                CollectionHelper.Set(ref _CatchBlock, value);
+                CollectionHelper.Set(ref _CatchBlock, value, this);
             }
         }
 
-        private Collection<Statement> _FinallyBlock;
+        private StatementCollection _FinallyBlock;
 
         public bool HasFinallyBlock
             => _FinallyBlock?.Count > 0;
 
-        public Collection<Statement> FinallyBlock
+        public StatementCollection FinallyBlock
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _FinallyBlock);
+                return CollectionHelper.GetOrCreate(ref _FinallyBlock, this);
             }
             set
             {
-                CollectionHelper.Set(ref _FinallyBlock, value);
+                CollectionHelper.Set(ref _FinallyBlock, value, this);
             }
         }
 

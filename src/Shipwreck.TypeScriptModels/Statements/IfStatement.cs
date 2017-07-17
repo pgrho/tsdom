@@ -1,43 +1,41 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Shipwreck.TypeScriptModels.Statements
+﻿namespace Shipwreck.TypeScriptModels.Statements
 {
     // 5.4
-    public sealed class IfStatement : Statement
+    public sealed class IfStatement : Statement, IStatementOwner
     {
         public Expression Condition { get; set; }
 
-        private Collection<Statement> _TruePart;
+        private StatementCollection _TruePart;
 
         public bool HasTruePart
             => _TruePart?.Count > 0;
 
-        public Collection<Statement> TruePart
+        public StatementCollection TruePart
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _TruePart);
+                return CollectionHelper.GetOrCreate(ref _TruePart, this);
             }
             set
             {
-                CollectionHelper.Set(ref _TruePart, value);
+                CollectionHelper.Set(ref _TruePart, value, this);
             }
         }
 
-        private Collection<Statement> _FalsePart;
+        private StatementCollection _FalsePart;
 
         public bool HasFalsePart
             => _FalsePart?.Count > 0;
 
-        public Collection<Statement> FalsePart
+        public StatementCollection FalsePart
         {
             get
             {
-                return CollectionHelper.GetOrCreate(ref _FalsePart);
+                return CollectionHelper.GetOrCreate(ref _FalsePart, this);
             }
             set
             {
-                CollectionHelper.Set(ref _FalsePart, value);
+                CollectionHelper.Set(ref _FalsePart, value, this);
             }
         }
 
