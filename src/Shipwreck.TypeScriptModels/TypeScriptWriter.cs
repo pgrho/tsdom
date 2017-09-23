@@ -1441,6 +1441,10 @@ namespace Shipwreck.TypeScriptModels
             _Writer.WriteAccessibility(member.Accessibility);
             WriteIsStatic(member.IsStatic);
             _Writer.Write(member.FieldName);
+            if (member.IsOptional)
+            {
+                _Writer.Write('?');
+            }
             if (member.FieldType != null)
             {
                 _Writer.Write(": ");

@@ -1,12 +1,5 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Shipwreck.TypeScriptModels.Expressions;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
@@ -24,6 +17,9 @@ namespace Shipwreck.TypeScriptModels.Declarations
         /// </summary>
         [DefaultValue(false)]
         public bool IsStatic { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsOptional { get; set; }
 
         public string FieldName { get; set; }
 
