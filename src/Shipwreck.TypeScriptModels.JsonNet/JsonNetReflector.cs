@@ -16,7 +16,7 @@ namespace Shipwreck.TypeScriptModels.JsonNet
         // TODO: support generic types
         // TODO: support module or namespace
 
-        public IEnumerable<IRootStatement> GetDeclarations(IEnumerable<Type> clrTypes)
+        public IEnumerable<object> GetDeclarations(IEnumerable<Type> clrTypes)
         {
             var processingTypes = clrTypes.Distinct().ToList();
             var stringUnionEnums = new Dictionary<Type, TypeAliasDeclaration>();
@@ -40,7 +40,7 @@ namespace Shipwreck.TypeScriptModels.JsonNet
                 }
             }
 
-            return stringUnionEnums.Values.Cast<IRootStatement>().Concat(decs.Values);
+            return stringUnionEnums.Values.Cast<object>().Concat(decs.Values);
         }
 
         protected virtual string GetTypeName(Type type) => type.Name;

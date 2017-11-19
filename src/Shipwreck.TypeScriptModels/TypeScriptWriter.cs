@@ -1266,7 +1266,6 @@ namespace Shipwreck.TypeScriptModels
                 for (var i = 0; i < declaration.Members.Count; i++)
                 {
                     declaration.Members[i].Accept(cv);
-                    _Writer.WriteLine(';');
                 }
                 _Writer.Indent--;
             }
@@ -1765,6 +1764,16 @@ namespace Shipwreck.TypeScriptModels
             }
             _Writer.WriteLine('}');
 
+            return 0;
+        }
+
+        public int VisitTypeAliasDeclaration(TypeAliasDeclaration declaration)
+        {
+            _Writer.Write("type ");
+            _Writer.Write(declaration.Name);
+            _Writer.Write(" = ");
+            declaration.Type.WriteTypeReference(_Writer);
+            _Writer.WriteLine(';');
             return 0;
         }
     }

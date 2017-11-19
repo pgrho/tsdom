@@ -16,5 +16,7 @@
         T VisitInterfaceDeclaration(InterfaceDeclaration declaration);
 
         T VisitEnumDeclaration(EnumDeclaration declaration);
+
+        T VisitTypeAliasDeclaration(TypeAliasDeclaration declaration);
     }
 }

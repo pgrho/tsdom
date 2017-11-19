@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shipwreck.TypeScriptModels", "Shipwreck.TypeScriptModels\Shipwreck.TypeScriptModels.csproj", "{0B86311A-B8CF-4BF5-B4E6-795C411A5F47}"
 EndProject
@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\ILSpy\ceci
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ILSpy", "ILSpy", "{6C8C82AE-C2D8-4EFB-BDFA-0837E638B663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.TypeScriptModels.JsonNet", "Shipwreck.TypeScriptModels.JsonNet\Shipwreck.TypeScriptModels.JsonNet.csproj", "{C2C927BA-1F91-40F8-B4BF-F67077D810A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shipwreck.TypeScriptModels.JsonNet", "Shipwreck.TypeScriptModels.JsonNet\Shipwreck.TypeScriptModels.JsonNet.csproj", "{C2C927BA-1F91-40F8-B4BF-F67077D810A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

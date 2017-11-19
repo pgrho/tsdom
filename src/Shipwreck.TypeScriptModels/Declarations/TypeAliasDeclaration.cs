@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Shipwreck.TypeScriptModels.Declarations
 {
-    public sealed class TypeAliasDeclaration : ITypeReference
+    public sealed class TypeAliasDeclaration : Syntax, IRootStatement, ITypeReference
     {
         public string Name { get; set; }
         public bool? IsClass => null;
@@ -39,6 +39,9 @@ namespace Shipwreck.TypeScriptModels.Declarations
                 writer.WriteTypeParameters(_TypeParameters);
             }
         }
+
+        public void Accept<T>(IRootStatementVisitor<T> visitor)
+            => visitor.VisitTypeAliasDeclaration(this);
 
         public ITypeReference Type { get; set; }
     }
